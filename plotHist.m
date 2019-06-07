@@ -4,7 +4,7 @@ function [ vecProbClass ] = plotHist( vecResult, vecXstd, vecYstd, numClass, str
     hold on
     figHist = histogram(vecResult, 'NumBins', numClass, 'Normalization', 'probability');
     vecProbClass = figHist.Values;
-    figHist = plot(vecXstd, vecYstd, 'r', 'LineWidth', 2)
+    figHist = plot(vecXstd, vecYstd, 'r', 'LineWidth', 2);
     hold off
     saveas(figHist, [pwd '/images/' strFigName]);
 end

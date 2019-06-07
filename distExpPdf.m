@@ -4,5 +4,7 @@ function [ vecX, vecProbClass ] = distExpPdf( vecU, lambda, numClass, strFigName
     for i = 1:numU
         vecX(i) = - log(vecU(i)) / lambda;
     end
-    [vecProbClass] = plotHist(vecX, numClass, strFigName);
+    vecXstd = [min(vecX):0.01:max(vecX)];
+    vecYstd = exppdf(vecXstd, 1 / lambda);
+    [vecProbClass] = plotHist(vecX, vecXstd, vecYstd, numClass, strFigName);
 end
