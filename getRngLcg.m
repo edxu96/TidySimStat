@@ -1,12 +1,11 @@
 % 190606
-function [vecResultNorm, vecCumuProbNorm] = getRngLcg(mCap, a, c, x0)
+function [vecRanNum, vecCumuProb] = getRngLcg(mCap, a, c, x0)
     % c -> b, mCap >- c
-    vecResult = zeros(mCap, 1);
+    vecRanNum = zeros(mCap, 1);
     vecProb = zeros(mCap, 1);
-    vecResult(1) = rem(a * x0 + c, mCap);
+    vecRanNum(1) = rem(a * x0 + c, mCap);
     for i = 2:mCap
-        vecResult(i) = rem(a * vecResult(i-1) + c, mCap);
+        vecRanNum(i) = rem(a * vecRanNum(i-1) + c, mCap);
     end
-    vecResultNorm = vecResult / mCap;
-    vecCumuProbNorm = vecResultNorm / mCap;
+    vecCumuProb = vecRanNum / mCap;
 end
