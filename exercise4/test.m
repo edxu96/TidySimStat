@@ -32,9 +32,11 @@ end
 % 3,  Begin `numSim`-Times Simulations
 nEvent = nCustomer;
 [b, sState] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, vecParaArrive, vecParaServe);
-plotLine([1:length([sState.nCustomerBlock])], [sState.nCustomerBlock], ...
+plotLine([1:nEvent], [sState.nCustomerBlock], ...
     '2.png', "The Result of Number of Blocked Customers");
-plotScatter([1:length([sState.nCustomerServe])], [sState.nCustomerServe], ...
+plotScatter([1:nEvent], [sState.nCustomerServe], ...
     '3.png', "The Result of Number of Customers being Served");
+[bCap] = calErlangsFormula(lambda, mu, nServer);
+plotLine([1:nEvent], [sState.b; ones(1, nEvent) * bCap], '4.png', "The Result of the Probability a Customer is Blocked");
 matTimeDepart = [sState.vecTimeDepart];
 % ######################################################################################################################
