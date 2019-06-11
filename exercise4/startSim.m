@@ -12,29 +12,31 @@ function [ b, nCustomerBlock, vecNumCustomerServe ] = startSim( nServer, nCustom
     nCustomerServe = 0;
     for i = 1:nCustomer
         % Next customer arrive
-        timeArriveInterval = exprnd(mu);
+        clockSimPre = clockSim;
+        clockSim = clockSim + exprnd(mu);
         nCustomerServe = nCustomerServe + 1;
         % Check the departed customers
         for j = 1:nServer
-            if vecTimeDepart(j) > clockSim  % there is some customer
-                if clockSim + timeArriveInterval >= vecTimeDepart(j)
-                    vecTimeDepart(j) == clockSim + timeArriveInterval;
+            if vecTimeDepart(j) > clockSimPre  % there is a customer
+                if vecTimeDepart(j) < clockSim
+                    vecTimeDepart(j) == clockSim;
                     nCustomerServe = nCustomerServe - 1;
                 end
-            elseif vecTimeDepart(j) == clockSim  % there is no customer
-                vecTimeDepart(j) = clockSim + timeArriveInterval;
+            elseif vecTimeDepart(j) == clockSimPre  % there is no customer
+                vecTimeDepart(j) = clockSim;
             end
         end
-        clockSim = clockSim + timeArriveInterval;
-        % Check if blocked
+        % Check if there is a block
+        disp(nCustomerServe)
         if nCustomerServe > nServer
             nCustomerBlock = nCustomerBlock + (nCustomerServe - nServer);
         else
-            for j = 1:nServer
-                if vecTimeDepart(j) == clockSim
-                    vecTimeDepart(j) = clockSim + exprnd(lambda);
-                end
+            % Select the first server without a customer, assign a customer to it.
+            j = 1;
+            while vecTimeDepart(j) ~= clockSim
+                j = j + 1;
             end
+            vecTimeDepart(j) = clockSim + exprnd(lambda);
         end
         vecNumCustomerServe(i) = nCustomerServe;
     end
