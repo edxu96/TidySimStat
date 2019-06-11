@@ -5,10 +5,14 @@ function [ b ] = startSim( offeredTraffic, nServer, nCustomer )
 %     :param n: number of servers
     exppdf(vecXstd, 1 / lambda);
     nCustomerBlock = 0;
+    clockSim = 0;
+    nCustomerServe = 0
     for i = 1:nCustomer
-
-        
-        nCustomerBlock = nCustomerBlock + 1
+        nCustomerServe = nCustomerServe + 1
+        clockSim = clockSim + exppdf(lambda)
+        if nCustomerServe > nServer
+            nCustomerBlock = nCustomerBlock + 1;
+        end
     end
     b = nCustomerBlock / nCustomer;
 end  % function
