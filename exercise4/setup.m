@@ -9,7 +9,7 @@ addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % ######################################################################################################################
 
 nServer = 10;
-nCustomer = 10000;
+nCustomer = 10000;  % 10000;
 lambda = 8;
 mu = 1;
-[ b, nCustomerBlock, vecNumCustomerServe ] = startSim( nServer, nCustomer, lambda, mu )
+[ b, nCustomerBlock ] = startSim( nServer, nCustomer, lambda, mu )
