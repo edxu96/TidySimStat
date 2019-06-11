@@ -1,10 +1,8 @@
 
-function [ b, nCustomerBlock, vecNumCustomerServe ] = startSim( nServer, nCustomer, lambda, mu )
+function [ b, sState ] = startSim( nServer, nCustomer, lambda, mu )
 % Function to simulate the block system
 %     :param offeredTraffic: offered traffic = lambda / mu
 %     :param n: number of servers
-    % Data storage
-    vecNumCustomerServe = zeros(nCustomer, 1);
     %
     vecTimeDepart = zeros(nServer, 1);
     nCustomerBlock = 0;
@@ -28,9 +26,6 @@ function [ b, nCustomerBlock, vecNumCustomerServe ] = startSim( nServer, nCustom
             end
         end
         % Check if there is a block
-        % disp(nCustomerServe)
-        % disp(clockSim)
-        % disp(vecTimeDepart)
         if nCustomerServe > nServer
             nCustomerBlock = nCustomerBlock + (nCustomerServe - nServer);
             nCustomerServe = nServer;
@@ -44,7 +39,11 @@ function [ b, nCustomerBlock, vecNumCustomerServe ] = startSim( nServer, nCustom
             vecTimeDepart(j) = clockSim + exprnd(lambda);
             % vecTimeDepart(j) = clockSim + 10;
         end
-        vecNumCustomerServe(i) = nCustomerServe;
+        % Store the result of state variables
+        sState(i).clockSim  = clockSim ;
+        sState(i).vecTimeDepart = vecTimeDepart;
+        sState(i).nCustomerBlock = nCustomerBlock;
+        sState(i).nCustomerServe = nCustomerServe;
     end
     b = nCustomerBlock / nCustomer;
 end  % function
