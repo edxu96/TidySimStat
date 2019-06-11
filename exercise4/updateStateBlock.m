@@ -1,7 +1,7 @@
 % function file for exercise 4
 % Author: Edward J. Xu, Sanaz
 % Date: 190611
-% Version: 2.0
+% Version: 2.1
 % ######################################################################################################################
 function [nCustomerServe, nCustomerBlock, vecTimeDepart] = updateStateBlock(clockSim, nServer, nCustomerServe, ...
     nCustomerBlock, vecTimeDepart, funcServe, vecParaServe)

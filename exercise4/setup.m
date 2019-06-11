@@ -1,7 +1,7 @@
 % setup file for exercise 4
 % Author: Edward J. Xu, Sanaz
 % Date: 190611
-% Version: 3.0
+% Version: 3.1
 % ######################################################################################################################
 % cd ~/Documents/GitHub/StochasticSim/exercise4
 % pwd
@@ -10,7 +10,8 @@ addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % 1,  Define Basic Parameters
 nServer = 10;
 nCustomer = 10000;  % 10000;
-numSim = 100;
+numSim = 10;
+clockSimZero = 0;
 % 2,  Define Functions for Length of Arrival Interval and Serve Time
 whiFuncArrive = "exp";
 whiFuncServe = "exp";
@@ -37,7 +38,8 @@ end
 nEvent = nCustomer;
 vecResultProb = zeros(numSim, 1);
 for i = 1:numSim
-    [vecResultProb(i)] = simDiscreteEvent(nServer, nEvent, funcArrive, funcServe, vecParaArrive, vecParaServe);
+    [vecResultProb(i)] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, vecParaArrive, ...
+        vecParaServe);
 end
 % 4,  Compare the Mean Value from Simualtions and Analytical Value
 fprintf("Simulation: mean(prob that the customer gets blocked) = %f.\n", mean(vecResultProb));

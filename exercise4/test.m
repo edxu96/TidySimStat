@@ -1,11 +1,12 @@
 % Test the functions for exercise 4
 % Author: Edward J. Xu
 % Date: 190611
-% Version: 2.0
+% Version: 2.1
 % ######################################################################################################################
 % 1,  Define Basic Parameters
 nServer = 10;
 nCustomer = 10000;  % 10000;
+clockSimZero = 0;
 % 2,  Define Functions for Length of Arrival Interval and Serve Time
 whiFuncArrive = "exp";
 whiFuncServe = "exp";
@@ -30,7 +31,7 @@ elseif  whiFuncServe == "cons"
 end
 % 3,  Begin `numSim`-Times Simulations
 nEvent = nCustomer;
-[b, sState] = simDiscreteEvent(nServer, nEvent, funcArrive, funcServe, vecParaArrive, vecParaServe);
+[b, sState] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, vecParaArrive, vecParaServe);
 plotLine([1:length([sState.nCustomerBlock])], [sState.nCustomerBlock], ...
     '2.png', "The Result of Number of Blocked Customers");
 plotScatter([1:length([sState.nCustomerServe])], [sState.nCustomerServe], ...
