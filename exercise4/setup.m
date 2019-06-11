@@ -5,7 +5,7 @@
 % ######################################################################################################################
 % cd ~/Documents/GitHub/StochasticSim/exercise4
 % pwd
-addpath("~/Documents/GitHub/StochasticSim/exercise4")
+% addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % ######################################################################################################################
 
 nServer = 10;
