@@ -9,7 +9,7 @@ addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % ######################################################################################################################
 
 nServer = 10;
-nCustomer = 1000;  % 10000;
+nCustomer = 10000;  % 10000;
 lambda = 15;
 mu = 1;
 numSim = 10;

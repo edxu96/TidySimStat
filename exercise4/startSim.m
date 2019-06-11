@@ -41,8 +41,8 @@ function [ b, nCustomerBlock, vecNumCustomerServe ] = startSim( nServer, nCustom
                 j = j + 1;
             end
             % Set the service time
-            % vecTimeDepart(j) = clockSim + exprnd(lambda);
-            vecTimeDepart(j) = clockSim + 10;
+            vecTimeDepart(j) = clockSim + exprnd(lambda);
+            % vecTimeDepart(j) = clockSim + 10;
         end
         vecNumCustomerServe(i) = nCustomerServe;
     end
