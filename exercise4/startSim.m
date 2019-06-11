@@ -1,5 +1,5 @@
 
-function [ b ] = startSim( offeredTraffic, nServer, nCustomer, lambda, mu )
+function [ b, nCustomerBlock, vecNumCustomerServe ] = startSim( nServer, nCustomer, lambda, mu )
 % Function to simulate the block system
 %     :param offeredTraffic: offered traffic = lambda / mu
 %     :param n: number of servers
@@ -7,12 +7,13 @@ function [ b ] = startSim( offeredTraffic, nServer, nCustomer, lambda, mu )
     nCustomerBlock = 0;
     clockSim = 0;
     nCustomerServe = 0;
-    while i = 1:nCustomer
+    vecNumCustomerServe = zeros(nCustomer, 1);
+    for i = 1:nCustomer
         % Next customer arrive
         clockSim = clockSim + exprnd(mu);
         nCustomerServe = nCustomerServe + 1;
         % Check the departed customers
-        for j = 1:nServe
+        for j = 1:nServer
             if clockSim >= vecTimeDepart(j)
                 vecTimeDepart(j) == clockSim;
                 nCustomerServe = nCustomerServe - 1;
@@ -22,12 +23,13 @@ function [ b ] = startSim( offeredTraffic, nServer, nCustomer, lambda, mu )
         if nCustomerServe > nServer
             nCustomerBlock = nCustomerBlock + (nCustomerServe - nServer);
         else
-            j = 1;
-            while vecTimeDepart(j) != clockSim
-                j = j + 1;
+            for j = 1:nServer
+                if vecTimeDepart(j) == clockSim
+                    vecTimeDepart(j) = clockSim + exprnd(lambda);
+                end
             end
-            vecTimeDepart(j) = clockSim + exprnd(lambda);
         end
+        vecNumCustomerServe(i) = nCustomerServe;
     end
     b = nCustomerBlock / nCustomer;
 end  % function
