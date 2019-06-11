@@ -9,7 +9,15 @@ addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % ######################################################################################################################
 
 nServer = 10;
-nCustomer = 10000;  % 10000;
-lambda = 8;
+nCustomer = 1000;  % 10000;
+lambda = 15;
 mu = 1;
-[ b, nCustomerBlock ] = startSim( nServer, nCustomer, lambda, mu )
+numSim = 10;
+vecResultProb = zeros(numSim, 1);
+for i = 1:numSim
+    [ vecResultProb(i) ] = startSim( nServer, nCustomer, lambda, mu );
+end
+mean(vecResultProb)
+[ bCap ] = calErlangsFormula( lambda, mu, nServer )
+
+% gamrnd(nServer, 1 / nServer)
