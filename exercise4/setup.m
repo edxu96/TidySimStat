@@ -31,7 +31,7 @@ for i = 1:nSim
 end
 fprintf("Result from Simulation ---------------------------------------------------------");
 toc
-printResult(vecResultProb);
+printResult(vecResultProb, var(vecResultProb));
 % Plot the Histogram of Simulated Time and Standard Distribution
 vecXStd_1 = [0.01:0.01:5];
 vecYStd_1 = exppdf(vecXStd_1, mu);
@@ -51,7 +51,8 @@ c = - varXY / var(vecY);
 for i = 1:nSim
     vecZ(i) = vecX(i) + c * (vecY(i) - expectY);
 end
-printResult(vecZ);
+varianceZ = var(vecX) - varXY^2 / var(vecY);  % The calculation is a bit different. ???
+printResult(vecZ, varianceZ);
 fprintf("#### End #######################################################################");  % ########################
 % To define the function for length of arrival interval and serving time.
 function [func, vecPara] = getFunc(whiFunc, mu, lambda)
@@ -69,10 +70,10 @@ function [func, vecPara] = getFunc(whiFunc, mu, lambda)
     fprintf("Func: %s.\n", whiFunc);
 end
 % To print the result.
-function [boundLower, boundUpper] = printResult(vecResult)
+function [boundLower, boundUpper] = printResult(vecResult, variance)
     fprintf("mean(b) = %f.\n", mean(vecResult));
-    fprintf("var(b) = %f.\n", var(vecResult));
-    [boundLower, boundUpper] = calConfInterval(vecResult);
+    fprintf("var(b) = %f.\n", variance);
+    [boundLower, boundUpper] = calConfInte(vecResult);
     fprintf("lowerConfiInterval(b) = %f.\n", boundLower);
     fprintf("upperConfiInterval(b) = %f.\n", boundUpper);
 end

@@ -2,7 +2,7 @@
 % Author: Edward J. Xu, Sanaz
 % Date: 190611
 % ######################################################################################################################
-function [ boundLower, boundUpper ] = calConfInterval(vecResult)
+function [ boundLower, boundUpper ] = calConfInte(vecResult)
     n = length(vecResult);
     expect = mean(vecResult);
     sCapSquare = (sum(vecResult.^2) - n * expect^2) / (n - 1);
