@@ -5,17 +5,19 @@
 % ######################################################################################################################
 % cd ~/Documents/GitHub/StochasticSim/exercise4
 % pwd
-% addpath("~/Documents/GitHub/StochasticSim/exercise4")
+addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % ######################################################################################################################
 % 1,  Define Basic Parameters
 nServer = 10;
-nCustomer = 10000;  % 10000;
+nCustomer = 10000;
 numSim = 10;
 clockSimZero = 0;
 % 2,  Define Functions for Length of Arrival Interval and Serve Time
-whiFuncArrive = "exp";
+% whiFuncArrive = "exp";
+whiFuncArrive = "control";
 fprintf("Func for Length Arrival Interval: %s.\n", whiFuncArrive);
-whiFuncServe = "exp";
+% whiFuncServe = "exp";
+whiFuncServe = "control";
 fprintf("Func for Serve Time: %s.\n", whiFuncServe);
 if whiFuncArrive == "exp"
     mu = 1;
@@ -26,8 +28,11 @@ elseif  whiFuncArrive == "cons"
     funcArrive = @(cons) cons;
     vecParaArrive = cons;
 elseif whiFuncArrive == "control"
-    c = - 0.14086;
-    funcSim = @(u) exp(u) + - 0.14086 * (u - 0.5);
+    mu = 1;
+    vecU = rand(1000);
+    c = (- mean(1 / mu .* vecU * exp(- 1 / mu * vecU)) + 0.5 / mu) / var(vecU);
+    funcArrive = @rndControlVar;
+    vecParaArrive = [mu, c];
 end
 % gamrnd(nServer, 1 / nServer);
 if whiFuncServe == "exp"
@@ -38,11 +43,15 @@ elseif  whiFuncServe == "cons"
     cons = 10;
     funcServe = @(cons) cons;
     vecParaServe = cons;
-elseif whiFuncArrive == "control"
-    c = - 0.14086;
-    funcSim = @(u) exp(u) + - 0.14086 * (u - 0.5);
+elseif whiFuncServe == "control"
+    lambda = 8;
+    vecU = rand(1000);
+    c = (- mean(1 / lambda .* vecU .* exp(- 1 / lambda * vecU)) + 0.5 / lambda) / var(vecU);
+    funcServe = @rndControlVar;  % funcServe(vecParaServe)
+    vecParaServe = [lambda, c];
 end
 % 3,  Begin `numSim`-Times Simulations
+tic
 nEvent = nCustomer;
 vecResultProb = zeros(numSim, 1);
 for i = 1:numSim
@@ -52,5 +61,7 @@ end
 % 4,  Compare the Mean Value from Simualtions and Analytical Value
 fprintf("Simulation: mean(prob that the customer gets blocked) = %f.\n", mean(vecResultProb));
 fprintf("Simulation: var(prob that the customer gets blocked) = %f.\n", var(vecResultProb));
+toc
 [bCap] = calErlangsFormula(lambda, mu, nServer);
 fprintf("Analysis: prob that the customer gets blocked = %f.\n", bCap);
+% ######################################################################################################################
