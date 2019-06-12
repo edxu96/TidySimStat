@@ -8,7 +8,7 @@ addpath("~/Documents/GitHub/StochasticSim/exercise4")  % #######################
 nServer = 10;
 nCustomer = 11000;
 nSim = 100;
-nStable = 1000;  % nCustomer * 0.01;
+nStable = 1000;
 clockSimZero = 0;
 mu = 1;
 lambda = 8;
@@ -27,11 +27,18 @@ for i = 1:nSim
     [vecResultProbRaw(i), sState] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, ...
         vecParaArrive, vecParaServe);
     vecResultProb(i) = (sState(nEvent).nCustomerBlock - sState(nStable).nCustomerBlock) / (nEvent - nStable);
-    vecY(i) = mean([sState.intervalArrive]);
+    vecY(i) = mean([sState.inteEvent]);
 end
 fprintf("Result from Simulation ---------------------------------------------------------");
 toc
 printResult(vecResultProb);
+% Plot the Histogram of Simulated Time and Standard Distribution
+vecXStd_1 = [0.01:0.01:5];
+vecYStd_1 = exppdf(vecXStd_1, mu);
+[vecProbClass] = plotHist([sState.inteEvent], vecXStd_1, vecYStd_1, 30, '5.png');
+vecXStd_2 = [0.01:1:40];
+vecYStd_2 = exppdf(vecXStd_2, lambda);
+[vecProbClass] = plotHist([sState.timeServe], vecXStd_2, vecYStd_2, 30, '6.png');
 fprintf("Result from Simulation and Control Variate -------------------------------------");
 expectY = 1;
 vecX = vecResultProb;
