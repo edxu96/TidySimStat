@@ -35,10 +35,12 @@ printResult(vecResultProb);
 % Plot the Histogram of Simulated Time and Standard Distribution
 vecXStd_1 = [0.01:0.01:5];
 vecYStd_1 = exppdf(vecXStd_1, mu);
-[vecProbClass] = plotHist([sState.inteEvent], vecXStd_1, vecYStd_1, 30, '5.png');
+[vecProbClass] = plotHist([sState.inteEvent], vecXStd_1, vecYStd_1, 30, '5.png',
+    "Histogram of Simulated Length of Arrival Interval and Exponential Distribution", 'Histogram of LAI');
 vecXStd_2 = [0.01:1:40];
 vecYStd_2 = exppdf(vecXStd_2, lambda);
-[vecProbClass] = plotHist([sState.timeServe], vecXStd_2, vecYStd_2, 30, '6.png');
+[vecProbClass] = plotHist([sState.timeServe], vecXStd_2, vecYStd_2, 30, '6.png',
+    "Histogram of Simulated Serving Time and Exponential Distribution", 'Histogram of Serving Time');
 fprintf("Result from Simulation and Control Variate -------------------------------------");
 expectY = 1;
 vecX = vecResultProb;
