@@ -7,18 +7,35 @@
 % pwd
 addpath("~/Documents/GitHub/StochasticSim/exercise5")
 % ######################################################################################################################
-whiFunc = "antithetic";
+whiFunc = "stratified";
 fprintf("Method: %s.\n", whiFunc);
 if whiFunc == "exp"
     funcSim = @exp;
 elseif whiFunc == "antithetic"
     funcSim = @(u) (exp(u) + exp(1-u)) / 2;
+elseif whiFunc == "control"
+    c = - 0.14086;
+    % funcSim = @(u, c) exp(u) + c * (u - 0.5)
+    funcSim = @(u) exp(u) + - 0.14086 * (u - 0.5);
+elseif whiFunc == "stratified"
+    funcSim = @(w) w;
 end
-nSim = 100;
 nSample = 100;
-vecResultBar = zeros(nSim, 1);
-for i = 1:nSim
-    [vecResultBar(i)] = simIntegral(nSample, funcSim);
+nSim = 100;
+if whiFunc == "stratified"
+    matSample = zeros(nSim, nSample);
+    vecSample = zeros(nSim, 1);
+    for i = 1:nSim
+        matSample(i, :) = rand(nSample, 1);
+        vecSample = vecSample + exp((i-1) / nSim + matSample(i, :) / nSim);
+    end
+    vecSample = vecSample / nSim;
+else
+    vecResultBar = zeros(nSim, 1);
+    for i = 1:nSim
+        vecSample = rand(nSample, 1);
+        [vecResultBar(i)] = simIntegral(nSample, funcSim, vecSample);
+    end
 end
 fprintf("Mean = %f.\n", mean(vecResultBar));
 fprintf("Var = %f.\n", var(vecResultBar));

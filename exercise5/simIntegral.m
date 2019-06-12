@@ -1,6 +1,5 @@
-function [resultBar] = simIntegral(nSample, funcSim)
+function [resultBar] = simIntegral(nSample, funcSim, vecSample)
     vecResult = zeros(nSample, 1);
-    vecSample = rand(nSample);
     for i = 1:nSample
         vecResult(i) = funcSim(vecSample(i));
     end
