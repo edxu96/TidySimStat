@@ -7,7 +7,10 @@
 % pwd
 addpath("~/Documents/GitHub/StochasticSim/exercise5")
 % ######################################################################################################################
-whiFunc = "stratified";
+% whiFunc = "exp";
+% whiFunc = "antithetic";
+whiFunc = "control";
+% whiFunc = "stratified";
 fprintf("Method: %s.\n", whiFunc);
 if whiFunc == "exp"
     funcSim = @exp;
@@ -23,6 +26,7 @@ end
 nSample = 100;
 nSim = 100;
 if whiFunc == "stratified"
+    tic
     matSample = zeros(nSim, nSample);
     vecSample = zeros(nSim, 1);
     for i = 1:nSim
@@ -32,7 +36,9 @@ if whiFunc == "stratified"
     vecSample = vecSample / nSim;
     [resultBar] = simIntegral(nSample, funcSim, vecSample);
     fprintf("result = %f.\n", resultBar);
+    toc
 else
+    tic
     vecResultBar = zeros(nSim, 1);
     for i = 1:nSim
         vecSample = rand(nSample, 1);
@@ -40,4 +46,5 @@ else
     end
     fprintf("mean = %f.\n", mean(vecResultBar));
     fprintf("var = %f.\n", var(vecResultBar));
+    toc
 end
