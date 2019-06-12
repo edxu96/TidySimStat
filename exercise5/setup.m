@@ -17,9 +17,9 @@ if whiFunc == "exp"
 elseif whiFunc == "antithetic"
     funcSim = @(u) (exp(u) + exp(1-u)) / 2;
 elseif whiFunc == "control"
-    c = - 0.14086;
-    % funcSim = @(u, c) exp(u) + c * (u - 0.5)
-    funcSim = @(u) exp(u) + - 0.14086 * (u - 0.5);
+    vecU = rand(10000, 1);
+    c = - (mean(vecU .* exp(vecU)) - 0.5 * mean(exp(vecU))) / var(vecU);
+    funcSim = @(u) exp(u) + c * (u - 0.5);
 elseif whiFunc == "stratified"
     funcSim = @(w) w;
 end

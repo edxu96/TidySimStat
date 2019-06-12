@@ -13,11 +13,9 @@ nCustomer = 10000;
 numSim = 10;
 clockSimZero = 0;
 % 2,  Define Functions for Length of Arrival Interval and Serve Time
-% whiFuncArrive = "exp";
-whiFuncArrive = "control";
+whiFuncArrive = "exp";
 fprintf("Func for Length Arrival Interval: %s.\n", whiFuncArrive);
-% whiFuncServe = "exp";
-whiFuncServe = "control";
+whiFuncServe = "exp";
 fprintf("Func for Serve Time: %s.\n", whiFuncServe);
 if whiFuncArrive == "exp"
     mu = 1;
@@ -27,12 +25,6 @@ elseif  whiFuncArrive == "cons"
     cons = 10;
     funcArrive = @(cons) cons;
     vecParaArrive = cons;
-elseif whiFuncArrive == "control"
-    mu = 1;
-    vecU = rand(1000);
-    c = (- mean(1 / mu .* vecU * exp(- 1 / mu * vecU)) + 0.5 / mu) / var(vecU);
-    funcArrive = @rndControlVar;
-    vecParaArrive = [mu, c];
 end
 % gamrnd(nServer, 1 / nServer);
 if whiFuncServe == "exp"
@@ -43,12 +35,6 @@ elseif  whiFuncServe == "cons"
     cons = 10;
     funcServe = @(cons) cons;
     vecParaServe = cons;
-elseif whiFuncServe == "control"
-    lambda = 8;
-    vecU = rand(1000);
-    c = (- mean(1 / lambda .* vecU .* exp(- 1 / lambda * vecU)) + 0.5 / lambda) / var(vecU);
-    funcServe = @rndControlVar;  % funcServe(vecParaServe)
-    vecParaServe = [lambda, c];
 end
 % 3,  Begin `numSim`-Times Simulations
 tic
