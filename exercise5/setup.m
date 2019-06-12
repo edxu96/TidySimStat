@@ -11,20 +11,10 @@ addpath("~/Documents/GitHub/StochasticSim/exercise5")
 % whiFunc = "antithetic";
 whiFunc = "control";
 % whiFunc = "stratified";
-fprintf("Method: %s.\n", whiFunc);
-if whiFunc == "exp"
-    funcSim = @exp;
-elseif whiFunc == "antithetic"
-    funcSim = @(u) (exp(u) + exp(1-u)) / 2;
-elseif whiFunc == "control"
-    vecU = rand(10000, 1);
-    c = - (mean(vecU .* exp(vecU)) - 0.5 * mean(exp(vecU))) / var(vecU);
-    funcSim = @(u) exp(u) + c * (u - 0.5);
-elseif whiFunc == "stratified"
-    funcSim = @(w) w;
-end
-nSample = 100;
-nSim = 100;
+nSample = 10000;
+% ######################################################################################################################
+vecU = rand(nSample, 1);
+[funcSim] = getFunc(whiFunc, vecU);
 if whiFunc == "stratified"
     tic
     matSample = zeros(nSim, nSample);
@@ -34,17 +24,30 @@ if whiFunc == "stratified"
         vecSample = vecSample + exp((i-1) / nSim + matSample(i, :) / nSim);
     end
     vecSample = vecSample / nSim;
-    [resultBar] = simIntegral(nSample, funcSim, vecSample);
+    [resultBar] = sampleFuncSim(nSample, funcSim, vecSample);
     fprintf("result = %f.\n", resultBar);
     toc
 else
     tic
-    vecResultBar = zeros(nSim, 1);
-    for i = 1:nSim
-        vecSample = rand(nSample, 1);
-        [vecResultBar(i)] = simIntegral(nSample, funcSim, vecSample);
-    end
-    fprintf("mean = %f.\n", mean(vecResultBar));
-    fprintf("var = %f.\n", var(vecResultBar));
+    vecResult = sampleFuncSim(nSample, funcSim, vecU);
+    expect = mean(vecResult);
+    variance = var(vecResult);
+    fprintf("mean = %f.\n", expect);
+    fprintf("var = %f.\n", variance);
     toc
+end
+% ######################################################################################################################
+%
+function [funcSim] = getFunc(whiFunc, vecU)
+    fprintf("Method: %s.\n", whiFunc);
+    if whiFunc == "exp"
+        funcSim = @exp;
+    elseif whiFunc == "antithetic"
+        funcSim = @(u) (exp(u) + exp(1-u)) / 2;
+    elseif whiFunc == "control"
+        c = - (mean(vecU .* exp(vecU)) - mean(vecU) * mean(exp(vecU))) / var(vecU);
+        funcSim = @(u) exp(u) + c * (u - mean(vecU));
+    elseif whiFunc == "stratified"
+        funcSim = @(w) w;
+    end
 end
