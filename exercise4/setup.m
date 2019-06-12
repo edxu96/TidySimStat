@@ -8,33 +8,12 @@
 addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % 1,  Define Basic Parameters ##########################################################################################
 nServer = 10;
-nCustomer = 100000;
-numSim = 10;
+nCustomer = 10000;
+numSim = 100;
 clockSimZero = 0;
 % 2,  Define Functions for Length of Arrival Interval and Serve Time ###################################################
-whiFuncArrive = "exp";
-fprintf("Func for Length Arrival Interval: %s.\n", whiFuncArrive);
-whiFuncServe = "exp";
-fprintf("Func for Serve Time: %s.\n", whiFuncServe);
-if whiFuncArrive == "exp"
-    mu = 1;
-    funcArrive = @exprnd;
-    vecParaArrive = mu;
-elseif  whiFuncArrive == "cons"
-    cons = 10;
-    funcArrive = @(cons) cons;
-    vecParaArrive = cons;
-end
-% gamrnd(nServer, 1 / nServer);
-if whiFuncServe == "exp"
-    lambda = 8;
-    funcServe = @exprnd;
-    vecParaServe = lambda;
-elseif  whiFuncServe == "cons"
-    cons = 10;
-    funcServe = @(cons) cons;
-    vecParaServe = cons;
-end
+[funcArrive, vecParaArrive] = getFunc("expArrive");
+[funcServe, vecParaServe] = getFunc("expServe");
 % 3,  Begin `numSim`-Times Simulations #################################################################################
 tic
 nEvent = nCustomer;
@@ -54,7 +33,7 @@ fprintf("Simulation: lowerConfiInterval(b) = %f.\n", boundLower);
 fprintf("Simulation: upperConfiInterval(b) = %f.\n", boundUpper);
 [bCap] = calErlangsFormula(lambda, mu, nServer);
 fprintf("Analysis: prob that the customer gets blocked = %f.\n", bCap);
-% 5,  Control Variate #####################################################
+% 5,  Control Variate ##################################################################################################
 expectY = mu;
 vecX = vecResultProb;
 vecZ = zeros(numSim, 1);
@@ -69,3 +48,20 @@ fprintf("Control Variate: var(vecZ) = %f.\n", var(vecZ));
 [boundLower, boundUpper] = calConfInterval(vecZ);
 fprintf("Control Variate: lowerConfiInterval(vecZ) = %f.\n", boundLower);
 fprintf("Control Variate: upperConfiInterval(vecZ) = %f.\n", boundUpper);
+% 6,  Functions ########################################################################################################
+function [func, vecPara] = getFunc(whiFunc)
+    if whiFunc == "expArrive"
+        mu = 1;
+        func = @exprnd;
+        vecPara = mu;
+    elseif whiFunc == "expServe"
+        lambda = 8;
+        func = @exprnd;
+        vecPara = lambda;
+    elseif  whiFunc == "cons"
+        cons = 10;
+        func = @(cons) cons;
+        vecPara = cons;
+    end
+    fprintf("Func: %s.\n", whiFunc);
+end
