@@ -30,12 +30,14 @@ if whiFunc == "stratified"
         vecSample = vecSample + exp((i-1) / nSim + matSample(i, :) / nSim);
     end
     vecSample = vecSample / nSim;
+    [resultBar] = simIntegral(nSample, funcSim, vecSample);
+    fprintf("result = %f.\n", resultBar);
 else
     vecResultBar = zeros(nSim, 1);
     for i = 1:nSim
         vecSample = rand(nSample, 1);
         [vecResultBar(i)] = simIntegral(nSample, funcSim, vecSample);
     end
+    fprintf("mean = %f.\n", mean(vecResultBar));
+    fprintf("var = %f.\n", var(vecResultBar));
 end
-fprintf("Mean = %f.\n", mean(vecResultBar));
-fprintf("Var = %f.\n", var(vecResultBar));
