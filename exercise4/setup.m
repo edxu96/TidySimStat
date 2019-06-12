@@ -14,7 +14,9 @@ numSim = 10;
 clockSimZero = 0;
 % 2,  Define Functions for Length of Arrival Interval and Serve Time
 whiFuncArrive = "exp";
+fprintf("Func for Length Arrival Interval: %s.\n", whiFuncArrive);
 whiFuncServe = "exp";
+fprintf("Func for Serve Time: %s.\n", whiFuncServe);
 if whiFuncArrive == "exp"
     mu = 1;
     funcArrive = @exprnd;
@@ -23,6 +25,9 @@ elseif  whiFuncArrive == "cons"
     cons = 10;
     funcArrive = @(cons) cons;
     vecParaArrive = cons;
+elseif whiFuncArrive == "control"
+    c = - 0.14086;
+    funcSim = @(u) exp(u) + - 0.14086 * (u - 0.5);
 end
 % gamrnd(nServer, 1 / nServer);
 if whiFuncServe == "exp"
@@ -33,6 +38,9 @@ elseif  whiFuncServe == "cons"
     cons = 10;
     funcServe = @(cons) cons;
     vecParaServe = cons;
+elseif whiFuncArrive == "control"
+    c = - 0.14086;
+    funcSim = @(u) exp(u) + - 0.14086 * (u - 0.5);
 end
 % 3,  Begin `numSim`-Times Simulations
 nEvent = nCustomer;
@@ -43,5 +51,6 @@ for i = 1:numSim
 end
 % 4,  Compare the Mean Value from Simualtions and Analytical Value
 fprintf("Simulation: mean(prob that the customer gets blocked) = %f.\n", mean(vecResultProb));
+fprintf("Simulation: var(prob that the customer gets blocked) = %f.\n", var(vecResultProb));
 [bCap] = calErlangsFormula(lambda, mu, nServer);
 fprintf("Analysis: prob that the customer gets blocked = %f.\n", bCap);
