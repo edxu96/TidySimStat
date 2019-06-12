@@ -1,7 +1,6 @@
 % function file for exercise 4
 % Author: Edward J. Xu, Sanaz
-% Date: 190611
-% Version: 2.1
+% Date: 190612
 % ######################################################################################################################
 function [b, sState] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, vecParaArrive, ...
     vecParaServe)

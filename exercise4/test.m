@@ -1,7 +1,6 @@
 % Test the functions for exercise 4
 % Author: Edward J. Xu
-% Date: 190611
-% Version: 2.1
+% Date: 190612
 % ######################################################################################################################
 % 1,  Define Basic Parameters
 nServer = 10;

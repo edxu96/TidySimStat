@@ -1,7 +1,8 @@
+% function file for exercise 4
+% Author: Edward J. Xu, Sanaz
+% Date: 190611
+% ######################################################################################################################
 function [ boundLower, boundUpper ] = calConfInterval(vecResult)
-% function: Short description
-%
-% Extended description
     n = length(vecResult);
     expect = mean(vecResult);
     sCapSquare = (sum(vecResult.^2) - n * expect^2) / (n - 1);

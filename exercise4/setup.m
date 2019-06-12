@@ -1,7 +1,6 @@
 % setup file for exercise 4
 % Author: Edward J. Xu, Sanaz
-% Date: 190611
-% Version: 3.1
+% Date: 190612
 % ######################################################################################################################
 % cd ~/Documents/GitHub/StochasticSim/exercise4
 % pwd
@@ -14,9 +13,11 @@ nStable = 1000;  % nCustomer * 0.01;
 clockSimZero = 0;
 mu = 1;
 lambda = 8;
-% 2,  Define Functions for Length of Arrival Intervals and Serving Time ################################################
+fprintf("#### Begin #####################################################################");
 [funcArrive, vecParaArrive] = getFunc("expArrive", mu, lambda);
 [funcServe, vecParaServe] = getFunc("expServe", mu, lambda);
+[bCap] = calErlangsFormula(8, 1, nServer);
+fprintf("Analysis: b = %f.\n", bCap);
 % 3,  Begin `nSim`-Times Simulations ###################################################################################
 tic
 nEvent = nCustomer;
@@ -29,16 +30,10 @@ for i = 1:nSim
     vecResultProb(i) = (sState(nEvent).nCustomerBlock - sState(nStable).nCustomerBlock) / (nEvent - nStable);
     vecY(i) = mean([sState.intervalArrive]);
 end
+fprintf("Result from Simulation ---------------------------------------------------------");
 toc
-% 4,  Compare the Mean Value from Simualtions and Analytical Value #####################################################
-fprintf("Simulation: mean(b) = %f.\n", mean(vecResultProb));
-fprintf("Simulation: var(b) = %f.\n", var(vecResultProb));
-[boundLower, boundUpper] = calConfInterval(vecResultProb);
-fprintf("Simulation: lowerConfiInterval(b) = %f.\n", boundLower);
-fprintf("Simulation: upperConfiInterval(b) = %f.\n", boundUpper);
-[bCap] = calErlangsFormula(8, 1, nServer);
-fprintf("Analysis: b = %f.\n", bCap);
-% 5,  Control Variate ##################################################################################################
+printResult(vecResultProb);
+fprintf("Result from Simulation and Control Variate -------------------------------------");
 expectY = 1;
 vecX = vecResultProb;
 vecZ = zeros(nSim, 1);
@@ -48,12 +43,10 @@ c = - varXY / var(vecY);
 for i = 1:nSim
     vecZ(i) = vecX(i) + c * (vecY(i) - expectY);
 end
-fprintf("Control Variate: mean(vecZ) = %f.\n", mean(vecZ));
-fprintf("Control Variate: var(vecZ) = %f.\n", var(vecZ));
-[boundLower, boundUpper] = calConfInterval(vecZ);
-fprintf("Control Variate: lowerConfiInterval(vecZ) = %f.\n", boundLower);
-fprintf("Control Variate: upperConfiInterval(vecZ) = %f.\n", boundUpper);
-% 6,  Functions ########################################################################################################
+printResult(vecZ);
+fprintf("#### End #######################################################################");
+% 4,  Functions ########################################################################################################
+% To define the function for length of arrival interval and serving time.
 function [func, vecPara] = getFunc(whiFunc, mu, lambda)
     if whiFunc == "expArrive"
         func = @exprnd;
@@ -67,4 +60,12 @@ function [func, vecPara] = getFunc(whiFunc, mu, lambda)
         vecPara = cons;
     end
     fprintf("Func: %s.\n", whiFunc);
+end
+% To print the result.
+function [boundLower, boundUpper] = printResult(vecResult)
+    fprintf("mean(b) = %f.\n", mean(vecResult));
+    fprintf("var(b) = %f.\n", var(vecResult));
+    [boundLower, boundUpper] = calConfInterval(vecResult);
+    fprintf("lowerConfiInterval(b) = %f.\n", boundLower);
+    fprintf("upperConfiInterval(b) = %f.\n", boundUpper);
 end
