@@ -4,8 +4,7 @@
 % ######################################################################################################################
 % cd ~/Documents/GitHub/StochasticSim/exercise4
 % pwd
-addpath("~/Documents/GitHub/StochasticSim/exercise4")
-% 1,  Define Basic Parameters ##########################################################################################
+addpath("~/Documents/GitHub/StochasticSim/exercise4")  % ###############################################################
 nServer = 10;
 nCustomer = 11000;
 nSim = 100;
@@ -13,7 +12,7 @@ nStable = 1000;  % nCustomer * 0.01;
 clockSimZero = 0;
 mu = 1;
 lambda = 8;
-fprintf("#### Begin #####################################################################");
+fprintf("#### Begin #####################################################################");  % ########################
 [funcArrive, vecParaArrive] = getFunc("expArrive", mu, lambda);
 [funcServe, vecParaServe] = getFunc("expServe", mu, lambda);
 [bCap] = calErlangsFormula(8, 1, nServer);
@@ -44,8 +43,7 @@ for i = 1:nSim
     vecZ(i) = vecX(i) + c * (vecY(i) - expectY);
 end
 printResult(vecZ);
-fprintf("#### End #######################################################################");
-% 4,  Functions ########################################################################################################
+fprintf("#### End #######################################################################");  % ########################
 % To define the function for length of arrival interval and serving time.
 function [func, vecPara] = getFunc(whiFunc, mu, lambda)
     if whiFunc == "expArrive"
