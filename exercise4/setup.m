@@ -5,7 +5,7 @@
 % ######################################################################################################################
 % cd ~/Documents/GitHub/StochasticSim/exercise4
 % pwd
-addpath("~/Documents/GitHub/StochasticSim/exercise4")
+% addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % ######################################################################################################################
 % 1,  Define Basic Parameters
 nServer = 10;
