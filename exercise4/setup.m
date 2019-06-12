@@ -9,17 +9,17 @@ addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % 1,  Define Basic Parameters ##########################################################################################
 nServer = 10;
 nCustomer = 10000;
-numSim = 100;
+nSim = 100;
 clockSimZero = 0;
-% 2,  Define Functions for Length of Arrival Interval and Serve Time ###################################################
+% 2,  Define Functions for Length of Arrival Intervals and Serving Time ################################################
 [funcArrive, vecParaArrive] = getFunc("expArrive");
 [funcServe, vecParaServe] = getFunc("expServe");
-% 3,  Begin `numSim`-Times Simulations #################################################################################
+% 3,  Begin `nSim`-Times Simulations ###################################################################################
 tic
 nEvent = nCustomer;
-vecResultProb = zeros(numSim, 1);
-vecY = zeros(numSim, 1);
-for i = 1:numSim
+vecResultProb = zeros(nSim, 1);
+vecY = zeros(nSim, 1);
+for i = 1:nSim
     [vecResultProb(i), sState] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, ...
         vecParaArrive, vecParaServe);
     vecY(i) = mean([sState.intervalArrive]);
@@ -36,11 +36,11 @@ fprintf("Analysis: prob that the customer gets blocked = %f.\n", bCap);
 % 5,  Control Variate ##################################################################################################
 expectY = mu;
 vecX = vecResultProb;
-vecZ = zeros(numSim, 1);
+vecZ = zeros(nSim, 1);
 covXY = cov(vecX, vecY);
 varXY = covXY(1, 2);
 c = - varXY / var(vecY);
-for i = 1:numSim
+for i = 1:nSim
     vecZ(i) = vecX(i) + c * (vecY(i) - expectY);
 end
 fprintf("Control Variate: mean(vecZ) = %f.\n", mean(vecZ));
