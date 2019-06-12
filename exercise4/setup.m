@@ -8,13 +8,15 @@
 addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % 1,  Define Basic Parameters ##########################################################################################
 nServer = 10;
-nCustomer = 100000;
-nSim = 10;
-nStable = nCustomer * 0.01;
+nCustomer = 11000;
+nSim = 100;
+nStable = 1000;  % nCustomer * 0.01;
 clockSimZero = 0;
+mu = 1;
+lambda = 8;
 % 2,  Define Functions for Length of Arrival Intervals and Serving Time ################################################
-[funcArrive, vecParaArrive] = getFunc("expArrive");
-[funcServe, vecParaServe] = getFunc("expServe");
+[funcArrive, vecParaArrive] = getFunc("expArrive", mu, lambda);
+[funcServe, vecParaServe] = getFunc("expServe", mu, lambda);
 % 3,  Begin `nSim`-Times Simulations ###################################################################################
 tic
 nEvent = nCustomer;
@@ -52,13 +54,11 @@ fprintf("Control Variate: var(vecZ) = %f.\n", var(vecZ));
 fprintf("Control Variate: lowerConfiInterval(vecZ) = %f.\n", boundLower);
 fprintf("Control Variate: upperConfiInterval(vecZ) = %f.\n", boundUpper);
 % 6,  Functions ########################################################################################################
-function [func, vecPara] = getFunc(whiFunc)
+function [func, vecPara] = getFunc(whiFunc, mu, lambda)
     if whiFunc == "expArrive"
-        mu = 1;
         func = @exprnd;
         vecPara = mu;
     elseif whiFunc == "expServe"
-        lambda = 8;
         func = @exprnd;
         vecPara = lambda;
     elseif  whiFunc == "cons"

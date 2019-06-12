@@ -5,7 +5,7 @@
 % ######################################################################################################################
 % 1,  Define Basic Parameters
 nServer = 10;
-nCustomer = 100000;  % 10000;
+nCustomer = 10000;  % 10000;
 clockSimZero = 0;
 % 2,  Define Functions for Length of Arrival Interval and Serve Time
 [funcArrive, vecParaArrive] = getFunc("expArrive");

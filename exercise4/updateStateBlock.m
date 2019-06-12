@@ -4,11 +4,11 @@
 % Version: 2.1
 % ######################################################################################################################
 function [nCustomerServe, nCustomerBlock, vecTimeDepart] = updateStateBlock(clockSim, nServer, nCustomerServe, ...
-    nCustomerBlock, vecTimeDepart, funcServe, vecParaServe)
+    nCustomerBlock, vecTimeDepart, timeServe)
     nCustomerServe = nCustomerServe + 1;
     % Check the departed customers
     for j = 1:nServer
-        if (vecTimeDepart(j) ~= 0) & (vecTimeDepart(j) < clockSim)  % There is a customer and he/she has already left.
+        if (vecTimeDepart(j) ~= 0) & (vecTimeDepart(j) <= clockSim)  % There is a customer and he/she has already left.
             vecTimeDepart(j) = 0;  % The vacancy is set to 0.
             nCustomerServe = nCustomerServe - 1;
         end
@@ -23,6 +23,6 @@ function [nCustomerServe, nCustomerBlock, vecTimeDepart] = updateStateBlock(cloc
         while vecTimeDepart(j) ~= 0
             j = j + 1;
         end
-        vecTimeDepart(j) = clockSim + funcServe(vecParaServe);  % Set the service time
+        vecTimeDepart(j) = clockSim + timeServe;  % Set the service time
     end
 end  % function
