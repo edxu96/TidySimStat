@@ -8,8 +8,9 @@
 addpath("~/Documents/GitHub/StochasticSim/exercise4")
 % 1,  Define Basic Parameters ##########################################################################################
 nServer = 10;
-nCustomer = 10000;
-nSim = 100;
+nCustomer = 100000;
+nSim = 10;
+nStable = nCustomer * 0.01;
 clockSimZero = 0;
 % 2,  Define Functions for Length of Arrival Intervals and Serving Time ################################################
 [funcArrive, vecParaArrive] = getFunc("expArrive");
@@ -17,11 +18,13 @@ clockSimZero = 0;
 % 3,  Begin `nSim`-Times Simulations ###################################################################################
 tic
 nEvent = nCustomer;
+vecResultProbRaw = zeros(nSim, 1);
 vecResultProb = zeros(nSim, 1);
 vecY = zeros(nSim, 1);
 for i = 1:nSim
-    [vecResultProb(i), sState] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, ...
+    [vecResultProbRaw(i), sState] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, ...
         vecParaArrive, vecParaServe);
+    vecResultProb(i) = (sState(nEvent).nCustomerBlock - sState(nStable).nCustomerBlock) / (nEvent - nStable);
     vecY(i) = mean([sState.intervalArrive]);
 end
 toc
@@ -31,10 +34,10 @@ fprintf("Simulation: var(b) = %f.\n", var(vecResultProb));
 [boundLower, boundUpper] = calConfInterval(vecResultProb);
 fprintf("Simulation: lowerConfiInterval(b) = %f.\n", boundLower);
 fprintf("Simulation: upperConfiInterval(b) = %f.\n", boundUpper);
-[bCap] = calErlangsFormula(lambda, mu, nServer);
-fprintf("Analysis: prob that the customer gets blocked = %f.\n", bCap);
+[bCap] = calErlangsFormula(8, 1, nServer);
+fprintf("Analysis: b = %f.\n", bCap);
 % 5,  Control Variate ##################################################################################################
-expectY = mu;
+expectY = 1;
 vecX = vecResultProb;
 vecZ = zeros(nSim, 1);
 covXY = cov(vecX, vecY);
