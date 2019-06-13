@@ -1,6 +1,6 @@
-function [x] = randWalk()
-    x = randi(2, 1);
-    if x == 2
-        x = -1;
+function [delta] = randWalk()
+    delta = randi(2, 1);
+    if delta == 2
+        delta = -1;
     end
 end
