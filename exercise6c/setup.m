@@ -3,19 +3,20 @@
 % Date: 190613
 % Version: 1.0
 % ######################################################################################################################
-% cd ~/Documents/GitHub/StochasticSim/exercise6b
+% cd ~/Documents/GitHub/StochasticSim/exercise6c
 % pwd
-addpath("~/Documents/GitHub/StochasticSim/exercise6b")  % ##############################################################
+addpath("~/Documents/GitHub/StochasticSim/exercise6c")  % ##############################################################
 m = 10;
-nSample = 100000;
+nSample = 10000;
 aCap_1 = 4;
 aCap_2 = 4;
 [vecX, sState] = simRanWalkMHAlgo(m, nSample, aCap_1, aCap_2);
 %
-vecResult = zeros(m, 1);
-for j = 1:m
-    vecResult(j) = calCount(j, aCap);
+matProb = zeros(m + 1);
+for i = 1:(m + 1)
+    for j = 1:(m + 1)
+        matProb(i, j) = calCount2(i - 1, j - 1, aCap_1, aCap_2);
+    end
 end
-vecResult = vecResult / sum(vecResult);
+matResult = matResult / sum(matResult);
 %
-vecProbClass = plotHist(vecX, [1:1:m], vecResult, m, '3.png');

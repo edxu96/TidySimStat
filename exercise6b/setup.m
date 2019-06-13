@@ -7,15 +7,15 @@
 % pwd
 addpath("~/Documents/GitHub/StochasticSim/exercise6b")  % ##############################################################
 m = 10;
-nSample = 100000;
+nSample = 10000;
 lambda = 8;
 mu = 1;
 aCap = lambda / mu;
 [vecX, sState] = simRanWalkMHAlgo(m, nSample, aCap);
 %
-vecResult = zeros(m, 1);
-for j = 1:m
-    vecResult(j) = calCount(j, aCap);
+vecResult = zeros(m + 1, 1);
+for j = 0:m
+    vecResult(j + 1) = calCount(j, aCap);
 end
 vecResult = vecResult / sum(vecResult);
 %
