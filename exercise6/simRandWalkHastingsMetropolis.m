@@ -1,13 +1,11 @@
-function [vecX, sState] = simRanWalkMHAlgo(m, nSample, aCap)
+% function file for exercise 6
+% Author: Edward J. Xu, Sanaz
+% Date: 190613
+% ######################################################################################################################
+function [vecState, sState] = simRandWalkHastingsMetropolis(m, nSample, aCap)
     sState(1).x = randi(m + 1) - 1;  % Random integer in [0, m]
     for n = 2:nSample
-        sState(n).y = sState(n - 1).x + randWalk();
-        if sState(n).y > m
-            sState(n).y = sState(n).y - m;
-        elseif sState(n).y < 1
-            sState(n).y = sState(n).y + m;
-        end
-        % disp(sState(n).y)
+        sState(n).y = loopRandWalk(sState(n - 1).x, m, 0);
         if calCount(sState(n).y, aCap) >= calCount(sState(n - 1).x, aCap)
             sState(n).x = sState(n).y;
         else
@@ -17,5 +15,5 @@ function [vecX, sState] = simRanWalkMHAlgo(m, nSample, aCap)
                 sState(n).x = sState(n - 1).x;
         end
     end
-    vecX = [sState.x];
+    vecState = [sState.x];
 end
