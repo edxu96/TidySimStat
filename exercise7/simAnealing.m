@@ -4,7 +4,7 @@
 % ######################################################################################################################
 
 
-function [sState] = simAnealing(startPosition, m, nSample)
+function [sState] = simAnealing(startPosition, m, nSample, matCost)
     cellArraySSpace = getSampleSpace2(m, startPosition);
     % Generate a Permutation Randomly
     vecXcap = zeros(m + 1, 1);
@@ -13,13 +13,16 @@ function [sState] = simAnealing(startPosition, m, nSample)
     vecPerm = randperm(m);
     vecXcap(2:m) = vecPerm(vecPerm ~= startPosition);
     sState(1).x = vecXcap;
+    sState(1).y = vecXcap;
     sState(1).z = cellArraySSpace{randi(length(cellArraySSpace))};
     % Start Anealing
     for n = 2:nSample
-        sState(n).x = randWalk2(cellArraySSpace, sState(n - 1).z);
-         sState(n).y
+        sState(n).z = randWalk2(cellArraySSpace, sState(n - 1).z);
+        sState(n).y = sState(n - 1).y
+        sState(n).y(sState(n).z(1)) = sState(n - 1).y(sState(n).z(2));
+        sState(n).y(sState(n).z(2)) = sState(n - 1).y(sState(n).z(1));
         % Accept the candidate state or not.
-        [sState(n).x, sState(n).accept] = acceptCandidate(sState(n - 1).x, sState(n).y, aCap_1, aCap_2);
+        [sState(n).x, sState(n).accept] = acceptCandidate(sState(n - 1).x, sState(n).y, n, matCost);
     end
 end
 
@@ -56,12 +59,12 @@ function [x, y] = returnPosition(where, m, n)
 end
 
 
-function [x, accept] = acceptCandidate(xPre, y, aCap_1, aCap_2)
-    if calCount2(y(1), y(2), aCap_1, aCap_2) >= calCount2(xPre(1), xPre(2), aCap_1, aCap_2)
+function [x, accept] = acceptCandidate(xPre, y, k, matCost)
+    if getCountAnnealing(y, k, matCost) >= getCountAnnealing(xPre, k - 1, matCost);
         x = y;
         accept = 1;
     else
-        if rand() < (calCount2(y(1), y(2), aCap_1, aCap_2) / calCount2(xPre(1), xPre(2), aCap_1, aCap_2))
+        if rand() < (getCountAnnealing(y, k, matCost) / getCountAnnealing(xPre, k - 1, matCost)
             x = y;
             accept = 1;
         else

@@ -7,3 +7,4 @@
 addpath("~/Documents/GitHub/StochasticSim/exercise7")  % ###############################################################
 matCost = getMatCost();
 m = size(matCost);
+[sState] = simAnealing(startPosition, m, nSample, matCost)

@@ -4,17 +4,17 @@
 % ######################################################################################################################
 
 
-function [count] = getCountAnnealing(vecXcap, k, matCost)
+function [count] = getCountAnnealing(vector, k, matCost)
     temp = calTemp(k);
-    energy = calEnergy(vecXcap, matCost)
+    energy = calEnergy(vector, matCost)
     count = exp(- energy / temp);
 end
 
 
-function [energy] = calEnergy(vecXcap, matCost)
-    energy = matCost(vecXcap(1), vecXcap(2));
-    for i = 2:length(vecXcap)
-        energy = matCost(vecXcap(i - 1), vecXcap(i));
+function [energy] = calEnergy(vector, matCost)
+    energy = matCost(vector(1), vector(2));
+    for i = 2:length(vector)
+        energy = matCost(vector(i - 1), vector(i));
     end
 end
 
