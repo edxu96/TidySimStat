@@ -11,5 +11,5 @@ startPosition = 1;
 nSample = 10000;
 [sState] = simAnealing(startPosition, m, nSample, matCost);
 % Result
-costSave = calEnergy(sState(1).x, matCost) - calEnergy(sState(1).x, matCost)
+costSave = calEnergy(sState(1).x, matCost) - calEnergy(sState(end).x, matCost)
 ratioAccept = sum([sState.accept]) / nSample
