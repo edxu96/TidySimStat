@@ -18,7 +18,7 @@ function [sState] = simAnealing(startPosition, m, nSample, matCost)
     % Start Anealing
     for n = 2:nSample
         sState(n).z = randWalk2(cellArraySSpace, sState(n - 1).z);
-        sState(n).y = sState(n - 1).y
+        sState(n).y = sState(n - 1).y;
         sState(n).y(sState(n).z(1)) = sState(n - 1).y(sState(n).z(2));
         sState(n).y(sState(n).z(2)) = sState(n - 1).y(sState(n).z(1));
         % Accept the candidate state or not.
@@ -60,11 +60,11 @@ end
 
 
 function [x, accept] = acceptCandidate(xPre, y, k, matCost)
-    if getCountAnnealing(y, k, matCost) >= getCountAnnealing(xPre, k - 1, matCost);
+    if calEnergy(y, matCost) < calEnergy(xPre, matCost);
         x = y;
         accept = 1;
     else
-        if rand() < (getCountAnnealing(y, k, matCost) / getCountAnnealing(xPre, k - 1, matCost)
+        if rand() < exp(getCountAnnealing(y, k, matCost) / getCountAnnealing(xPre, k, matCost))
             x = y;
             accept = 1;
         else
@@ -102,8 +102,8 @@ function [cellSampleSpace] = getSampleSpace(vecPossible)
     n = length(vecPossible);
     cellSampleSpace = {};
     for i = 1:n
-        for j = 0:n
-            cellSampleSpace{end+1} = [vecPossible(i), vecPossible(j)];
+        for j = 1:n
+            cellSampleSpace{end + 1} = [vecPossible(i), vecPossible(j)];
         end
     end
     cellSampleSpace = cellSampleSpace(randperm(length(cellSampleSpace)));

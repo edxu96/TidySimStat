@@ -6,5 +6,10 @@
 % pwd
 addpath("~/Documents/GitHub/StochasticSim/exercise7")  % ###############################################################
 matCost = getMatCost();
-m = size(matCost);
-[sState] = simAnealing(startPosition, m, nSample, matCost)
+[m, n] = size(matCost);
+startPosition = 1;
+nSample = 10000;
+[sState] = simAnealing(startPosition, m, nSample, matCost);
+% Result
+costSave = calEnergy(sState(1).x, matCost) - calEnergy(sState(1).x, matCost)
+ratioAccept = sum([sState.accept]) / nSample
