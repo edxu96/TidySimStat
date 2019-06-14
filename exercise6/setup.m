@@ -26,14 +26,14 @@ clc
 % ######################################################################################################################
 m = 10;
 nRow = 6;
-nSample = 10000;
+nSample = 100000;
 aCap_1 = 4;
 aCap_2 = 4;
-% whiMethod = 'direct';
-whiMethod = 'gibbs';
+% whiMethod = 1;
+whiMethod = 2;
 [sState2] = simDistDiscrete2(m, nRow, nSample, aCap_1, aCap_2, whiMethod);
 save([pwd '/outputs/sState2_2.mat'], 'sState2');
-% Plot the Analytical Values
+% Plot the Analytical Values -------------------------------------------------------------------------------------------
 matProb = zeros(m + 1);
 for i = 1:(m + 1)
     for j = 1:i
@@ -41,8 +41,8 @@ for i = 1:(m + 1)
     end
 end
 matProb = matProb / sum(sum(matProb));
-% plotBar2(matProb, '10', m);
-% Plot 3-D Histogram of the Result
+% plotStem3(matProb, '12', m);
+% Plot 3-D Histogram of the Result -------------------------------------------------------------------------------------
 vecX1 = zeros(nSample, 1);
 vecX2 = zeros(nSample, 1);
 vecX12 = zeros(nSample, 1);
@@ -51,5 +51,5 @@ for i = 1:nSample
     vecX2(i) = sState2(i).x(2);
     vecX12(i) = sum(sState2(i).x);
 end
-plotHist2(vecX1, vecX2, '11');
+plotHist2(vecX1, vecX2, matProb * nSample, m, '7');
 % openfig('images/4.fig')

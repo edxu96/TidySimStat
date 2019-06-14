@@ -9,12 +9,12 @@ function [sState] = simDistDiscrete2(m, nRow, nSample, aCap_1, aCap_2, whiMethod
     sState(1).x = cellArraySSpace{randi(length(cellArraySSpace))};
     sState(1).accept = 1;
     for n = 2:nSample
-        if whiMethod == 'direct'
+        if whiMethod == 1
             % Generate candidate state using 2-D random walk with arrangement of sample space.
             sState(n).y = randWalk2(cellArraySSpace, sState(n - 1).x);
             % Accept the candidate state or not.
             [sState(n).x, sState(n).accept] = acceptCandidate(sState(n - 1).x, sState(n).y, aCap_1, aCap_2);
-        elseif whiMethod == 'gibbs'
+        elseif whiMethod == 2
             % Generate candidate state using Gibbs sampler.
             sState(n).y = sampleGibbs(sState(n - 1).x, m, aCap_1, aCap_2);
             % Always accept the candidate state.
