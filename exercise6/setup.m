@@ -29,7 +29,9 @@ nRow = 6;
 nSample = 10000;
 aCap_1 = 4;
 aCap_2 = 4;
-[sState2] = simRandWalkHastingsMetropolis2(m, nRow, nSample, aCap_1, aCap_2);
+% whiMethod = 'direct';
+whiMethod = 'gibbs';
+[sState2] = simDistDiscrete2(m, nRow, nSample, aCap_1, aCap_2, whiMethod);
 save([pwd '/outputs/sState2_2.mat'], 'sState2');
 % Plot the Analytical Values
 matProb = zeros(m + 1);
@@ -39,7 +41,7 @@ for i = 1:(m + 1)
     end
 end
 matProb = matProb / sum(sum(matProb));
-plotSurf(matProb, '8', m);
+% plotBar2(matProb, '10', m);
 % Plot 3-D Histogram of the Result
 vecX1 = zeros(nSample, 1);
 vecX2 = zeros(nSample, 1);
@@ -49,5 +51,5 @@ for i = 1:nSample
     vecX2(i) = sState2(i).x(2);
     vecX12(i) = sum(sState2(i).x);
 end
-plotHist2(vecX1, vecX2, '9');
+plotHist2(vecX1, vecX2, '11');
 % openfig('images/4.fig')
