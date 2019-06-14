@@ -5,5 +5,5 @@
 % cd ~/Documents/GitHub/StochasticSim/exercise7
 % pwd
 addpath("~/Documents/GitHub/StochasticSim/exercise7")  % ###############################################################
-matCost = getCost();
+matCost = getMatCost();
 m = size(matCost);
