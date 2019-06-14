@@ -7,21 +7,12 @@
 function [sState] = simRandWalkHastingsMetropolis2(m, nRow, nSample, aCap_1, aCap_2)
     cellArraySSpace = getSampleSpace2(m, nRow);
     sState(1).x = cellArraySSpace{randi(length(cellArraySSpace))};
+    sState(1).accept = 1;
     for n = 2:nSample
         % sState(n).y = randWalkMarkovChain2(cellArraySSpace, sState(n - 1).x);  % Generate the candidate state directly
         sState(n).y = sampleGibbs(sState(n - 1).x, m, aCap_1, aCap_2);  % Generate the candidate state using Gibbs sampler
-        %
-        if calCount2(sState(n).y(1), sState(n).y(2), aCap_1, aCap_2) >= ...
-            calCount2(sState(n - 1).x(1), sState(n - 1).x(2), aCap_1, aCap_2)
-            sState(n).x = sState(n).y;
-        else
-            if rand() < (calCount2(sState(n).y(1), sState(n).y(2), aCap_1, aCap_2) / ...
-                calCount2(sState(n - 1).x(1), sState(n - 1).x(2), aCap_1, aCap_2))
-                sState(n).x = sState(n).y;
-            else
-                sState(n).x = sState(n - 1).x;
-            end
-        end
+        % Accept the candidate state or not
+        [sState(n).x, sState(n).accept] = accept(sState(n - 1).x, sState(n).y, aCap_1, aCap_2);
     end
 end
 
@@ -95,6 +86,21 @@ function [j] = getOtherOne(i)
     end
 end
 
+
+function [x, accept] = accept(xPre, y, aCap_1, aCap_2)
+    if calCount2(y(1), y(2), aCap_1, aCap_2) >= calCount2(xPre(1), xPre(2), aCap_1, aCap_2)
+        x = y;
+        accept = 1;
+    else
+        if rand() < (calCount2(y(1), y(2), aCap_1, aCap_2) / calCount2(xPre(1), xPre(2), aCap_1, aCap_2))
+            x = y;
+            accept = 1;
+        else
+            x = xPre;
+            accept = 0;
+        end
+    end
+end
 
 % x1 = randi(m + 1) - 1;
 % x2 = randi(x1) - 1;
