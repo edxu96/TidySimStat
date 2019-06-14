@@ -4,18 +4,22 @@
 % ######################################################################################################################
 
 
-function [sState] = simAnealing(m, nSample)
+function [sState] = simAnealing(startPosition, m, nSample)
+    cellArraySSpace = getSampleSpace2(m, startPosition);
     % Generate a Permutation Randomly
-    randperm()
-    sState(1).x =
-
-
-    sState(1).accept = 1;
+    vecXcap = zeros(m + 1, 1);
+    vecXcap(1) = startPosition;
+    vecXcap(m + 1) = startPosition;
+    vecPerm = randperm(m);
+    vecXcap(2:m) = vecPerm(vecPerm ~= startPosition);
+    sState(1).x = vecXcap;
+    sState(1).z = cellArraySSpace{randi(length(cellArraySSpace))};
+    % Start Anealing
     for n = 2:nSample
-        % Generate candidate state using Gibbs sampler.
-        sState(n).y = sampleGibbs(sState(n - 1).x, m, aCap_1, aCap_2);
-        % Always accept the candidate state.
-        sState(n).x = sState(n).y;
+        sState(n).x = randWalk2(cellArraySSpace, sState(n - 1).z);
+         sState(n).y
+        % Accept the candidate state or not.
+        [sState(n).x, sState(n).accept] = acceptCandidate(sState(n - 1).x, sState(n).y, aCap_1, aCap_2);
     end
 end
 
@@ -68,61 +72,36 @@ function [x, accept] = acceptCandidate(xPre, y, aCap_1, aCap_2)
 end
 
 
-function [vecCandidate] = sampleGibbs(vecPre, m, aCap_1, aCap_2)
-    vecCandidate = zeros(2, 1);
-    % 1,  Draw i-coordinate to change
-    i = randi(2);
-    j = getOtherOne(i);
-    vecCandidate(j) = vecPre(j);  % value j-coordinate remains the same
-    % 2,  Define new random variable
-    denominator = 0;
-    for k = 0:1:(m - vecPre(j))
-        denominator = denominator + calCount(k, aCap_1);
+function [cellArraySSpace] = getSampleSpace2(m, startPosition)
+    %
+    vecPossible = [1:m];
+    vecPossible = vecPossible([1:m] ~= startPosition);
+    % Get the sample space in one dimension
+    cellSampleSpace = getSampleSpace(vecPossible);
+    %
+    nRow = length(vecPossible);
+    nCol = length(cellSampleSpace) / nRow;
+    if mod(nCol, 1) ~= 0
+        error("nRow is impossible!!!")
     end
-    % 3,  Draw new value for j-coordinate from the new random variable
-    draw = rand();
-    k = 0;
-    probCumu = calCount(0, aCap_1) / denominator;
-    while ~(draw < probCumu)
-        k = k + 1;
-        probCumu = probCumu + calCount(k, aCap_1) / denominator;
-    end
-    if (k + vecCandidate(j)) > m
-        error('i + j > m');
-    elseif (k + vecCandidate(j)) < 0
-        error('i + j < 0');
-    end
-    % 4,  Change
-    vecCandidate(i) = k;
-end
-
-
-function [j] = getOtherOne(i)
-    if i == 1
-        j = 2;
-    elseif i == 2
-        j = 1;
+    cellArraySSpace = {};
+    k = 1;
+    for i = 1:nRow
+        for j = 1:nCol
+            cellArraySSpace(i, j) = cellSampleSpace(k);
+            k = k + 1;
+        end
     end
 end
 
 
-% x1 = randi(m + 1) - 1;
-% x2 = randi(x1) - 1;
-% sState(1).x = [x1, x2];
-
-
-% y1 = sState(n - 1).x(1) + randWalk();
-% if y1 > m
-%     y1 = y1 - (m + 1);
-% elseif y1 < 0
-%     y1 = y1 + (m + 1);
-% end
-% % disp(y1)
-% y2 = sState(n - 1).x(2) + randWalk();
-% % disp(y2)
-% if y2 > m - y1
-%     y2 = 0;
-% elseif y2 < 0
-%     y2 = m - y1;
-% end
-% sState(n).y = [y1, y2];
+function [cellSampleSpace] = getSampleSpace(vecPossible)
+    n = length(vecPossible);
+    cellSampleSpace = {};
+    for i = 1:n
+        for j = 0:n
+            cellSampleSpace{end+1} = [vecPossible(i), vecPossible(j)];
+        end
+    end
+    cellSampleSpace = cellSampleSpace(randperm(length(cellSampleSpace)));
+end
