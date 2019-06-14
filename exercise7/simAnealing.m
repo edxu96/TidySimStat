@@ -103,7 +103,9 @@ function [cellSampleSpace] = getSampleSpace(vecPossible)
     cellSampleSpace = {};
     for i = 1:n
         for j = 1:n
-            cellSampleSpace{end + 1} = [vecPossible(i), vecPossible(j)];
+            if vecPossible(i) ~= vecPossible(j)
+                cellSampleSpace{end + 1} = [vecPossible(i), vecPossible(j)];
+            end
         end
     end
     cellSampleSpace = cellSampleSpace(randperm(length(cellSampleSpace)));
