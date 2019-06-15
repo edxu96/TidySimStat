@@ -5,7 +5,7 @@
 
 
 function [sState] = simAnealing(startPosition, m, nSample, matCost)
-    cellArraySSpace = getSampleSpace2(m, startPosition);
+    cellArraySSpace = getCellArraySampleSpaceAnnealing(m, startPosition);
     % Generate a Permutation Randomly
     vecXcap = zeros(m + 1, 1);
     vecXcap(1) = startPosition;
@@ -75,38 +75,30 @@ function [x, accept] = acceptCandidate(xPre, y, k, matCost)
 end
 
 
-function [cellArraySSpace] = getSampleSpace2(m, startPosition)
+function [cellArraySSpace] = getCellArraySampleSpaceAnnealing(m, startPosition)
     %
     vecPossible = [1:m];
     vecPossible = vecPossible([1:m] ~= startPosition);
     % Get the sample space in one dimension
-    cellSampleSpace = getSampleSpace(vecPossible);
+    vecData1 = vecPossible;
+    vecData2 = vecPossible;
+    n1 = length(vecPossible);
+    n2 = length(vecPossible);
+    funcLogic = @(data1, data2) data1 ~= data2;  % vecPossible(i) ~= vecPossible(j)
+    cellSampleSpace = getSampleSpace(vecData1, vecData2, n1, n2, funcLogic);
     %
     nRow = length(vecPossible);
-    nCol = length(cellSampleSpace) / nRow;
-    if mod(nCol, 1) ~= 0
-        error("nRow is impossible!!!")
-    end
-    cellArraySSpace = {};
-    k = 1;
-    for i = 1:nRow
-        for j = 1:nCol
-            cellArraySSpace(i, j) = cellSampleSpace(k);
-            k = k + 1;
-        end
-    end
+    cellArraySSpace = arrangeSampleSpace2dim(cellSampleSpace, nRow);
 end
 
 
-function [cellSampleSpace] = getSampleSpace(vecPossible)
-    n = length(vecPossible);
-    cellSampleSpace = {};
-    for i = 1:n
-        for j = 1:n
-            if vecPossible(i) ~= vecPossible(j)
-                cellSampleSpace{end + 1} = [vecPossible(i), vecPossible(j)];
-            end
-        end
-    end
-    cellSampleSpace = cellSampleSpace(randperm(length(cellSampleSpace)));
+function [count] = getCountAnnealing(vector, k, matCost)
+    temp = calTemp(k);
+    energy = calEnergy(vector, matCost);
+    count = exp(- energy / temp);
+end
+
+
+function [temp] = calTemp(k)
+    temp = 1 / sqrt(1 + k);
 end

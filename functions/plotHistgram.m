@@ -1,4 +1,4 @@
-function [ vecProbClass ] = plotHist(vecResult, vecXstd, vecYstd, nBin, strFigName)
+function [ vecProbClass ] = plotHistgram(vecResult, vecXstd, vecYstd, nBin, strTitle, strFigName)
     % Plot the histogram of RNG result and return the vector of values
     figHist = figure("Visible", "off");
     figHist = histogram(vecResult, 'NumBins', nBin, 'Normalization', 'probability', "Visible", "off");
@@ -10,7 +10,7 @@ function [ vecProbClass ] = plotHist(vecResult, vecXstd, vecYstd, nBin, strFigNa
     hold on
     figHist = plot(vecXstd, vecYstd, 'r', 'LineWidth', 2);
     hold off
-    title("Simulation and Analysis Result of Queueing System with 10 Servers and A being 8");
+    title(strTitle);
     legend('Simulation', 'Analysis', 'Location', 'northwest');
     saveas(figHist, [pwd '/images/' strFigName]);
 end

@@ -1,28 +1,30 @@
 % setup file for exercise 5
-% Author: Edward J. Xu, Sanaz
-% Date: 190612
-% Version: 1.0
+% Author: Edward J. Xu
+% Date: 190615
 % ######################################################################################################################
-% cd ~/Documents/GitHub/StochasticSim/exercise5
-% pwd
-addpath("~/Documents/GitHub/StochasticSim/exercise5")  % ###############################################################
-% whiFunc = "exp";
-% whiFunc = "antithetic";
-% whiFunc = "control";
-whiFunc = "stratified";
-nSample = 10000;
-fprintf("#### Begin #####################################################################");  % ########################
-fprintf("Analytical Result: %f.\n", exp(1) - 1);
-vecU = rand(nSample, 1);
-tic
-[funcSim, vecU] = getFunc(whiFunc, vecU);
-vecResult = sampleFuncSim(nSample, funcSim, vecU);
-fprintf("mean = %f.\n", mean(vecResult));
-fprintf("var = %f.\n", var(vecResult));
-toc
-fprintf("#### End #######################################################################");  % ########################
-% To get the function
+
+
+function doExercise_5()
+    % whiFunc = "exp";
+    % whiFunc = "antithetic";
+    % whiFunc = "control";
+    whiFunc = "stratified";
+    nSample = 10000;
+    fprintf("#### Begin #####################################################################");  % ####################
+    fprintf("Analytical Result: %f.\n", exp(1) - 1);
+    vecU = rand(nSample, 1);
+    tic
+    [funcSim, vecU] = getFunc(whiFunc, vecU);
+    vecResult = sampleFuncSim(nSample, funcSim, vecU);
+    fprintf("mean = %f.\n", mean(vecResult));
+    fprintf("var = %f.\n", var(vecResult));
+    toc
+    fprintf("#### End #######################################################################");  % ####################
+end
+
+
 function [funcSim, vecU] = getFunc(whiFunc, vecU)
+% To get the function
     fprintf("Method: %s.\n", whiFunc);
     if whiFunc == "exp"
         funcSim = @exp;
@@ -43,15 +45,19 @@ function [funcSim, vecU] = getFunc(whiFunc, vecU)
         funcSim = @(w) w;
     end
 end
-% To sample using the function
+
+
 function [vecResult] = sampleFuncSim(nSample, funcSim, vecU)
+% To sample using the function
     vecResult = zeros(nSample, 1);
     for i = 1:nSample
         vecResult(i) = funcSim(vecU(i));
     end
 end
-% To stratified sample using the function
+
+
 function [vecResult] = sampleStratify(nSample, funcSim, vecU)
+% To stratified sample using the function
     vecResult = zeros(nSample, 1);
     for i = 1:nSample
         vecResult(i) = funcSim(vecU(i), i, nSample);
