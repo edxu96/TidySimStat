@@ -7,6 +7,7 @@
 addpath("~/Documents/GitHub/StochasticSim/functions")  % ###############################################################
 addpath("~/Documents/GitHub/StochasticSim/exercises")  % ###############################################################
 
+
 % ######################################################################################################################
 % Exercise 7: Anealing Simulation to Solve TSM Problem Mat-Heuristically
 nSample = 100000;

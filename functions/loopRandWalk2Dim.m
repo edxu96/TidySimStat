@@ -1,4 +1,5 @@
 
+
 function [vecCandidate] = loopRandWalk2Dim(cellArraySSpace, vecPre)
     [m, n] = size(cellArraySSpace);
     % Find where vecPre is
@@ -6,7 +7,7 @@ function [vecCandidate] = loopRandWalk2Dim(cellArraySSpace, vecPre)
     while ~isequal(cellArraySSpace{where}, vecPre)
         where = where + 1;
     end
-    [x, y] = returnPosition(where, m, n);
+    [x, y] = getArrayPosition(where, m, n);
     % disp(x)
     % disp(y)
     if cellArraySSpace{x, y} ~= cellArraySSpace{where}

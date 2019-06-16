@@ -1,3 +1,9 @@
+% setup file for exercise 5
+% Author: Edward J. Xu
+% Date: 190615
+% ######################################################################################################################
+
+
 function doExercise_6a()
     m = 10;
     nSample = 20000;
@@ -12,13 +18,13 @@ function doExercise_6a()
     [vecState, sState] = simMarkovChain(cellArraySSpace, funcGetCandidate, funcAcceptCandidate, nSample, vecPara)
     % [vecState, sState] = simRandWalkHastingsMetropolis(m, nSample, aCap);
     save([pwd '/outputs/vecState_2.mat'], 'vecState');
-    % Calculate the Analytical Values --------------------------------------------------------------------------------------
+    % Calculate the Analytical Values ----------------------------------------------------------------------------------
     vecResult = zeros(m + 1, 1);
     for j = 0:m
         vecResult(j + 1) = calCount(j, aCap);
     end
     vecResult = vecResult / sum(vecResult);
-    % Plot the Histogram of the Result -------------------------------------------------------------------------------------
+    % Plot the Histogram of the Result ---------------------------------------------------------------------------------
     strTitle = "Simulation and Analysis Result of Queueing System with 10 Servers and A being 8";
     vecProbClass = plotHist(vecState(1000:end), [0:1:m], vecResult, m + 1, strTitle, '1.png');
 end
