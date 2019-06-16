@@ -2,8 +2,8 @@ function [ fig ] = plotLine( vecX, matY, strFigName, strTitle )
 % Plot the line chart and save in the images folder
 %
 % Warning: remember to use '' for strFigName instead of "".
-    [m, n] = size(matY);
-    fig = figure("Visible", "off");
+    [m, ~] = size(matY);
+    fig = figure('Visible', 'off');
     hold on
     for i = 1:m
         fig = plot(vecX, matY(i, :), 'LineWidth', 2);
