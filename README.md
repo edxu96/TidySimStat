@@ -2,7 +2,7 @@
 
 Stochastic Simulation using MATLAB
 
-## What can it do?
+## 1,  What can it do?
 
 - [ ] Random Number Generation
 - [ ] Statistical Test
@@ -16,17 +16,17 @@ Stochastic Simulation using MATLAB
 
 Detailed explanation can be found in [StochasticSim/wiki](http://github.com/edxu96/StochasticSim/wiki/1-Home).
 
-## What's New?
+## 2,  New Algorithm by Ourselves
 
-### 1, Array the 2-D Irregular Sample Space for 8-Direction Random Walk
+### 2.1, Array the 2-D Irregular Sample Space for 8-Direction Random Walk
 
 The algorithm and analysis is shared in [edxu96/RandomWalk2dim.m](https://gist.github.com/edxu96/a506b784d1a8864a188a8aa3ce49cc4d).
 
-The result from MCMC simulation using Gibbs Sampler and sample space processed by this algorithm is quite satisfying.
+The result from MCMC simulation using Gibbs Sampler and sample space processed by this algorithm is quite satisfying. The red points indicate the theoretical values, which are almost all the same as the simulation results.
 
 ![Queue Simulation using MCMC Gibbs Sampler](/images/6/GibbsSampler_2.png)
 
-## Contributors
+## 3,  Contributors
 
-- Edward J. Xu (<edxu96@outlook.com>)
+- Edward J. Xu (<edxu96@outlook.com>) (<https://edxu96.github.io>)
 - Sanaz
