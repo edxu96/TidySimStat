@@ -24,7 +24,7 @@ The algorithm and analysis is shared in [edxu96/RandomWalk2dim.m](https://gist.g
 
 The result from MCMC simulation using Gibbs Sampler and sample space processed by this algorithm is quite satisfying.
 
-![Queue Simulation using MCMC Gibbs Sampler](images/6/GibbsSampler_2)
+![Queue Simulation using MCMC Gibbs Sampler](/images/6/GibbsSampler_2.png)
 
 ## Contributors
 
