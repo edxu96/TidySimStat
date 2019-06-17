@@ -92,8 +92,8 @@ function [func, vecPara, strFunc] = getFuncArrive(whiFunc, mu)
     elseif whiFunc == 3
         func = @simDistHyperExp2;
         vecPara = [0.8, 0.833, 5];
-        strFunc = 'hyper-exp';
-    elseif  whiFunc == 'cons'
+        strFunc = 'h-exp';
+    elseif  whiFunc == 4
         func = @(cons) cons;
         vecPara = mu;
         strFunc = 'cons';
