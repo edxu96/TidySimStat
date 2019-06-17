@@ -49,26 +49,40 @@ end
 
 function [funcArrive, vecParaArrive, funcServe, vecParaServe] = getFunction(whi)
     if whi == 1
-        [funcArrive, vecParaArrive] = getFunc('expArrive', mu, lambda);
-        [funcServe, vecParaServe] = getFunc('expServe', mu, lambda);
+        [funcArrive, vecParaArrive] = getFuncArrive('expArrive', mu, lambda);
+        [funcServe, vecParaServe] = getFuncServe('expServe', mu, lambda);
     end
 end
 
 
-function [func, vecPara] = getFunc(whiFunc, mu, lambda)
+function [func, vecPara] = getFuncArrive(whiFunc)
 % To define the function for length of arrival interval and serving time.
-    if whiFunc == 'expArrive'
+    if whiFunc == 'exp'
         func = @exprnd;
-        vecPara = mu;
-    elseif whiFunc == 'expServe'
-        func = @exprnd;
-        vecPara = lambda;
+        vecPara = 1;
     elseif  whiFunc == 'cons'
-        cons = 10;
+        cons = 8;
         func = @(cons) cons;
         vecPara = cons;
     end
-    fprintf('Func: %s.\n', whiFunc);
+    fprintf('Function for Inter-Arrival Time: %s.\n', whiFunc);
+end
+
+
+function [func, vecPara] = getFuncServe(whiFunc)
+% To define the function for length of arrival interval and serving time.
+    if whiFunc == 'expArrive'
+        func = @exprnd;
+        vecPara = 1;
+    elseif whiFunc == 'expServe'
+        func = @exprnd;
+        vecPara = 8;
+    elseif  whiFunc == 'cons'
+        cons = 8;
+        func = @(cons) cons;
+        vecPara = cons;
+    end
+    fprintf('Function for Service Time: %s.\n', whiFunc);
 end
 
 

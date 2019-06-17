@@ -35,4 +35,5 @@ doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial
 % k = 2.05;
 % nSet = 100;
 % nObs = 10000;
-% doExercise_8(beta, k, nSet, nObs);
+% seedObs = 99;
+% doExercise_8(beta, k, nSet, nObs, seedObs);
