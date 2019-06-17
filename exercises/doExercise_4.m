@@ -6,22 +6,34 @@
 
 function doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda)
     fprintf('#### Begin #####################################################################');  % ####################
-    [funcArrive, vecParaArrive] = getFuncArrive('exp', mu);
-    [funcServe, vecParaServe] = getFuncServe('exp', lambda);
-    fprintf('1,  Multiple Simulation --------------------------------------------------------');  % --------------------
-    [vecYy] = simMultiDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, vecParaArrive, ...
-        vecParaServe, nStable, nSim);
-    fprintf('2,  Result from Analysis -------------------------------------------------------');  % --------------------
+    fprintf('**** Result from Analysis ******************************************************');  % --------------------
     prob = calErlangsFormula(8, 1, nServer);
     fprintf('prob = %f.\n', prob);
-    fprintf('3,  Result from Simulation -----------------------------------------------------');  % --------------------
-    plotSimulation(sState);
+    vecWhiFuncArrive = [1 2 3 1 1 1];
+    vecWhiFuncServe = [1 1 1 2 3 3];
+    for i = 1:length(vecWhiFuncArrive)
+        simBlockProblem(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda, ....
+            vecWhiFuncArrive(i), vecWhiFuncServe(i))
+    end
+    fprintf('#### End #######################################################################');  % ####################
+end
+
+
+function simBlockProblem(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda, whiFuncArrive, whiFuncServe)
+    fprintf('********************************************************************************');  % ####################
+    fprintf('---- 1,  Define Distribution Functions -----------------------------------------');  % --------------------
+    [funcArrive, vecParaArrive] = getFuncArrive(whiFuncArrive, mu);
+    [funcServe, vecParaServe] = getFuncServe(whiFuncServe, lambda);
+    fprintf('---- 2,  Multiple Simulation ---------------------------------------------------');  % --------------------
+    [vecYy, vecProbResult] = simMultipleDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, vecParaArrive, ...
+        vecParaServe, nStable, nSim);
+    fprintf('---- 3,  Result from Simulation ------------------------------------------------');  % --------------------
     printResult(vecYy, var(vecYy));
-    fprintf('4,  Result from Simulation and Control Variate ---------------------------------');  % --------------------
+    fprintf('---- 4,  Result from Simulation and Control Variate ----------------------------');  % --------------------
     expectYy = 1;
     vecXx = vecProbResult;
     vecZz = zeros(nSim, 1);
-    covXxYy = cov(vecX, vecYy);
+    covXxYy = cov(vecXx, vecYy);
     varXxYy = covXxYy(1, 2);
     c = - varXxYy / var(vecYy);
     for i = 1:nSim
@@ -29,12 +41,12 @@ function doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda)
     end
     varianceZz = var(vecXx) - varXxYy^2 / var(vecYy);  % The calculation is a bit different. ???
     printResult(vecZz, varianceZz);
-    fprintf('#### End #######################################################################');  % ####################
+    fprintf('********************************************************************************');  % ####################
 end
 
 
-function [vecYy] = simMultiDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, vecParaArrive, ...
-    vecParaServe, nStable, nSim)
+function [vecYy, vecProbResult] = simMultipleDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, ...
+    vecParaArrive, vecParaServe, nStable, nSim)
     tic
     vecProbResult = zeros(nSim, 1);
     vecYy = zeros(nSim, 1);
@@ -52,20 +64,24 @@ function [func, vecPara] = getFuncArrive(whiFunc, mu)
 % To define the function for length of arrival interval and serving time.
 %
 % Example: mu = 1;
-    if whiFunc == 'exp'
+    if whiFunc == 1
         func = @exprnd;
         vecPara = mu;
-    elseif whiFunc == 'Erland'
+        strFunc = 'exp';
+    elseif whiFunc == 2
         func = @(mu) exprnd(mu / 4) + exprnd(mu / 4) + exprnd(mu / 4) + exprnd(mu / 4);
         vecPara = mu;
-    elseif whiFunc == 'hyper-exp'
+        strFunc = 'Erlang';
+    elseif whiFunc == 3
         func = @simDistHyperExp2;
         vecPara = [0.8, 0.833, 5];
+        strFunc = 'hyper-exp';
     elseif  whiFunc == 'cons'
         func = @(cons) cons;
         vecPara = mu;
+        strFunc = 'cons';
     end
-    fprintf('Function for Inter-Arrival Time: %s.\n', whiFunc);
+    fprintf('Function for Inter-Arrival Time: %s.\n', strFunc);
 end
 
 
@@ -84,17 +100,20 @@ end
 
 function [func, vecPara] = getFuncServe(whiFunc, lambda)
 % To define the function for length of arrival interval and serving time.
-    if whiFunc == 'exp'
+    if whiFunc == 1
         func = @exprnd;
-        vecPara = 1;
-    elseif whiFunc == 'Pareto'
-        func = @simDistParetoWithoutUu;
-        vecPara = [8 * (1.05 - 1) / 1.05, 1.05];
-    elseif  whiFunc == 'cons'
+        vecPara = lambda;
+        strFunc = 'exp';
+    elseif  whiFunc == 2
         func = @(cons) cons;
         vecPara = lambda;
+        strFunc = 'cons';
+    elseif whiFunc == 3
+        func = @simDistParetoWithoutUu;
+        vecPara = [8 * (1.05 - 1) / 1.05, 1.05];
+        strFunc = 'Pareto';
     end
-    fprintf('Function for Service Time: %s.\n', whiFunc);
+    fprintf('Function for Service Time: %s.\n', strFunc);
 end
 
 
@@ -146,4 +165,6 @@ function test()
     [bCap] = calErlangsFormula(8, 1, nServer);
     plotLine(1:nEvent, [sState.b; ones(1, nEvent) * bCap], '15.png', 'The Result of the Probability a Customer is Blocked');
     matTimeDepart = [sState.vecTimeDepart];
+    %
+    plotSimulation(sState);
 end

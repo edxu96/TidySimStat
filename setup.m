@@ -18,7 +18,7 @@ nStable = 1000;
 clockSimZero = 0;
 mu = 1;
 lambda = 8;
-doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda)
+doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda);
 % ######################################################################################################################
 % Exercise 6:
 

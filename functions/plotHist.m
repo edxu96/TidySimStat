@@ -1,4 +1,4 @@
-function [vecProbClass] = plotHist(vecResult, vecXstd, vecYstd, numClass, strFigName, strFigTitle, strFigLegend_1)
+function [vecProbClass, figHist] = plotHist(vecResult, vecXstd, vecYstd, numClass, strFigName, strFigTitle, strFigLegend_1)
     % Plot the histogram of RNG result and return the vector of values
     figHist = figure('Visible', 'off');
     figHist = histogram(vecResult, 'NumBins', numClass, 'Normalization', 'probability', 'Visible', 'off');
