@@ -12,11 +12,11 @@ function doExercise_4()
     clockSimZero = 0;
     mu = 1;
     lambda = 8;
-    fprintf("#### Begin #####################################################################");  % ####################
-    [funcArrive, vecParaArrive] = getFunc("expArrive", mu, lambda);
-    [funcServe, vecParaServe] = getFunc("expServe", mu, lambda);
+    fprintf('#### Begin #####################################################################');  % ####################
+    [funcArrive, vecParaArrive] = getFunc('expArrive', mu, lambda);
+    [funcServe, vecParaServe] = getFunc('expServe', mu, lambda);
     [bCap] = calErlangsFormula(8, 1, nServer);
-    fprintf("Analysis: b = %f.\n", bCap);
+    fprintf('Analysis: b = %f.\n', bCap);
     % 3,  Begin `nSim`-Times Simulations ###############################################################################
     tic
     nEvent = nCustomer;
@@ -29,19 +29,19 @@ function doExercise_4()
         vecResultProb(i) = (sState(nEvent).nCustomerBlock - sState(nStable).nCustomerBlock) / (nEvent - nStable);
         vecY(i) = mean([sState.inteEvent]);
     end
-    fprintf("Result from Simulation ---------------------------------------------------------");
+    fprintf('Result from Simulation ---------------------------------------------------------');
     toc
     printResult(vecResultProb, var(vecResultProb));
     % Plot the Histogram of Simulated Time and Standard Distribution
     vecXStd_1 = [0.01:0.01:5];
     vecYStd_1 = exppdf(vecXStd_1, mu);
     [vecProbClass] = plotHist([sState.inteEvent], vecXStd_1, vecYStd_1, 30, '5.png', ...
-        "Histogram of Simulated Length of Arrival Interval and Exponential Distribution", 'Histogram of LAI');
+        'Histogram of Simulated Length of Arrival Interval and Exponential Distribution', 'Histogram of LAI');
     vecXStd_2 = [0.01:1:40];
     vecYStd_2 = exppdf(vecXStd_2, lambda);
     [vecProbClass] = plotHist([sState.timeServe], vecXStd_2, vecYStd_2, 30, '6.png', ...
-        "Histogram of Simulated Serving Time and Exponential Distribution", 'Histogram of Serving Time');
-    fprintf("Result from Simulation and Control Variate -------------------------------------");
+        'Histogram of Simulated Serving Time and Exponential Distribution', 'Histogram of Serving Time');
+    fprintf('Result from Simulation and Control Variate -------------------------------------');
     expectY = 1;
     vecX = vecResultProb;
     vecZ = zeros(nSim, 1);
@@ -53,33 +53,33 @@ function doExercise_4()
     end
     varianceZ = var(vecX) - varXY^2 / var(vecY);  % The calculation is a bit different. ???
     printResult(vecZ, varianceZ);
-    fprintf("#### End #######################################################################");  % ####################
+    fprintf('#### End #######################################################################');  % ####################
 end
 
 
 function [func, vecPara] = getFunc(whiFunc, mu, lambda)
 % To define the function for length of arrival interval and serving time.
-    if whiFunc == "expArrive"
+    if whiFunc == 'expArrive'
         func = @exprnd;
         vecPara = mu;
-    elseif whiFunc == "expServe"
+    elseif whiFunc == 'expServe'
         func = @exprnd;
         vecPara = lambda;
-    elseif  whiFunc == "cons"
+    elseif  whiFunc == 'cons'
         cons = 10;
         func = @(cons) cons;
         vecPara = cons;
     end
-    fprintf("Func: %s.\n", whiFunc);
+    fprintf('Func: %s.\n', whiFunc);
 end
 
 
 function [boundLower, boundUpper] = printResult(vecResult, variance)
-    fprintf("mean(b) = %f.\n", mean(vecResult));
-    fprintf("var(b) = %f.\n", variance);
+    fprintf('mean(b) = %f.\n', mean(vecResult));
+    fprintf('var(b) = %f.\n', variance);
     [boundLower, boundUpper] = calConfInte(vecResult);
-    fprintf("lowerConfiInterval(b) = %f.\n", boundLower);
-    fprintf("upperConfiInterval(b) = %f.\n", boundUpper);
+    fprintf('lowerConfiInterval(b) = %f.\n', boundLower);
+    fprintf('upperConfiInterval(b) = %f.\n', boundUpper);
 end
 
 

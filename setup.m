@@ -14,7 +14,7 @@ addpath('~/Documents/GitHub/StochasticSim/data')  % ############################
 
 % ######################################################################################################################
 % Exercise 7: Anealing Simulation to Solve TSM Problem Mat-Heuristically
-nSample = 1000000;
+nSample = 10000;
 startPosition = 1;
 tempMax = 100;  % 1
 coefDecay = 0.45;

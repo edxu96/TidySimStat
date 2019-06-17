@@ -22,6 +22,7 @@ function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coe
     fprintf('costResult = %f.\n', costResult);
     fprintf('costSave = %f.\n', costSave);
     fprintf('ratioAccept = %f.\n', ratioAccept);
+    disp(vecResult');
     % Plot the Simulation Result
     vecXx = 1:nSample;
     matYy = zeros(nSample, 2);

@@ -16,16 +16,16 @@ for j = 1:ite
     cs = 0;          % Customers served
     cb = 0;          % Customers blocked
     for i = 1:c
-        [min_ns_t,min_ns_idx] = min(ns); % Minimum time for server is ready
+        [min_ns_t, min_ns_idx] = min(ns); % Minimum time for server is ready
         tc = exprnd(l);  % Time between customers
         ts = exprnd(s);  % Service time
         if tc_t >= min_ns_t
-            ns(min_ns_idx) = tc_t+ts;
-            cs = cs+1;   % Customers served
+            min_ns_t = tc_t + ts;
+            cs = cs + 1;   % Customers served
         else
-            cb = cb+1;   % Customers blocked
+            cb = cb + 1;   % Customers blocked
         end
-        tc_t = tc_t+tc;  % Total time between customers
+        tc_t = tc_t + tc;  % Total time between customers
     end
     cb_vec(j) = cb;      % Customers blocked of every iteration
 end
