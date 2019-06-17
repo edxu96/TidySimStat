@@ -8,19 +8,27 @@ addpath('~/Documents/GitHub/StochasticSim/functions')  % #######################
 addpath('~/Documents/GitHub/StochasticSim/exercises')  % ###############################################################
 addpath('~/Documents/GitHub/StochasticSim/data')  % ###############################################################
 
-
-% whiMethod = 1;
-% whiMethod = 2;
+% ######################################################################################################################
+nServer = 10;
+nCustomer = 11000;
+nEvent = nCustomer;
+nSim = 100;
+nStable = 1000;
+clockSimZero = 0;
+whi = 1;
+doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, whi)
+% ######################################################################################################################
 
 % ######################################################################################################################
 % Exercise 7: Anealing Simulation to Solve TSM Problem Mat-Heuristically
-nSample = 10000;
+nSample = 100000;
 startPosition = 1;
-tempMax = 100;  % 1
-coefDecay = 0.45;
-strFigName = '7/5';
-seedInitial = 2;
-doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial);
+tempMax = 50;
+coefDecay = 0.5;
+coefStretch = 0.1;
+strFigName = '7/7';
+seedInitial = 100;
+doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial, coefStretch);
 % ######################################################################################################################
 % Exercise 8: Bootstrap
 % beta = 1;

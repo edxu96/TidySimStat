@@ -4,7 +4,7 @@
 % ######################################################################################################################
 
 
-function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial)
+function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial, coefStretch)
 % Simulated Annealing to Optimize the Path in Travelling Salesman Problem
 %
 % :param tempMax: maximum temperature during annealing
@@ -12,7 +12,7 @@ function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coe
     matCost = getMatCost();
     [m, ~] = size(matCost);
     tic
-    [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay, seedInitial);
+    [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay, seedInitial, coefStretch);
     toc
     % Print the Simulation Result
     costResult = sState(end).obj;
@@ -27,7 +27,7 @@ function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coe
     vecXx = 1:nSample;
     matYy = zeros(nSample, 2);
     matYy(:, 1) = [sState.obj];
-    matYy(:, 2) = [sState.temp] * 100;
+    matYy(:, 2) = [sState.temp] * 50;
     plotLine(vecXx, matYy, strFigName, 'Simulated Annealing Temperature and Energy');
     fprintf('#### End #######################################################################');  % ####################
 end

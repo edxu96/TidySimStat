@@ -4,7 +4,7 @@
 % ######################################################################################################################
 
 
-function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay, seedInitial)
+function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay, seedInitial, coefStretch)
     cellArraySSpace = getCellArraySampleSpaceAnnealing(m, startPosition);
     % Generate a Permutation Randomly
     vecXx = zeros(m + 1, 1);
@@ -74,5 +74,5 @@ end
 
 
 function [temp] = calTemp(k, tempMax, coefDecay)
-    temp = tempMax / (1 + k)^coefDecay;
+    temp = tempMax / (1 + coefStretch * k)^coefDecay;
 end
