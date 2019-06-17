@@ -9,13 +9,17 @@ addpath('~/Documents/GitHub/StochasticSim/exercises')  % #######################
 addpath('~/Documents/GitHub/StochasticSim/data')  % ###############################################################
 
 
+% whiMethod = 1;
+% whiMethod = 2;
+
 % ######################################################################################################################
 % Exercise 7: Anealing Simulation to Solve TSM Problem Mat-Heuristically
-nSample = 100000;
+nSample = 1000000;
 startPosition = 1;
-tempMax = 1000;  % 1
-coefDecay = 0.25;
-doExercise_7(nSample, startPosition, tempMax, coefDecay);
+tempMax = 100;  % 1
+coefDecay = 0.5;
+strFigName = '7/3';
+doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName);
 % ######################################################################################################################
 % Exercise 8: Bootstrap
 % beta = 1;

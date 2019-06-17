@@ -1,10 +1,13 @@
 % function file for exercise 7
-% Author: Edward J. Xu, Sanaz
-% Date: 190614
+% Author: Edward J. Xu
+% Date: 190617
 % ######################################################################################################################
 
 
-function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coefDecay)
+function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName)
+% Simulated Annealing to Optimize the Path in Travelling Salesman Problem
+%
+% :param tempMax: maximum temperature during annealing
     fprintf('#### Begin #####################################################################');  % ####################
     matCost = getMatCost();
     [m, ~] = size(matCost);
@@ -24,6 +27,6 @@ function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coe
     matYy = zeros(nSample, 2);
     matYy(:, 1) = [sState.obj];
     matYy(:, 2) = [sState.temp] * 100;
-    plotLine(vecXx, matYy, '7/1', 'Simulated Annealing Temperature and Energy');
+    plotLine(vecXx, matYy, strFigName, 'Simulated Annealing Temperature and Energy');
     fprintf('#### End #######################################################################');  % ####################
 end

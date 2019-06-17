@@ -4,16 +4,14 @@
 % ######################################################################################################################
 
 
-function doExercise_6b()
+function doExercise_6b(whiMethod)
     m = 10;
     nRow = 6;
     nSample = 100000;
     aCap_1 = 4;
     aCap_2 = 4;
-    whiMethod = 1;
-    % whiMethod = 2;
     if whiMethod == 1
-        vecPara = [aCap_1, aCap_2]
+        vecPara = [aCap_1, aCap_2];
         funcGetCandidate = @loopRandWalk2dim(cellArraySSpace, xPre);
         funcAcceptCandidate = @acceptCandidate(xPre, y, vecPara);
     elseif whiMethod == 2
