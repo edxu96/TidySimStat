@@ -17,9 +17,10 @@ addpath('~/Documents/GitHub/StochasticSim/data')  % ############################
 nSample = 1000000;
 startPosition = 1;
 tempMax = 100;  % 1
-coefDecay = 0.5;
-strFigName = '7/3';
-doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName);
+coefDecay = 0.45;
+strFigName = '7/5';
+seedInitial = 2;
+doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial);
 % ######################################################################################################################
 % Exercise 8: Bootstrap
 % beta = 1;

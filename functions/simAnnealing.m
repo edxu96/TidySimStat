@@ -4,12 +4,13 @@
 % ######################################################################################################################
 
 
-function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay)
+function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay, seedInitial)
     cellArraySSpace = getCellArraySampleSpaceAnnealing(m, startPosition);
     % Generate a Permutation Randomly
     vecXx = zeros(m + 1, 1);
     vecXx(1) = startPosition;
     vecXx(m + 1) = startPosition;
+    rng(seedInitial);
     vecPerm = randperm(m);
     vecXx(2:m) = vecPerm(vecPerm ~= startPosition);
     % Initialize the struct

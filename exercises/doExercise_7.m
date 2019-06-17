@@ -4,7 +4,7 @@
 % ######################################################################################################################
 
 
-function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName)
+function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial)
 % Simulated Annealing to Optimize the Path in Travelling Salesman Problem
 %
 % :param tempMax: maximum temperature during annealing
@@ -12,7 +12,7 @@ function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coe
     matCost = getMatCost();
     [m, ~] = size(matCost);
     tic
-    [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay);
+    [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay, seedInitial);
     toc
     % Print the Simulation Result
     costResult = sState(end).obj;
