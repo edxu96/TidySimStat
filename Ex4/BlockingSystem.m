@@ -20,7 +20,7 @@ for j = 1:ite
         tc = exprnd(l);  % Time between customers
         ts = exprnd(s);  % Service time
         if tc_t >= min_ns_t
-            min_ns_t = tc_t + ts;
+            ns(min_ns_idx) = tc_t + ts;
             cs = cs + 1;   % Customers served
         else
             cb = cb + 1;   % Customers blocked
