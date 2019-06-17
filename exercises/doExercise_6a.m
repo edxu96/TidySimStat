@@ -25,7 +25,7 @@ function doExercise_6a()
     end
     vecResult = vecResult / sum(vecResult);
     % Plot the Histogram of the Result ---------------------------------------------------------------------------------
-    strTitle = "Simulation and Analysis Result of Queueing System with 10 Servers and A being 8";
+    strTitle = 'Simulation and Analysis Result of Queueing System with 10 Servers and A being 8';
     vecProbClass = plotHist(vecState(1000:end), [0:1:m], vecResult, m + 1, strTitle, '1.png');
 end
 

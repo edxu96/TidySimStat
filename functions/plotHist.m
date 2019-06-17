@@ -1,7 +1,7 @@
 function [vecProbClass] = plotHist(vecResult, vecXstd, vecYstd, numClass, strFigName, strFigTitle, strFigLegend_1)
     % Plot the histogram of RNG result and return the vector of values
-    figHist = figure("Visible", "off");
-    figHist = histogram(vecResult, 'NumBins', numClass, 'Normalization', 'probability', "Visible", "off");
+    figHist = figure('Visible', 'off');
+    figHist = histogram(vecResult, 'NumBins', numClass, 'Normalization', 'probability', 'Visible', 'off');
     vecProbClass = figHist.Values;
     vecProbClassNorm = vecProbClass / figHist.BinWidth;  % Normalize the prob with BinWidth
     vecX = figHist.BinEdges(1:figHist.NumBins);
@@ -12,5 +12,6 @@ function [vecProbClass] = plotHist(vecResult, vecXstd, vecYstd, numClass, strFig
     hold off
     title(strFigTitle);
     legend(strFigLegend_1, 'Standard Distribution');
-    saveas(figHist, [pwd '/images/' strFigName]);
+    saveas(figHist, [pwd '/images/' strFigName '.png']);
+    saveas(figHist, [pwd '/images/' strFigName '.fig']);
 end

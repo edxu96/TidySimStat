@@ -1,3 +1,4 @@
+
 function [x] = simDistPareto(u, vecPara)
 % vecPara = [beta, k];
     beta = vecPara(1);

@@ -5,35 +5,35 @@
 
 
 function doExercise_5()
-    % whiFunc = "exp";
-    % whiFunc = "antithetic";
-    % whiFunc = "control";
-    whiFunc = "stratified";
+    % whiFunc = 'exp';
+    % whiFunc = 'antithetic';
+    % whiFunc = 'control';
+    whiFunc = 'stratified';
     nSample = 10000;
-    fprintf("#### Begin #####################################################################");  % ####################
-    fprintf("Analytical Result: %f.\n", exp(1) - 1);
+    fprintf('#### Begin #####################################################################');  % ####################
+    fprintf('Analytical Result: %f.\n', exp(1) - 1);
     vecU = rand(nSample, 1);
     tic
     [funcSim, vecU] = getFunc(whiFunc, vecU);
     vecResult = sampleFuncSim(nSample, funcSim, vecU);
-    fprintf("mean = %f.\n", mean(vecResult));
-    fprintf("var = %f.\n", var(vecResult));
+    fprintf('mean = %f.\n', mean(vecResult));
+    fprintf('var = %f.\n', var(vecResult));
     toc
-    fprintf("#### End #######################################################################");  % ####################
+    fprintf('#### End #######################################################################');  % ####################
 end
 
 
 function [funcSim, vecU] = getFunc(whiFunc, vecU)
 % To get the function
-    fprintf("Method: %s.\n", whiFunc);
-    if whiFunc == "exp"
+    fprintf('Method: %s.\n', whiFunc);
+    if whiFunc == 'exp'
         funcSim = @exp;
-    elseif whiFunc == "antithetic"
+    elseif whiFunc == 'antithetic'
         funcSim = @(u) (exp(u) + exp(1-u)) / 2;
-    elseif whiFunc == "control"
+    elseif whiFunc == 'control'
         c = - (mean(vecU .* exp(vecU)) - mean(vecU) * mean(exp(vecU))) / var(vecU);
         funcSim = @(u) exp(u) + c * (u - mean(vecU));
-    elseif whiFunc == "stratified"
+    elseif whiFunc == 'stratified'
         matU = rand(length(vecU), 10);
         for i = 1:length(matU(:, 1))
             w_i = 0;
