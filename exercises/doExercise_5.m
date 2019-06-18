@@ -7,7 +7,7 @@
 function doExercise_5(nSample)
     fprintf('--------------------------------------------------------------------------------\n');
     fprintf('Analytical Result: \n');
-    fprintf('   value = %f ; \n', exp(1) - 1)
+    fprintf('    value = %f ; \n', exp(1) - 1)
     for i = 1:4
         doExercise(i, nSample)
     end
@@ -17,13 +17,13 @@ end
 function doExercise(whiFunc, nSample)
     fprintf('--------------------------------------------------------------------------------\n');
     fprintf('Simulation Result: \n')
-    fprintf('   nSample = %d ; \n', nSample)
+    fprintf('    nSample = %d ; \n', nSample)
     vecU = rand(nSample, 1);
     tic
     [funcSim, vecU] = getFunc(whiFunc, vecU);
     vecResult = sampleFuncSim(nSample, funcSim, vecU);
-    fprintf('   mean(vecResult) = %f ; \n', mean(vecResult))
-    fprintf('   var(vecResult) = %f ; \n', var(vecResult))
+    fprintf('    mean(vecResult) = %f ; \n', mean(vecResult))
+    fprintf('    var(vecResult) = %f ; \n', var(vecResult))
     calInterConf(vecResult, 0.05);
     toc
 end
@@ -53,7 +53,7 @@ function [funcSim, vecU] = getFunc(whiFunc, vecU)
         funcSim = @(w) w;
         strWhiFunc =  'stratified';
     end
-    fprintf('   method is %s ; \n', strWhiFunc);
+    fprintf('    method is %s ; \n', strWhiFunc);
 end
 
 

@@ -14,7 +14,6 @@ function [lb, ub] = calInterConf(vecResult, alpha)
     % se = (sum(vecResult.^2) - n * expect^2) / (n - 1);
     lb = expect - se * tinv(1 - alpha / 2, n - 1) / sqrt(n);
     ub = expect + se * tinv(1 - alpha / 2, n - 1) / sqrt(n);
-    fprintf('Confidence Interval: \n')
-    fprintf('   Upper Bound = %f ;\n', ub)
-    fprintf('   Lower Bound = %f ;\n', lb)
+    fprintf('    ub = %f ;\n', ub)
+    fprintf('    lb = %f ;\n', lb)
 end
