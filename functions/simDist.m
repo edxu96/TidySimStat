@@ -8,5 +8,6 @@ function [vecXx] = simDist(nUu, seed, funcSimDist, vecPara)
         vecXx(i) = funcSimDist(vecUu(i), vecPara);
     end
     fprintf('mean(vecXx) = %f.\n', mean(vecXx))
+    fprintf('median(vecXx) = %f.\n', median(vecXx))
     fprintf('var(vecXx) = %f.\n', var(vecXx))
 end

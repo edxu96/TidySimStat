@@ -4,18 +4,23 @@
 % ######################################################################################################################
 
 
-function [matCount, matProbAnalysis] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, whiMethod)
+function [matCount, matProbAnalysis, cass] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, whiMethod)
+    fprintf('nSample = %d ; \n', nSample)
+    %
     vecAa = [aCap_1, aCap_2];
     if whiMethod == 1
         funcGetCandidate = @loopRandWalk2dim;
         funcAcceptCandidate = @acceptCandidate;
     elseif whiMethod == 2
-        funcGetCandidate = @(cass, vecPre) sampleGibbs(vecPre, m, vecAa);
-        funcAcceptCandidate = @(xPre, y, vecAa) {y, 1};
+        funcGetCandidate = @(cass, vecPre) sampleGibbs(vecPre, m, vecAa);  % `cass` will not be used.
+        funcAcceptCandidate = @(xPre, y, vecAa) {y, 1};  % `xPre` and `vecAa` will not be used.
+    elseif whiMethod == 3
+        funcGetCandidate = @getCandidateCoWise;
+        funcAcceptCandidate = @acceptCandidate;
     end
     cass = getSampleSpace2dim(m, nRow);
     sState2 = simMarkovChain(cass, funcGetCandidate, funcAcceptCandidate, nSample, vecAa);
-    save([pwd '/outputs/6/sState2_3.mat'], 'sState2');
+    save([pwd '/outputs/6/sState2_4.mat'], 'sState2');
     % Plot the Analytical Values -------------------------------------------------------------------------------------------
     matProbAnalysis = zeros(m + 1);
     for i = 0:m
@@ -37,20 +42,20 @@ function [matCount, matProbAnalysis] = doExercise_6b(m, nRow, nSample, aCap_1, a
     if sum(vecXx12 <= 10) ~= nSample
         error('There are some state(s) out of the state space.');
     end
-    matCount = plotHistogram2dim(vecXx1, vecXx2, matProbAnalysis * nSample, m, '/6/5');
+    matCount = plotHistogram2dim(vecXx1, vecXx2, matProbAnalysis * nSample, m, '/6/2');
     % Perform Chi-Square Test
-    doTestChiSquare(matCount', matProbAnalysis * nSample, 0.05, m)
+    doTestChiSquare(matCount, matProbAnalysis * nSample, 0.05, m)
 end
 
 
 function [cell] = acceptCandidate(xPre, y, vecAa)
     aCap_1 = vecAa(1);
     aCap_2 = vecAa(2);
-    if calCount2(y(1), y(2), aCap_1, aCap_2) >= calCount2(xPre(1), xPre(2), aCap_1, aCap_2)
+    if calCountQueue2dim(y(1), y(2), aCap_1, aCap_2) >= calCountQueue2dim(xPre(1), xPre(2), aCap_1, aCap_2)
         x = y;
         accept = 1;
     else
-        if rand() < (calCount2(y(1), y(2), aCap_1, aCap_2) / calCount2(xPre(1), xPre(2), aCap_1, aCap_2))
+        if rand() < (calCountQueue2dim(y(1), y(2), aCap_1, aCap_2) / calCountQueue2dim(xPre(1), xPre(2), aCap_1, aCap_2))
             x = y;
             accept = 1;
         else
@@ -61,6 +66,18 @@ function [cell] = acceptCandidate(xPre, y, vecAa)
     cell = {x, accept};
 end
 
+
+function [vecNow] = getCandidateCoWise(cass, vecPre)
+    vecNow = zeros(2, 1);
+    i = randi(2, 1);
+    if i == 1
+        j = 2;
+    else
+        j = 1;
+    end
+    vecNow(j) = vecPre(j);
+    vecNow(i) = loopRandWalk(vecPre(i), 10 - vecNow(j), 0);
+end
 
 function [vecCandidate] = sampleGibbs(vecPre, m, vecAa)
     vecCandidate = zeros(2, 1);

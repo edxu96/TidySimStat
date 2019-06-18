@@ -21,10 +21,10 @@ function doExercise_8(beta, k, nSet, nObs, seedObs)
     clear indexBootstrap
     fprintf('#### 4, Analyze the Result #####################################################\n')
     vecMedian = median(matBootstrap');
-    vecExpect = mean(matBootstrap');
+    vecMean = mean(matBootstrap');
     vecVar = var(matBootstrap');
+    fprintf('mean(vecMean) = %f, var(vecMean) = %f.\n', mean(vecMean), var(vecMean))
     fprintf('mean(vecMedian) = %f, var(vecMedian) = %f.\n', mean(vecMedian), var(vecMedian))
-    fprintf('mean(vecExpect) = %f, var(vecExpect) = %f.\n', mean(vecExpect), var(vecExpect))
     fprintf('mean(vecVar) = %f, var(vecVar) = %f.\n', mean(vecVar), var(vecVar))
     expectCal = beta * k / (k - 1);
     varCal = beta^2 * k / (k - 1)^2 / (k - 2);

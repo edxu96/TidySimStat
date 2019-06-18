@@ -5,7 +5,7 @@
 
 
 function [x] = loopRandWalk(x, nMax, nMin)
-    x = x + randWalk();
+    x = x + randWalkWith0();
     if x > nMax
         x = nMin;
     elseif x < nMin
@@ -19,4 +19,9 @@ function [delta] = randWalk()
     if delta == 2
         delta = -1;
     end
+end
+
+
+function [delta] = randWalkWith0()
+    delta = randi(3, 1) - 2;
 end
