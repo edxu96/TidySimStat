@@ -5,6 +5,14 @@
 
 
 function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, coefDecay, seedInitial, coefStretch)
+    %
+    % vecTemp = zeros(nSample, 1);
+    % for i = 1:nSample
+    %     vecTemp(i) = calTemp(i, tempMax, coefDecay, coefStretch) * (5000 / tempMax);
+    % end
+    % plot(1:nSample, vecTemp);
+    % hold on
+    %
     cellArraySSpace = getCellArraySampleSpaceAnnealing(m, startPosition);
     % Generate a Permutation Randomly
     vecXx = zeros(m + 1, 1);
@@ -18,8 +26,20 @@ function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, co
     sState(1).x = vecXx;
     sState(1).y = vecXx;
     sState(1).z = cellArraySSpace{randi(length(cellArraySSpace))};
-    sState(1).temp = calTemp(1, tempMax, coefDecay);
+    sState(1).temp = calTemp(1, tempMax, coefDecay, coefStretch);
     sState(1).obj = calEnergy(sState(1).x, matCost);
+    x = 1;
+    y = sState(1).obj;
+    %
+    figure
+    fig = plot(x, y);
+    linkdata on
+    xlim([1 nSample])
+    ylim([0 5000])
+    xlabel('Iteration')
+    ylabel('Approximation for \pi')
+    fig.XDataSource = 'x';
+    fig.YDataSource = 'y';
     % Start Anealing
     for n = 2:nSample
         sState(n).z = loopRandWalk2dim(cellArraySSpace, sState(n - 1).z);
@@ -27,10 +47,15 @@ function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, co
         sState(n).y(sState(n).z(1)) = sState(n - 1).y(sState(n).z(2));
         sState(n).y(sState(n).z(2)) = sState(n - 1).y(sState(n).z(1));
         % Accept the candidate state or not.
-        sState(n).temp = calTemp(n, tempMax, coefDecay);
+        sState(n).temp = calTemp(n, tempMax, coefDecay, coefStretch);
         [sState(n).x, sState(n).accept] = acceptCandidate(sState(n - 1).x, sState(n).y, sState(n).temp, matCost);
         sState(n).obj = calEnergy(sState(n).x, matCost);
+        x = n;
+        y = sState(n).obj;
+        refreshdata
+        % plot(x, y);
     end
+    % hold off
 end
 
 
@@ -73,6 +98,6 @@ function [count] = getCountAnnealing(vector, temp, matCost)
 end
 
 
-function [temp] = calTemp(k, tempMax, coefDecay)
+function [temp] = calTemp(k, tempMax, coefDecay, coefStretch)
     temp = tempMax / (1 + coefStretch * k)^coefDecay;
 end

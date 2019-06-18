@@ -4,19 +4,14 @@
 % ######################################################################################################################
 
 
-function doExercise_6a()
-    m = 10;
-    nSample = 20000;
-    lambda = 8;
-    mu = 1;
-    aCap = lambda / mu;
+function doExercise_6a(m, nSample, aCap)
     % --------------------------------------------------------------------------------------
-    cellArraySSpace = getCellArraySampleSpace([0:1:m]);
-    vecPara = [aCap];
-    funcGetCandidate = @(cass, xPre) loopRandWalk(xPre, m, 0);
-    funcAcceptCandidate = @acceptHastingsMetropolis;
-    [vecState, sState] = simMarkovChain(cellArraySSpace, funcGetCandidate, funcAcceptCandidate, nSample, vecPara)
-    % [vecState, sState] = simRandWalkHastingsMetropolis(m, nSample, aCap);
+    cellSampleSpace = getSampleSpace(0:1:m);
+    funcGetCandidate = @(css, xPre) loopRandWalk(xPre, css{end}, css{1});
+    vecPara = aCap;
+    funcAcceptCandidate = @accept;
+    sState = simMarkovChain(cellSampleSpace, funcGetCandidate, funcAcceptCandidate, nSample, vecPara);
+    vecState = [sState.x];
     save([pwd '/outputs/vecState_2.mat'], 'vecState');
     % Calculate the Analytical Values ----------------------------------------------------------------------------------
     vecResult = zeros(m + 1, 1);
@@ -26,20 +21,13 @@ function doExercise_6a()
     vecResult = vecResult / sum(vecResult);
     % Plot the Histogram of the Result ---------------------------------------------------------------------------------
     strTitle = 'Simulation and Analysis Result of Queueing System with 10 Servers and A being 8';
-    vecProbClass = plotHist(vecState(1000:end), [0:1:m], vecResult, m + 1, strTitle, '1.png');
+    vecProbClass = plotHist(vecState(1000:end), 0:1:m, vecResult, m + 1, strTitle, '1.png');
+    % [prob] = testChiSquare(vecProbClass * nSample, );
 end
 
 
-function [cellArraySSpace] = getCellArraySampleSpace(vecSampleSpace)
-    for i = 1:length(vecSampleSpace)
-        cellSampleSpace{end + 1} = {vecSampleSpace(i)};
-    end
-    cellArraySSpace = cellSampleSpace;  % 1 dimension
-end
-
-
-function [x] = acceptHastingsMetropolis(xPre, y, vecPara)
-    aCap = vecPara;
+function [x] = accept(xPre, y, vecPara)
+    aCap = vecPara(1);
     if calCount(y, aCap) >= calCount(xPre, aCap)
         x = sState(n).y;
     else
@@ -47,5 +35,6 @@ function [x] = acceptHastingsMetropolis(xPre, y, vecPara)
             x = y;
         else
             x = xPred;
+        end
     end
 end

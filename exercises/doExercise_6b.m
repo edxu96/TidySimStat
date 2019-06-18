@@ -4,49 +4,46 @@
 % ######################################################################################################################
 
 
-function doExercise_6b(whiMethod)
-    m = 10;
-    nRow = 6;
-    nSample = 100000;
-    aCap_1 = 4;
-    aCap_2 = 4;
+function [matCount, matProb] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, whiMethod)
+    vecAa = [aCap_1, aCap_2];
     if whiMethod == 1
-        vecPara = [aCap_1, aCap_2];
-        funcGetCandidate = @loopRandWalk2dim(cellArraySSpace, xPre);
-        funcAcceptCandidate = @acceptCandidate(xPre, y, vecPara);
+        funcGetCandidate = @loopRandWalk2dim;
+        funcAcceptCandidate = @acceptCandidate;
     elseif whiMethod == 2
-        vecPara = [aCap_1, aCap_2]
-        funcGetCandidate = @sampleGibbs(sState(n - 1).x, m, aCap_1, aCap_2);
-        funcAcceptCandidate = @(xPre, y, vecPara) y;
+        funcGetCandidate = @(cass, vecPre) sampleGibbs(vecPre, m, vecAa);
+        funcAcceptCandidate = @(xPre, y, vecAa) {y, 1};
     end
-    cellArraySSpace = getCellArraySampleSpace2Dim(m, nRow);
-    sState2 = simMarkovChain(cellArraySSpace, funcGetCandidate, funcAcceptCandidate, nSample, vecPara)
-    save([pwd '/outputs/sState2_2.mat'], 'sState2');
+    cass = getSampleSpace2dim(m, nRow);
+    sState2 = simMarkovChain(cass, funcGetCandidate, funcAcceptCandidate, nSample, vecAa);
+    save([pwd '/outputs/6/sState2_3.mat'], 'sState2');
     % Plot the Analytical Values -------------------------------------------------------------------------------------------
     matProb = zeros(m + 1);
     for i = 0:m
         for j = 0:(m - i)
-            matProb(i + 1, j + 1) = calCount2(i, j, aCap_1, aCap_2);
+            matProb(i + 1, j + 1) = calCountQueue2dim(i, j, aCap_1, aCap_2);
         end
     end
     matProb = matProb / sum(sum(matProb));
-    plotStem3([0:m], [0:m], matProb, '3', m);
+    % plotStem3(0:m, 0:m, matProb, '/6/3');
     % Plot 3-D Histogram of the Result -------------------------------------------------------------------------------------
-    vecX1 = zeros(nSample, 1);
-    vecX2 = zeros(nSample, 1);
-    vecX12 = zeros(nSample, 1);
+    vecXx1 = zeros(nSample, 1);
+    vecXx2 = zeros(nSample, 1);
+    vecXx12 = zeros(nSample, 1);
     for i = 1:nSample
-        vecX1(i) = sState2(i).x(1);
-        vecX2(i) = sState2(i).x(2);
-        vecX12(i) = sum(sState2(i).x);
+        vecXx1(i) = sState2(i).x(1);
+        vecXx2(i) = sState2(i).x(2);
+        vecXx12(i) = sum(sState2(i).x);
     end
-    plotHist2(vecX1, vecX2, matProb * nSample, m, '4', whiMethod);
+    if sum(vecXx12 <= 10) ~= nSample
+        error('There are some state(s) out of the state space.');
+    end
+    matCount = plotHistogram2dim(vecXx1, vecXx2, matProb * nSample, m, '/6/5');
 end
 
 
-function [x, accept] = acceptCandidate(xPre, y, vecPara)
-    aCap_1 = vecPara(1);
-    aCap_2 = vecPara(2);
+function [cell] = acceptCandidate(xPre, y, vecAa)
+    aCap_1 = vecAa(1);
+    aCap_2 = vecAa(2);
     if calCount2(y(1), y(2), aCap_1, aCap_2) >= calCount2(xPre(1), xPre(2), aCap_1, aCap_2)
         x = y;
         accept = 1;
@@ -59,12 +56,11 @@ function [x, accept] = acceptCandidate(xPre, y, vecPara)
             accept = 0;
         end
     end
+    cell = {x, accept};
 end
 
 
-function [vecCandidate] = sampleGibbs(vecPre, m, vecPara)
-    aCap_1 = vecPara(1);
-    aCap_2 = vecPara(2);
+function [vecCandidate] = sampleGibbs(vecPre, m, vecAa)
     vecCandidate = zeros(2, 1);
     % 1,  Draw i-coordinate to change
     i = randi(2);
@@ -73,15 +69,15 @@ function [vecCandidate] = sampleGibbs(vecPre, m, vecPara)
     % 2,  Define new random variable
     denominator = 0;
     for k = 0:1:(m - vecPre(j))
-        denominator = denominator + calCount(k, aCap_1);
+        denominator = denominator + calCountQueue(k, vecAa(j));
     end
     % 3,  Draw new value for j-coordinate from the new random variable
     draw = rand();
     k = 0;
-    probCumu = calCount(0, aCap_1) / denominator;
+    probCumu = calCountQueue(0, vecAa(j)) / denominator;
     while ~(draw < probCumu)
         k = k + 1;
-        probCumu = probCumu + calCount(k, aCap_1) / denominator;
+        probCumu = probCumu + calCountQueue(k, vecAa(j)) / denominator;
     end
     if (k + vecCandidate(j)) > m
         error('i + j > m');
@@ -102,14 +98,14 @@ function [j] = getOtherOne(i)
 end
 
 
-function [cellArraySSpace] = getCellArraySampleSpace2dim(m, nRow)
-    % nRow = 6
-    vecData1 = [0:1:m];
-    vecData2 = [0:1:m];
+function [cass] = getSampleSpace2dim(m, nRow)
+% cass: cellArraySampleSpace
+% nRow = 6
+    vecData1 = 0:1:m;
+    vecData2 = 0:1:m;
     n1 = length(vecData1);
     n2 = length(vecData2);
     funcLogic = @(data1, data2) ((0 <= data1 + data2) & (data1 + data2 <= m));  % (0 <= i + j) & (i + j <= m)
     cellSampleSpace = getCellSampleSpace2dim(vecData1, vecData2, n1, n2, funcLogic);
-    cellSampleSpace = getSampleSpace(m);
-    [cellArraySSpace] = arrangeSampleSpace2dim(cellSampleSpace, nRow);
+    cass = getCellArraySampleSpace(cellSampleSpace, nRow);
 end

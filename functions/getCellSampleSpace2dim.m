@@ -1,6 +1,6 @@
 
 
-function [cellSampleSpace] = getSampleSpace2dim(vecData1, vecData2, n1, n2, funcLogic)
+function [cellSampleSpace] = getCellSampleSpace2dim(vecData1, vecData2, n1, n2, funcLogic)
     cellSampleSpaceRaw = cell(n1 * n2, 1);
     k = 1;
     for i = 1:n1
