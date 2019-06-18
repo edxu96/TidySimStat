@@ -4,36 +4,44 @@
 % ######################################################################################################################
 
 
-function doExercise_5()
-    % whiFunc = 'exp';
-    % whiFunc = 'antithetic';
-    % whiFunc = 'control';
-    whiFunc = 'stratified';
-    nSample = 10000;
-    fprintf('#### Begin #####################################################################');  % ####################
-    fprintf('Analytical Result: %f.\n', exp(1) - 1);
+function doExercise_5(nSample)
+    fprintf('--------------------------------------------------------------------------------\n');
+    fprintf('Analytical Result: \n');
+    fprintf('   value = %f ; \n', exp(1) - 1)
+    for i = 1:4
+        doExercise(i, nSample)
+    end
+end
+
+
+function doExercise(whiFunc, nSample)
+    fprintf('--------------------------------------------------------------------------------\n');
+    fprintf('Simulation Result: \n')
+    fprintf('   nSample = %d ; \n', nSample)
     vecU = rand(nSample, 1);
     tic
     [funcSim, vecU] = getFunc(whiFunc, vecU);
     vecResult = sampleFuncSim(nSample, funcSim, vecU);
-    fprintf('mean = %f.\n', mean(vecResult));
-    fprintf('var = %f.\n', var(vecResult));
+    fprintf('   mean(vecResult) = %f ; \n', mean(vecResult))
+    fprintf('   var(vecResult) = %f ; \n', var(vecResult))
+    calInterConf(vecResult, 0.05);
     toc
-    fprintf('#### End #######################################################################');  % ####################
 end
 
 
 function [funcSim, vecU] = getFunc(whiFunc, vecU)
 % To get the function
-    fprintf('Method: %s.\n', whiFunc);
-    if whiFunc == 'exp'
+    if whiFunc == 1
         funcSim = @exp;
-    elseif whiFunc == 'antithetic'
+        strWhiFunc = 'crude exp';
+    elseif whiFunc == 2
         funcSim = @(u) (exp(u) + exp(1-u)) / 2;
-    elseif whiFunc == 'control'
+        strWhiFunc = 'antithetic';
+    elseif whiFunc == 3
         c = - (mean(vecU .* exp(vecU)) - mean(vecU) * mean(exp(vecU))) / var(vecU);
-        funcSim = @(u) exp(u) + c * (u - mean(vecU));
-    elseif whiFunc == 'stratified'
+        funcSim = @(u) exp(u) + c * (u - 0.5);  % mean(vecU)
+        strWhiFunc = 'control variate';
+    elseif whiFunc == 4
         matU = rand(length(vecU), 10);
         for i = 1:length(matU(:, 1))
             w_i = 0;
@@ -43,7 +51,9 @@ function [funcSim, vecU] = getFunc(whiFunc, vecU)
             vecU(i) = w_i / 10;
         end
         funcSim = @(w) w;
+        strWhiFunc =  'stratified';
     end
+    fprintf('   method is %s ; \n', strWhiFunc);
 end
 
 
@@ -57,7 +67,6 @@ end
 
 
 function [vecResult] = sampleStratify(nSample, funcSim, vecU)
-% To stratified sample using the function
     vecResult = zeros(nSample, 1);
     for i = 1:nSample
         vecResult(i) = funcSim(vecU(i), i, nSample);
