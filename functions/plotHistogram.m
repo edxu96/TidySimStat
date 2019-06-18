@@ -4,19 +4,18 @@
 % ######################################################################################################################
 
 
-function [ vecProbClass ] = plotHistogram(vecResult, vecXstd, vecYstd, nBin, strTitle, strFigName)
+function [vecProb] = plotHistogram(vecResult, vecXxStd, vecYstd, nBin, strTitle, strFigName)
     % Plot the histogram of RNG result and return the vector of values
-    figHist = figure("Visible", "off");
-    figHist = histogram(vecResult, 'NumBins', nBin, 'Normalization', 'probability', "Visible", "off");
-    vecProbClass = figHist.Values;
-    vecProbClassNorm = vecProbClass / figHist.BinWidth;
-    vecX = figHist.BinEdges(1:figHist.NumBins);
-    vecX = vecX + figHist.BinWidth / 1;
-    figHist = plot(vecX, vecProbClassNorm, 'b', 'LineWidth', 2);
+    fig = figure('Visible', 'off');
+    figHist = histogram(vecResult, 'NumBins', nBin, 'BinEdges', -0.5:1:10.5, 'Normalization', 'probability', 'Visible', 'off');
+    vecProb = figHist.Values;
+    vecProbNorm = vecProb / figHist.BinWidth;
+    plot(vecXxStd, vecProbNorm, 'b', 'LineWidth', 2);
     hold on
-    figHist = plot(vecXstd, vecYstd, 'r', 'LineWidth', 2);
+    plot(vecXxStd, vecYstd, 'r', 'LineWidth', 2);
     hold off
     title(strTitle);
     legend('Simulation', 'Analysis', 'Location', 'northwest');
-    saveas(figHist, [pwd '/images/' strFigName]);
+    saveas(fig, [pwd '/images/' strFigName '.png']);
+    saveas(fig, [pwd '/images/' strFigName '.fig']);
 end

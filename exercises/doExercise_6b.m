@@ -4,7 +4,7 @@
 % ######################################################################################################################
 
 
-function [matCount, matProb] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, whiMethod)
+function [matCount, matProbAnalysis] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, whiMethod)
     vecAa = [aCap_1, aCap_2];
     if whiMethod == 1
         funcGetCandidate = @loopRandWalk2dim;
@@ -17,14 +17,14 @@ function [matCount, matProb] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, w
     sState2 = simMarkovChain(cass, funcGetCandidate, funcAcceptCandidate, nSample, vecAa);
     save([pwd '/outputs/6/sState2_3.mat'], 'sState2');
     % Plot the Analytical Values -------------------------------------------------------------------------------------------
-    matProb = zeros(m + 1);
+    matProbAnalysis = zeros(m + 1);
     for i = 0:m
         for j = 0:(m - i)
-            matProb(i + 1, j + 1) = calCountQueue2dim(i, j, aCap_1, aCap_2);
+            matProbAnalysis(i + 1, j + 1) = calCountQueue2dim(i, j, aCap_1, aCap_2);
         end
     end
-    matProb = matProb / sum(sum(matProb));
-    % plotStem3(0:m, 0:m, matProb, '/6/3');
+    matProbAnalysis = matProbAnalysis / sum(sum(matProbAnalysis));
+    % plotStem3(0:m, 0:m, matProbAnalysis, '/6/3');
     % Plot 3-D Histogram of the Result -------------------------------------------------------------------------------------
     vecXx1 = zeros(nSample, 1);
     vecXx2 = zeros(nSample, 1);
@@ -37,7 +37,9 @@ function [matCount, matProb] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, w
     if sum(vecXx12 <= 10) ~= nSample
         error('There are some state(s) out of the state space.');
     end
-    matCount = plotHistogram2dim(vecXx1, vecXx2, matProb * nSample, m, '/6/5');
+    matCount = plotHistogram2dim(vecXx1, vecXx2, matProbAnalysis * nSample, m, '/6/5');
+    % Perform Chi-Square Test
+    doTestChiSquare(matCount', matProbAnalysis * nSample, 0.05, m)
 end
 
 
@@ -108,4 +110,17 @@ function [cass] = getSampleSpace2dim(m, nRow)
     funcLogic = @(data1, data2) ((0 <= data1 + data2) & (data1 + data2 <= m));  % (0 <= i + j) & (i + j <= m)
     cellSampleSpace = getCellSampleSpace2dim(vecData1, vecData2, n1, n2, funcLogic);
     cass = getCellArraySampleSpace(cellSampleSpace, nRow);
+end
+
+
+function doTestChiSquare(matObs, matExp, alpha, m)
+    vecObs = zeros((m + 1)^2, 1);
+    vecExp = zeros((m + 1)^2, 1);
+    for i = 1:(m + 1)^2
+        vecObs(i) = matObs(i);
+        vecExp(i) = matExp(i);
+    end
+    vecObs = vecObs(vecObs ~= 0);
+    vecExp = vecExp(vecExp ~= 0);
+    testChiSquare(vecObs, vecExp, alpha);
 end

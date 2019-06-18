@@ -21,30 +21,21 @@ addpath('~/Documents/GitHub/StochasticSim/data')  % ############################
 % tabYy = doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda);
 % ######################################################################################################################
 % Exercise 6a:
-% m = 10;
-% nSample = 20000;
-% lambda = 8;
-% mu = 1;
-% aCap = lambda / mu;
-% doExercise_6a(m, nSample, aCap);
+m = 10;
+nSample = 1000000;
+lambda = 8;
+mu = 1;
+aCap = lambda / mu;
+doExercise_6a(m, nSample, aCap);
 % ######################################################################################################################
 % Exercise 6b:
-m = 10;
-nRow = 6;
-nSample = 100000;
-aCap_1 = 4;
-aCap_2 = 4;
-whiMethod = 2;
-[matCount, matProb] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, whiMethod);
-vecNumObsClass = zeros((m + 1)^2, 1);
-vecExpect = zeros((m + 1)^2, 1);
-for i = 1:(m + 1)^2
-    vecNumObsClass(i) = matCount(i);
-    vecExpect(i) = matProb(i) * nSample;
-end
-vecNumObsClass = vecNumObsClass(vecNumObsClass ~= 0);
-vecExpect = vecExpect(vecExpect ~= 0);
-[prob] = testChiSquare(vecNumObsClass, vecExpect);
+% m = 10;
+% nRow = 6;
+% nSample = 1000000;
+% aCap_1 = 4;
+% aCap_2 = 4;
+% whiMethod = 2;
+% [matCount, matProb] = doExercise_6b(m, nRow, nSample, aCap_1, aCap_2, whiMethod);
 % ######################################################################################################################
 % Exercise 7: Anealing Simulation to Solve TSM Problem Mat-Heuristically
 % nSample = 10000;
