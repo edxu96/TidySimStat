@@ -1,6 +1,6 @@
-% function file for exercise 6
-% Author: Edward J. Xu, Sanaz
-% Date: 190613
+% function file
+% Author: Edward J. Xu
+% Date: 190619
 % ######################################################################################################################
 
 

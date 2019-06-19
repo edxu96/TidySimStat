@@ -1,3 +1,9 @@
+% function file
+% Author: Edward J. Xu
+% Date: 190619
+% ######################################################################################################################
+
+
 function [z] = rndControlVar(vecPara)
     lambda = vecPara(1);
     c = vecPara(2);

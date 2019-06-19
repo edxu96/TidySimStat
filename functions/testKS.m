@@ -1,3 +1,9 @@
+% function file
+% Author: Edward J. Xu
+% Date: 190619
+% ######################################################################################################################
+
+
 function testKS(vecXx, vecTest, whiTail)
     fprintf('Perform Sample-StdSample Kolmogorov-Smirnov Test: \n')
     if whiTail

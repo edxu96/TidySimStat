@@ -1,3 +1,9 @@
+% function file
+% Author: Edward J. Xu
+% Date: 190619
+% ######################################################################################################################
+
+
 function [ fig ] = plotScatter( vecX, matY, strFigName, strTitle )
 % Plot the line chart and save in the images folder
 %

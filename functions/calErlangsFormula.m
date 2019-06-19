@@ -1,7 +1,9 @@
-% function file for exercise 4
-% Author: Edward J. Xu, Sanaz
-% Date: 190612
+% function file
+% Author: Edward J. Xu
+% Date: 190619
 % ######################################################################################################################
+
+
 function [ bCap ] = calErlangsFormula(lambda, mu, n)
     aCap = lambda * mu;
     sum = 0;

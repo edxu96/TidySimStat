@@ -1,3 +1,9 @@
+% function file
+% Author: Edward J. Xu
+% Date: 190619
+% ######################################################################################################################
+
+
 function [ fig ] = plotLine(vecXx, matYy, strFigName, strTitle)
 % Plot the line chart and save in the images folder
 %

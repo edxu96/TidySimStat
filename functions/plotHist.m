@@ -1,3 +1,7 @@
+% function file
+% Author: Edward J. Xu
+% Date: 190619
+% ######################################################################################################################
 
 
 function [vecProb, vecXx] = plotHist(vecResult, vecXxStd, vecYyStd, numClass, strFigName, strFigTitle, strFigLegend_1)

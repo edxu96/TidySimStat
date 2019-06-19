@@ -1,6 +1,6 @@
 % setup file
 % Author: Edward J. Xu
-% Date: 190615
+% Date: 190619
 % ######################################################################################################################
 % cd ~/Documents/GitHub/StochasticSim
 % pwd
@@ -8,7 +8,7 @@ addpath('~/Documents/GitHub/StochasticSim/functions')  % #######################
 addpath('~/Documents/GitHub/StochasticSim/exercises')  % ###############################################################
 addpath('~/Documents/GitHub/StochasticSim/data')  % ###############################################################
 % exercise3();
-exercise4();
+% exercise4();
 % exercise5();
 % exercise6a();
 % exercise6b();

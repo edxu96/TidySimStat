@@ -1,7 +1,9 @@
-% function file for exercise 4
-% Author: Edward J. Xu, Sanaz
-% Date: 190612
+% function file
+% Author: Edward J. Xu
+% Date: 190619
 % ######################################################################################################################
+
+
 function [sState] = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, vecParaArrive, ...
     vecParaServe)
     % 1,  Initiate State Variables

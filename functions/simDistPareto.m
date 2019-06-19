@@ -1,3 +1,8 @@
+% function file
+% Author: Edward J. Xu
+% Date: 190619
+% ######################################################################################################################
+
 
 function [x] = simDistPareto(u, vecPara)
 % vecPara = [beta, k];

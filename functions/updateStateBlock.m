@@ -1,7 +1,9 @@
-% function file for exercise 4
-% Author: Edward J. Xu, Sanaz
-% Date: 190612
+% function file
+% Author: Edward J. Xu
+% Date: 190619
 % ######################################################################################################################
+
+
 function [nCustomerServe, nCustomerBlock, vecTimeDepart] = updateStateBlock(clockSim, nServer, nCustomerServe, ...
     nCustomerBlock, vecTimeDepart, timeServe)
     nCustomerServe = nCustomerServe + 1;

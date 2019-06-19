@@ -1,10 +1,11 @@
-% function file for exercise 7
+% function file
 % Author: Edward J. Xu
-% Date: 190614
+% Date: 190619
 % ######################################################################################################################
 
 
-function [vecProbNorm, vecXx] = plotHistogram(vecResult, vecXxStd, vecYyStd, vecBinEdge, strFigTitle, strFigName, strFigLegend)
+function [vecProbNorm, vecXx] = plotHistogram(vecResult, vecXxStd, vecYyStd, vecBinEdge, strFigTitle, strFigName, ...
+    strFigLegend)
     % Plot the histogram of RNG result and return the vector of values
     fig = figure('Visible', 'off');
     figHist = histogram(vecResult, 'BinEdges', vecBinEdge, 'Normalization', 'probability', 'Visible', 'off');

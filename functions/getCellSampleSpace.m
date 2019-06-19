@@ -1,3 +1,7 @@
+% function file
+% Author: Edward J. Xu
+% Date: 190619
+% ######################################################################################################################
 
 
 function [cellSampleSpace] = getCellSampleSpace(vecSampleSpace)

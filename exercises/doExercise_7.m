@@ -1,10 +1,11 @@
-% function file for exercise 7
+% function file
 % Author: Edward J. Xu
-% Date: 190617
+% Date: 190619
 % ######################################################################################################################
 
 
-function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial, coefStretch)
+function [vecResult, sState] = doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial, ...
+    coefStretch)
 % Simulated Annealing to Optimize the Path in Travelling Salesman Problem
 %
 % :param tempMax: maximum temperature during annealing

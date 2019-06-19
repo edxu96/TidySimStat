@@ -1,3 +1,7 @@
+% function file
+% Author: Edward J. Xu
+% Date: 190619
+% ######################################################################################################################
 
 
 function [cellSampleSpace] = getCellSampleSpace2dim(vecData1, vecData2, n1, n2, funcLogic)
