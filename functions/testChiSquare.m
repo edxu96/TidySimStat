@@ -23,7 +23,7 @@ function testChiSquare(vecObs, vecExp, alpha)
     fprintf('    chiQuareCritical = %f ;\n', chiQuareCritical)
     if chiSquare > chiQuareCritical
         fprintf('    Reject H0. \n')
-    else
+    elseif chiSquare < chiQuareCritical
         fprintf('    Accept H0. \n')
     end
 end
