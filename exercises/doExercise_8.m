@@ -9,17 +9,22 @@ function doExercise_8(beta, k, nSet, nObs, seedObs)
     fprintf('Set Parameters: \n')
     fprintf('    beta = %f ; \n', beta)
     fprintf('    k = %f ; \n', k)
-    fprintf('    nObs = %f ; \n', nObs)
+    fprintf('    nObs = %d ; \n', nObs)
     vecPara = [beta, k];
     % 2, Generate Observations
     funcSimDist = @simDistPareto;
     vecXx = simDist(nObs, seedObs, funcSimDist, vecPara, 'Pareto');
     % 3, Bootstrap Data Sets
     % sample from observations set with replacement
-    [matBootstrap] = bootstrap(vecXx, nSet);
+    [matBootstrap] = simBootstrap(vecXx, nSet);
     fprintf('--------------------------------------------------------------------------------\n');
     fprintf('Theoretically: \n')
     fprintf('    mean = %f ; \n', beta * k / (k - 1))
     fprintf('    median = %f ; \n', beta * 2^(1 / k))
-    fprintf('    var = %f ; \n', beta^2 * k / (k - 1)^2 / (k - 2))
+    variance = beta^2 * k / (k - 1)^2 / (k - 2);
+    if variance >= 0
+        fprintf('    variance = %f ; \n', variance)
+    else
+        fprintf('    We cannot get theoretical value for variance ; \n')
+    end
 end

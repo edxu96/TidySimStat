@@ -64,9 +64,9 @@ if vecWheDoExercise(8)  % Exercise 8: Bootstrap
     fprintf('\n--------------------------------------------------------------------------------\n');
     fprintf('Exercise 8: Bootstrap \n')
     beta = 1;
-    k = 2.05;
+    k = 1.05;
     nSet = 100;
-    nObs = 1000000;
+    nObs = 200;
     seedObs = 99;
     doExercise_8(beta, k, nSet, nObs, seedObs);
     fprintf('--------------------------------------------------------------------------------\n\n');
