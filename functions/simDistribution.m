@@ -1,11 +1,11 @@
 
 
-function [vecXx] = simDist(nUu, seed, funcSimDist, vecPara, strDist)
+function [vecXx] = simDistribution(cellUu, seed, funcSimDist, vecPara, strDist)
     rng(seed);
-    vecUu = rand(nUu, 1);
+    nUu = length(cellUu);
     vecXx = zeros(nUu, 1);
     for i = 1:nUu
-        vecXx(i) = funcSimDist(vecUu(i), vecPara);
+        vecXx(i) = funcSimDist(cellUu{i}, vecPara);
     end
     fprintf('--------------------------------------------------------------------------------\n');
     fprintf('Analysis of Simulated %s Distribution: \n', strDist)

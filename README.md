@@ -5,9 +5,9 @@ Stochastic Simulation using MATLAB
 ## 1,  What can it do?
 
 - [ ] Random Number Generation
-- [ ] Statistical Test
+- [x] Statistical Test
 - [ ] Discrete Random Variable Generation
-- [ ] Continuous Random Variable Generation
+- [x] Continuous Random Variable Generation
 - [x] Discrete Event Simulation
 - [x] Variance Reduction
 - [x] Markov Chain Monte Carlo Simulation
@@ -24,12 +24,13 @@ The algorithm and analysis is shared in [edxu96/RandomWalk2dim.m](https://gist.g
 
 The result from MCMC simulation using Gibbs Sampler and sample space processed by this algorithm is quite satisfying. The red points indicate the theoretical values, which are almost all the same as the simulation results.
 
-![Queue Simulation using MCMC Gibbs Sampler](/images/6/GibbsSampler_2.png)
+![Queue Simulation using MCMC Gibbs Sampler](/results/6/2.png)
 
 ## 3,  Problems to be Solved
 
-- [] Statistical Test: Chi-Square Test
-- [] Continuous Random Variables
+- [x] Statistical Test: Chi-Square Test
+- [ ] KS test
+- [ ] Continuous Random Variables
 
 ## 4,  Contributors
 
