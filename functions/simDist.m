@@ -12,5 +12,5 @@ function [vecXx] = simDist(nUu, seed, funcSimDist, vecPara, strDist)
     fprintf('    mean = %f ; \n', mean(vecXx))
     fprintf('    median = %f ; \n', median(vecXx))
     fprintf('    variance = %f ; \n', var(vecXx))
-    calInterConf(vecXx, 0.05, 1);
+    calInterConf(vecXx, 0.05);
 end

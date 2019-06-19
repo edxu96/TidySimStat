@@ -25,7 +25,7 @@ function analyzeMatBootstrap(matBootstrap)
     vecMean = mean(matBootstrap');
     vecMedian = median(matBootstrap');
     vecVar = var(matBootstrap');
-    analyzeVec(vecMean, 'vecMean from boostrap', 1);
-    analyzeVec(vecMedian, 'vecMedian from boostrap', 1);
-    analyzeVec(vecVar, 'vecVar from boostrap', 2);
+    analyzeVec(vecMean, 'vecMean from boostrap');
+    analyzeVec(vecMedian, 'vecMedian from boostrap');
+    analyzeVec(vecVar, 'vecVar from boostrap');
 end
