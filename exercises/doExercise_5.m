@@ -22,10 +22,8 @@ function doExercise(whiFunc, nSample)
     tic
     [funcSim, vecU] = getFunc(whiFunc, vecU);
     vecResult = sampleFuncSim(nSample, funcSim, vecU);
-    fprintf('    mean(vecResult) = %f ; \n', mean(vecResult))
-    fprintf('    var(vecResult) = %f ; \n', var(vecResult))
-    calInterConf(vecResult, 0.05);
     toc
+    analyzeVec(vecResult, 'Simulation Result');
 end
 
 
