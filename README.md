@@ -26,13 +26,7 @@ The result from MCMC simulation using Gibbs Sampler and sample space processed b
 
 ![Queue Simulation using MCMC Gibbs Sampler](/results/6/2.png)
 
-## 3,  Problems to be Solved
-
-- [x] Statistical Test: Chi-Square Test
-- [ ] KS test
-- [ ] Continuous Random Variables
-
-## 4,  Contributors
+## 3,  Contributors
 
 - Edward J. Xu (<edxu96@outlook.com>) (<https://edxu96.github.io>)
 - Sanaz

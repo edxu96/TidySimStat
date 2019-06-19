@@ -9,17 +9,19 @@ function doExercise_3(nSample)
     cellUu = num2cell(vecUu1);
     simContinuousDist(1, cellUu, 8, 'exponential', 0:0.01:1.2);
     % 3,  Simulate normal distribution ---------------------------------------------------------------------------------
-    cellUu = cell(nSample, 1);
-    for i = 1:nSample
-        cellUu{i} = [vecUu1(i) vecUu3(i)];
-    end
-    simContinuousDist(2, cellUu, 0, 'normal', -4:0.1:4);
-    % 4,  Simulate Pareto distribution ---------------------------------------------------------------------------------
-    cellUu = num2cell(vecUu1);
-    simContinuousDist(3, cellUu, [1, 2.05], 'Pareto2.05-1', 0:1:40);
-    simContinuousDist(3, cellUu, [1, 2.5], 'Pareto2.5-1', 0:1:40);
-    simContinuousDist(3, cellUu, [1, 3], 'Pareto3-1', 0:1:40);
-    simContinuousDist(3, cellUu, [1, 4], 'Pareto4-1', 0:1:40);
+    % cellUu = cell(nSample, 1);
+    % for i = 1:nSample
+    %     cellUu{i} = [vecUu1(i) vecUu3(i)];
+    % end
+    % simContinuousDist(2, cellUu, 0, 'normal', -4:0.1:4);
+    % % 4,  Simulate Pareto distribution ---------------------------------------------------------------------------------
+    % cellUu = num2cell(vecUu1);
+    % % k = vecPara(1)
+    % % beta = vecPara(2)
+    % simContinuousDist(3, cellUu, [1, 2.05], 'Pareto2.05-1', 0:1:40);
+    % simContinuousDist(3, cellUu, [1, 2.5], 'Pareto2.5-1', 0:1:40);
+    % simContinuousDist(3, cellUu, [1, 3], 'Pareto3-1', 0:1:40);
+    % simContinuousDist(3, cellUu, [1, 4], 'Pareto4-1', 0:1:40);
 end
 
 

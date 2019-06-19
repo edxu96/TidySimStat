@@ -13,7 +13,9 @@ function doExercise_8(beta, k, nSet, nObs, seedObs)
     vecPara = [beta, k];
     % 2, Generate Observations
     funcSimDist = @simDistPareto;
-    vecXx = simDist(nObs, seedObs, funcSimDist, vecPara, 'Pareto');
+    vecUu = rand(nObs, 1);
+    cellUu = num2cell(vecUu);
+    vecXx = simDistribution(cellUu, seedObs, funcSimDist, vecPara, 'Pareto');
     % 3, Bootstrap Data Sets
     % sample from observations set with replacement
     [matBootstrap] = simBootstrap(vecXx, nSet);

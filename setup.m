@@ -13,7 +13,7 @@ addpath('~/Documents/GitHub/StochasticSim/data')  % ############################
 % exercise6a();
 % exercise6b();
 % exercise7();
-% exercise8();
+exercise8();
 % ######################################################################################################################
 
 
@@ -88,7 +88,17 @@ function exercise8()
     k = 1.05;
     nSet = 100;
     nObs = 200;
-    seedObs = 99;
+    seedObs = 50;
     doExercise_8(beta, k, nSet, nObs, seedObs);
     fprintf('--------------------------------------------------------------------------------\n\n');
+end
+
+
+function note()
+    n = 10;
+    lambda = 1;
+    mu = analyzePareto(0.38, 1.05)
+    bCap = calErlangsFormula(lambda, mu, n)
+    mu = analyzePareto(4.10, 2.05)
+    bCap = calErlangsFormula(lambda, mu, n)
 end
