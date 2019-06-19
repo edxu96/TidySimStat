@@ -7,7 +7,12 @@
 addpath('~/Documents/GitHub/StochasticSim/functions')  % ###############################################################
 addpath('~/Documents/GitHub/StochasticSim/exercises')  % ###############################################################
 addpath('~/Documents/GitHub/StochasticSim/data')  % ###############################################################
-vecWheDoExercise = [0 0 0 0 0 0 0 1];
+vecWheDoExercise = [0 0 1 0 0 0 0 0];
+% ######################################################################################################################
+if vecWheDoExercise(3)
+    nSample = 10000
+    doExercise_3(nSample);
+end
 % ######################################################################################################################
 if vecWheDoExercise(4)  % Exercise 4: Discrete Event Simulation
     nServer = 10;

@@ -1,28 +1,27 @@
 
-function doExercise_3()
 
+function doExercise_3(nSample)
     % 2,  Simulate Distributions
-    rng(2); vecUu1 = rand(10000, 1);
-    rng(3); vecUu2 = rand(10000, 1);
+    rng(2); vecUu1 = rand(nSample, 1);
+    rng(3); vecUu2 = rand(nSample, 1);
     vecUu3 = cos(2 * pi * vecUu2);
-
-    simContinuousDist(1, 8, 'exponential')
-
-    simContinuousDist(2, 0, 'normal')
-
-    simContinuousDist(3, [2.05, 1], 'Pareto')
-
-    simContinuousDist(3, [2.5, 1], 'Pareto')
-
-    simContinuousDist(3, [3, 1], 'Pareto')
-
-    simContinuousDist(3, [4, 1], 'Pareto')
-
-
+    % Simulate exponential and normal distribution
+    cellUu = {vecUu1};
+    simContinuousDist(1, cellUu, 8, 'exponential');
+    simContinuousDist(2, cellUu, 0, 'normal');
+    % Simulate Pareto distribution
+    cellUu = cell(nSample, 1);
+    for i = 1:nSample
+        cellUu{i} = {vecUu1(i), vecUu3(i)};
+    end
+    simContinuousDist(3, cellUu, [2.05, 1], 'Pareto');
+    simContinuousDist(3, cellUu, [2.5, 1], 'Pareto');
+    simContinuousDist(3, cellUu, [3, 1], 'Pareto');
+    simContinuousDist(3, cellUu, [4, 1], 'Pareto');
 end
 
 
-function simContinuousDist(whi, vecPara, strDist)
+function simContinuousDist(whi, cellUu, vecPara, strDist)
     % 1,  Simulate distribution
     nSample = length(cellUu);
     funcSimDist = getFuncSimDist(whi);
