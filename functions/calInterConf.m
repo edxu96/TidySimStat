@@ -16,8 +16,8 @@ function [lbMean, ubMean] = calInterConf(vecResult, alpha)
     ubMean = expect + se * tinv(1 - alpha / 2, n - 1) / sqrt(n);
     fprintf('    ubMean = %f ;\n', ubMean)
     fprintf('    lbMean = %f ;\n', lbMean)
-    lbVar = sqrt((n - 1) * se^2 / chi2inv(alpha / 2, n - 1));
-    ubVar = sqrt((n - 1) * se^2 / chi2inv(1 - alpha / 2, n - 1));
+    lbVar = sqrt((n - 1) * se^2 / chi2inv(1 - alpha / 2, n - 1));
+    ubVar = sqrt((n - 1) * se^2 / chi2inv(alpha / 2, n - 1));
     fprintf('    ubVar = %f ;\n', ubVar)
     fprintf('    lbVar = %f ;\n', lbVar)
 end
