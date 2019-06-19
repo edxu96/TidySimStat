@@ -4,7 +4,7 @@
 % ######################################################################################################################
 
 
-function calInterConf(vecResult, alpha)
+function [lbMean, ubMean] = calInterConf(vecResult, alpha)
 % Calculate the Confidence Interval of vecResult
 % default: alpha = 0.05
 % ub: upper bound ; lb: lower bound ;

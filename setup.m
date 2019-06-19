@@ -8,12 +8,12 @@ addpath('~/Documents/GitHub/StochasticSim/functions')  % #######################
 addpath('~/Documents/GitHub/StochasticSim/exercises')  % ###############################################################
 addpath('~/Documents/GitHub/StochasticSim/data')  % ###############################################################
 % exercise3();
-% exercise4();
+exercise4();
 % exercise5();
 % exercise6a();
 % exercise6b();
 % exercise7();
-exercise8();
+% exercise8();
 % ######################################################################################################################
 
 
@@ -35,7 +35,10 @@ function exercise4()
     clockSimZero = 0;
     mu = 1;
     lambda = 8;
+    fprintf('\n--------------------------------------------------------------------------------\n')
+    fprintf('Exercise 4: Discrete Event Simulation of Blocking System \n')
     tabYy = doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda);
+    fprintf('--------------------------------------------------------------------------------\n\n');
 end
 
 

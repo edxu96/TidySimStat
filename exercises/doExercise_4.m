@@ -5,8 +5,12 @@
 
 
 function [tabYy] = doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda)
-    fprintf('################################################################################\n')
-    fprintf('#### Exercise 4: Discrete Event Simulation of Blocking System ##################\n')
+    fprintf('--------------------------------------------------------------------------------\n')
+    fprintf('Set Parameters: \n')
+    fprintf('    nEvent = %d ; \n', nEvent)
+    fprintf('    nServer = %d ; \n', nServer)
+    fprintf('    nStable = %d ; \n', nStable)
+    % Initialize the Variables -----------------------------------------------------------------------------------------
     vecWhiFuncArrive = [1 2 3 1 1 1];
     vecWhiFuncServe = [1 1 1 2 3 3];
     if length(vecWhiFuncArrive) ~= length(vecWhiFuncServe)
@@ -14,56 +18,63 @@ function [tabYy] = doExercise_4(nServer, nEvent, nSim, nStable, clockSimZero, mu
     else
         nExperiment = length(vecWhiFuncArrive);
     end
-    sTabYy(1:(nExperiment + 1)) = struct('fA', NaN, 'fS', NaN, 'mean', NaN, 'vari', NaN, 'bl', NaN, 'bu', NaN, ...
+    sTabYy(1:(nExperiment + 1)) = struct('fA', NaN, 'fS', NaN, 'expect', NaN, 'variance', NaN, 'lb', NaN, 'ub', NaN, ...
         't', NaN);
     sTabYy(nExperiment + 1).fA = 'exp';
     sTabYy(nExperiment + 1).fS = 'exp';
-    sTabYy(nExperiment + 1).mean = calErlangsFormula(8, 1, nServer);
-    % sTabZz(1:(nExperiment + 1)) = struct('mean', NaN, 'vari', NaN, 'bl', NaN, 'bu', NaN, 't', NaN);
+    sTabYy(nExperiment + 1).expect = calErlangsFormula(8, 1, nServer);
+    % sTabZz(1:(nExperiment + 1)) = struct('mean', NaN, 'variance', NaN, 'lb', NaN, 'ub', NaN, 't', NaN);
+    % Begin Simulation -------------------------------------------------------------------------------------------------
     for i = 1:nExperiment
+        fprintf('--------------------------------------------------------------------------------\n')
+        fprintf('Experiment %d : \n', i)
         [sTabYy(i)] = simBlockProblem(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda, ....
             vecWhiFuncArrive(i), vecWhiFuncServe(i));  % , sTabZz(i)
     end
-    % Display the table
+    % Display the table ------------------------------------------------------------------------------------------------
+    fprintf('--------------------------------------------------------------------------------\n')
+    fprintf('Simulation Result: \n')
     tabYy = struct2table(sTabYy);
     format shortEng
     disp(tabYy)
     format
     % disp(struct2table(sTabZz))
-    fprintf('################################################################################\n')
 end
 
 
 function [sTabYy] = simBlockProblem(nServer, nEvent, nSim, nStable, clockSimZero, mu, lambda, ...
     whiFuncArrive, whiFuncServe)  % , sTabZz
-    % 1,  Define Distribution Functions
+    % 1,  Define Distribution Functions --------------------------------------------------------------------------------
     [funcArrive, vecParaArrive, fA] = getFuncArrive(whiFuncArrive, mu);
     [funcServe, vecParaServe, fS] = getFuncServe(whiFuncServe, lambda);
-    % 2,  Multiple Simulation
-    [vecYy, vecProbResult, t] = simMultipleDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, ...
+    % 2,  Multiple Simulation ------------------------------------------------------------------------------------------
+    [vecInterEvent, vecProbResult, t] = simMultipleDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, ...
         funcServe, vecParaArrive, vecParaServe, nStable, nSim);
-    % 3,  Result from Simulation
-    sTabYy = analyzeVecResult(vecYy, var(vecYy));
+    % 3,  Result from Simulation ---------------------------------------------------------------------------------------
+    % analyzeVec(vecInterEvent, 'Average Inter-Event Time')
+    sTabYy.expect = mean(vecProbResult);
+    sTabYy.variance = var(vecProbResult);
+    [sTabYy.lb, sTabYy.ub] = analyzeVec(vecProbResult, 'Simulated Block Probability');
     sTabYy.t = t;
     sTabYy.fA = fA;
     sTabYy.fS = fS;
-    % 4,  Result from Simulation and Control Variate
-    expectYy = 1;
-    vecXx = vecProbResult;
-    vecZz = zeros(nSim, 1);
-    covXxYy = cov(vecXx, vecYy);
-    varXxYy = covXxYy(1, 2);
-    c = - varXxYy / var(vecYy);
-    for i = 1:nSim
-        vecZz(i) = vecXx(i) + c * (vecYy(i) - expectYy);
-    end
-    variZz = var(vecXx) - varXxYy^2 / var(vecYy);  % The calculation is a bit different. ???
-    sTabZz = analyzeVecResult(vecZz, variZz);
+    % 4,  Result from Simulation and Control Variate -------------------------------------------------------------------
+    % expectYy = 1;
+    % vecXx = vecProbResult;
+    % vecZz = zeros(nSim, 1);
+    % covXxYy = cov(vecXx, vecYy);
+    % varXxYy = covXxYy(1, 2);
+    % c = - varXxYy / var(vecYy);
+    % for i = 1:nSim
+    %     vecZz(i) = vecXx(i) + c * (vecYy(i) - expectYy);
+    % end
+    % variZz = var(vecXx) - varXxYy^2 / var(vecYy);  % The calculation is a bit different. ???
+    % sTabZz = analyzeVecResult(vecZz, variZz);
 end
 
 
-function [vecYy, vecProbResult, elapsedTime] = simMultipleDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, ...
-    vecParaArrive, vecParaServe, nStable, nSim)
+function [vecInterEvent, vecProbResult, elapsedTime] = simMultipleDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, ...
+    funcServe, vecParaArrive, vecParaServe, nStable, nSim)
     tic;
     vecProbResult = zeros(nSim, 1);
     vecYy = zeros(nSim, 1);
@@ -71,7 +82,7 @@ function [vecYy, vecProbResult, elapsedTime] = simMultipleDiscreteEvent(clockSim
         sState = simDiscreteEvent(clockSimZero, nServer, nEvent, funcArrive, funcServe, ...
             vecParaArrive, vecParaServe);
         vecProbResult(i) = (sState(nEvent).nCustomerBlock - sState(nStable).nCustomerBlock) / (nEvent - nStable);
-        vecYy(i) = mean([sState.interEvent]);
+        vecInterEvent(i) = mean([sState.interEvent]);
     end
     elapsedTime = toc;
 end
@@ -98,7 +109,7 @@ function [func, vecPara, strFunc] = getFuncArrive(whiFunc, mu)
         vecPara = mu;
         strFunc = 'cons';
     end
-    % fprintf('Function for Inter-Arrival Time: %s.\n', strFunc);
+    fprintf('    Function for Inter-Arrival Time: %s.\n', strFunc);
 end
 
 
@@ -130,7 +141,7 @@ function [func, vecPara, strFunc] = getFuncServe(whiFunc, lambda)
         vecPara = [8 * (1.05 - 1) / 1.05, 1.05];
         strFunc = 'Pareto';
     end
-    % fprintf('Function for Service Time: %s.\n', strFunc);
+    fprintf('    Function for Service Time: %s.\n', strFunc);
 end
 
 
@@ -141,15 +152,6 @@ function [x] = simDistParetoWithoutUu(vecPara)
     k = vecPara(2);
     xRaw = beta * (u^(- 1 / k) - 1);
     x = xRaw + beta;
-end
-
-
-function [s] = analyzeVecResult(vecResult, vari)
-    s.mean = mean(vecResult);
-    s.vari = vari;
-    [bl, bu] = calInteConf(vecResult);
-    s.bl = bl;
-    s.bu = bu;
 end
 
 
