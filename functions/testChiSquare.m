@@ -9,6 +9,7 @@ function testChiSquare(vecObs, vecExp, alpha)
 % Hypothesis 0: the simulated vecObs can represent vecExp from analytical result
 % Warning: If the simulation produces count, vecObs should be count instead of probability
     fprintf('Perform Chi-Square Test: \n')
+    % disp(vecObs - vecExp)
     fprintf('    alpha = %f ; \n', alpha)
     numClass = length(vecObs);
     vecResultTest = zeros(numClass, 1);
