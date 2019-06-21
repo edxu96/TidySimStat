@@ -11,5 +11,5 @@ function [vecXx] = simDistribution(cellUu, seed, funcSimDist, vecPara, strDist)
     for i = 1:nUu
         vecXx(i) = funcSimDist(cellUu{i}, vecPara);
     end
-    analyzeVec(vecXx, ['Simulated ' strDist ' Distribution'])
+    analyzeVec(vecXx, ['Simulated ' strDist ' Distribution']);
 end

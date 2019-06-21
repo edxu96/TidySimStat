@@ -7,7 +7,7 @@
 addpath('~/Documents/GitHub/StochasticSim/functions')  % ###############################################################
 addpath('~/Documents/GitHub/StochasticSim/exercises')  % ###############################################################
 addpath('~/Documents/GitHub/StochasticSim/data')  % ###############################################################
-% exercise3();
+exercise3();
 % exercise4();
 % exercise5();
 % exercise6a();
