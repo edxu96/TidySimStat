@@ -11,26 +11,25 @@ function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, co
     %     vecTemp(i) = calTemp(i, tempMax, coefDecay, coefStretch) * (5000 / tempMax);
     % end
     % plot(1:nSample, vecTemp);
-    % hold on
-    %
-    cellArraySSpace = getCellArraySampleSpaceAnnealing(m, startPosition);
-    % Generate a Permutation Randomly
+    %% Get the sample space
+    cass = getCellArraySampleSpaceAnnealing(m, startPosition);  % cass: cellArraySampleSpace
+    %% Generate a Permutation Randomly
     vecXx = zeros(m + 1, 1);
     vecXx(1) = startPosition;
     vecXx(m + 1) = startPosition;
     rng(seedInitial);
     vecPerm = randperm(m);
     vecXx(2:m) = vecPerm(vecPerm ~= startPosition);
-    % Initialize the struct
+    %% Initialize the struct
     sState(1:nSample) = struct('x', zeros(m + 1, 1), 'y', zeros(m + 1, 1), 'z', zeros(2, 1), 'temp', 0, 'obj', 0);
     sState(1).x = vecXx;
     sState(1).y = vecXx;
-    sState(1).z = cellArraySSpace{randi(length(cellArraySSpace))};
+    sState(1).z = cass{randi(length(cass))};
     sState(1).temp = calTemp(1, tempMax, coefDecay, coefStretch);
     sState(1).obj = calEnergy(sState(1).x, matCost);
     x = 1;
     y = sState(1).obj;
-    %
+    %% Lauch the live plot
     figure
     fig = plot(x, y);
     linkdata on
@@ -40,22 +39,22 @@ function [sState] = simAnnealing(startPosition, m, nSample, matCost, tempMax, co
     ylabel('Approximation for \pi')
     fig.XDataSource = 'x';
     fig.YDataSource = 'y';
-    % Start Anealing
+    %% Start Anealing
     for n = 2:nSample
-        sState(n).z = loopRandWalk2dim(cellArraySSpace, sState(n - 1).z);
+        sState(n).z = loopRandWalk2dim(cass, sState(n - 1).z);
         sState(n).y = sState(n - 1).y;
         sState(n).y(sState(n).z(1)) = sState(n - 1).y(sState(n).z(2));
         sState(n).y(sState(n).z(2)) = sState(n - 1).y(sState(n).z(1));
-        % Accept the candidate state or not.
+        %% Accept the candidate state or not.
         sState(n).temp = calTemp(n, tempMax, coefDecay, coefStretch);
         [sState(n).x, sState(n).accept] = acceptCandidate(sState(n - 1).x, sState(n).y, sState(n).temp, matCost);
         sState(n).obj = calEnergy(sState(n).x, matCost);
+        %% Update the live plot
         x = n;
         y = sState(n).obj;
         refreshdata
         % plot(x, y);
     end
-    % hold off
 end
 
 
@@ -75,7 +74,7 @@ function [x, accept] = acceptCandidate(xPre, y, temp, matCost)
 end
 
 
-function [cellArraySSpace] = getCellArraySampleSpaceAnnealing(m, startPosition)
+function [cass] = getCellArraySampleSpaceAnnealing(m, startPosition)
     %
     vecPossible = 1:m;
     vecPossible = vecPossible(1:m ~= startPosition);
@@ -88,7 +87,7 @@ function [cellArraySSpace] = getCellArraySampleSpaceAnnealing(m, startPosition)
     cellSampleSpace = getSampleSpace2dim(vecData1, vecData2, n1, n2, funcLogic);
     %
     nRow = length(vecPossible);
-    cellArraySSpace = getArraySampleSpace(cellSampleSpace, nRow);
+    cass = getArraySampleSpace(cellSampleSpace, nRow);
 end
 
 
