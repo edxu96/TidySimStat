@@ -8,20 +8,20 @@ function [matCount, matProbAnalysis, cass] = doExercise_6b(m, nRow, nSample, aCa
     fprintf('nSample = %d ; \n', nSample)
     %
     vecAa = [aCap_1, aCap_2];
-    if whiMethod == 1
+    if whiMethod == 1  % 2-D random walk directly
         funcGetCandidate = @loopRandWalk2dim;
         funcAcceptCandidate = @acceptCandidate;
-    elseif whiMethod == 2
-        funcGetCandidate = @(cass, vecPre) sampleGibbs(vecPre, m, vecAa);  % `cass` will not be used.
+    elseif whiMethod == 2  % Gibbs sampler
+        funcGetCandidate = @(~, vecPre) sampleGibbs(vecPre, m, vecAa);  % `cass` will not be used.
         funcAcceptCandidate = @(xPre, y, vecAa) {y, 1};  % `xPre` and `vecAa` will not be used.
-    elseif whiMethod == 3
+    elseif whiMethod == 3  % Column-wise random walk directly
         funcGetCandidate = @getCandidateCoWise;
         funcAcceptCandidate = @acceptCandidate;
     end
     cass = getSampleSpace2dim(m, nRow);
     sState2 = simMarkovChain(cass, funcGetCandidate, funcAcceptCandidate, nSample, vecAa);
     save([pwd '/outputs/6/sState2_4.mat'], 'sState2');
-    % Plot the Analytical Values -------------------------------------------------------------------------------------------
+    % Calculate and Plot the Analytical Values 
     matProbAnalysis = zeros(m + 1);
     for i = 0:m
         for j = 0:(m - i)
@@ -30,7 +30,7 @@ function [matCount, matProbAnalysis, cass] = doExercise_6b(m, nRow, nSample, aCa
     end
     matProbAnalysis = matProbAnalysis / sum(sum(matProbAnalysis));
     % plotStem3(0:m, 0:m, matProbAnalysis, '/6/3');
-    % Plot 3-D Histogram of the Result -------------------------------------------------------------------------------------
+    % Plot 3-D Histogram of the Result
     vecXx1 = zeros(nSample, 1);
     vecXx2 = zeros(nSample, 1);
     vecXx12 = zeros(nSample, 1);
@@ -67,7 +67,7 @@ function [cell] = acceptCandidate(xPre, y, vecAa)
 end
 
 
-function [vecNow] = getCandidateCoWise(cass, vecPre)
+function [vecNow] = getCandidateCoWise(~, vecPre)
     vecNow = zeros(2, 1);
     i = randi(2, 1);
     if i == 1
@@ -78,6 +78,7 @@ function [vecNow] = getCandidateCoWise(cass, vecPre)
     vecNow(j) = vecPre(j);
     vecNow(i) = loopRandWalk(vecPre(i), 10 - vecNow(j), 0);
 end
+
 
 function [vecCandidate] = sampleGibbs(vecPre, m, vecAa)
     vecCandidate = zeros(2, 1);

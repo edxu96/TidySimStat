@@ -9,6 +9,8 @@ function testChiSquare(vecObs, vecTheo, alpha)
 % Hypothesis 0: the simulated vecObs can represent vecTheo from analytical result
 % Warning: If the simulation produces count, vecObs should be count instead of probability
     if length(vecObs) ~= length(vecTheo)
+        fprintf('length(vecObs) = %d ; \n', length(vecObs))
+        fprintf('length(vecTheo) = %d ; \n', length(vecTheo))
         error('length(vecObs) ~= length(vecTheo)')
     end
     fprintf('Perform Chi-Square Test: \n')
