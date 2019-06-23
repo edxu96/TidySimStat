@@ -11,8 +11,8 @@ addpath('~/Documents/GitHub/StochasticSim/data')  % ############################
 % exercise4();
 % exercise5();
 % exercise6a();
-exercise6b();
-% exercise7();
+% exercise6b();
+exercise7();
 % exercise8();
 % ######################################################################################################################
 
@@ -73,14 +73,17 @@ end
 
 
 function exercise7()
-    nSample = 10000;
+    fprintf('\n--------------------------------------------------------------------------------\n');
+    fprintf('Exercise 7: Simulated Annealing \n')
+    nSample = 10000000;
     startPosition = 1;
-    tempMax = 50;
+    tempMax = 10;
     coefDecay = 0.5;
-    coefStretch = 0.00001;
-    strFigName = '7/8';
+    coefStretch = 0.000001;  % [10000000 0.000001]
+    strFigName = '7/7';
     seedInitial = 100;
     doExercise_7(nSample, startPosition, tempMax, coefDecay, strFigName, seedInitial, coefStretch);
+    fprintf('--------------------------------------------------------------------------------\n\n');
 end
 
 
