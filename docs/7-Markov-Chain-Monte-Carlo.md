@@ -8,7 +8,7 @@ There are two kinds of random walk. The one used in RW-MH algorithm is independe
 
 ### 2.1,  1-D RW-MH Result
 
-![RW-MH 1-D](https://github.com/edxu96/StochasticSim/blob/master/results/6/1.png)
+![RW-MH 1-D](../results/6/1.png)
 
 ```
 Perform Chi-Square Test:
@@ -23,7 +23,7 @@ Perform Chi-Square Test:
 
 The red points shows the theoretical result. It can be seen than the result using ordinary Metropolis-Hastings is not very satisfying, while we can get very good result by using Gibbs Sampler.
 
-![RW-MH 2-D](https://github.com/edxu96/StochasticSim/blob/master/results/6/2.png)
+![RW-MH 2-D](../results/6/2.png)
 
 ```
 Perform Chi-Square Test:
@@ -34,7 +34,7 @@ Perform Chi-Square Test:
     Reject H0.
 ```
 
-![RW-MH 2-D](https://github.com/edxu96/StochasticSim/blob/master/results/6/4.png)
+![RW-MH 2-D](../results/6/4.png)
 
 ```
 Perform Chi-Square Test:
@@ -47,7 +47,7 @@ Perform Chi-Square Test:
 
 ### 2.3,  Result of Simulation with Two State Variables using Gibbs Sampler
 
-![Random Walk Gibbs Sampler 2-D](https://github.com/edxu96/StochasticSim/blob/master/results/6/3.png)
+![Random Walk Gibbs Sampler 2-D](../results/6/3.png)
 
 ```
 Perform Chi-Square Test:
@@ -136,7 +136,7 @@ From the table, we can say that the cooling scheme does affect the result.
 
 The time series of the temperatures and objective values from experiment 6 are plotted in the following graph.
 
-![Illustration of the Simulation Process](https://github.com/edxu96/StochasticSim/blob/master/results/7/best.png)
+![Illustration of the Simulation Process](../results/7/best.png)
 
 ## 4,  Questions
 
