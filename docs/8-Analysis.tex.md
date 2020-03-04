@@ -1,5 +1,36 @@
+---
+for: edxu96/TidySimStat/docs
+author: Edward J. Xu
+date: Mar 4, 2020
+---
 
-## Exercise 8: Bootstrap to Analyze Pareto Simulation
+# Statistical Analysis of Simulated Data
+
+- [x] Sample Mean and Sample Variance
+- [x] When to Stop Generating New Data
+- [x] Interval Estimates of a Population Mean
+- [ ] The Bootstrapping Technique for Estimating Mean Square Errors
+
+## 1. Sample Mean and Sample Variance
+
+* Sample mean: $\bar{X} \equiv \sum_{i=1}^{n} \frac{X_{i}}{n}$
+* Sample variance: $S^{2}=\frac{\sum_{i=1}^{n}\left(X_{i}-\bar{X}\right)^{2}}{n-1}$
+
+\(\bar{X},\) the sample mean of the \(n\) data values \(X_{1}, \ldots, X_{n},\) is a random variable with mean \(\theta\) and variance \(S^{2} / n .\) Because a random variable is unlikely to be too many standard deviations--equal to the square root of its variance--from its mean, it follows that \(\bar{X}\) is a good estimator of \(\theta\) when \(\sigma / \sqrt{n}\) is small.
+
+## 2. When to Stop Generating New Data
+
+## 3. Interval Estimates of a Population Mean
+
+## 4. The Bootstrapping Technique for Estimating Mean Square Errors
+
+- A technique for estimating the variance (etc) of an estimator
+- Based on sampling from the empirical distribution.
+- Non-parametric technique
+
+we don't want want to assume anything specific about F
+
+### Exercise 8: Bootstrap to Analyze Pareto Simulation
 
 Write a subroutine that takes as input a “data” vector of observed values, and which outputs the median as well as the bootstrap estimate of the variance of the median, based on `r = 100` bootstrap replicates.
 
@@ -66,10 +97,6 @@ Theoretically:
 |:---------------------:|:--------:|:---------:|:----------:|:--------:|:----------:|:----------:|:----------:|
 | Simulated Pareto Dist | 5.096183 | 29.096227 | -18.903861 | 1.862766 | 172.119351 | 156.742619 | 190.867438 |
 
-## Notes
+---
 
-- A technique for estimating the variance (etc) of an estimator
-- Based on sampling from the empirical distribution.
-- Non-parametric technique
-
-we don't want want to assume anything specific about F
+[_sheldon2012simulation_]: https://github.com/edxu96/symposium/tree/master/src/sim
