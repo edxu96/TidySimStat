@@ -1,0 +1,126 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{csquotes}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{amssymb}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{caption}
+\usepackage{mathtools}
+\usepackage{physics}
+\usepackage{bm}
+\usepackage{float}
+\usepackage{fp}
+\usepackage{amssymb}
+\usepackage{listings}
+\usepackage{pdfpages}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{\mathbb{V}}
+\DeclareMathOperator{\Cov}{\mathbb{C}\text{ov}}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{mwe}
+\renewcommand{\vec}[1]{\boldsymbol{#1}} % Uncomment for BOLD vectors
+
+
+% Default fixed font does not support bold face
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+\usepackage{listings}
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+language=Python,
+basicstyle=\ttm,
+otherkeywords={self},             % Add keywords here
+keywordstyle=\ttb\color{deepblue},
+emph={MyClass,__init__},          % Custom highlighting
+emphstyle=\ttb\color{deepred},    % Custom highlighting style
+stringstyle=\color{deepgreen},
+frame=tb,                         % Any extra options here
+showstringspaces=false            % 
+}}
+
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for external files
+\newcommand\pythonexternal[2][]{{
+\pythonstyle
+\lstinputlisting[#1]{#2}}}
+
+% Python for inline
+\newcommand\pythoninline[1]{{\pythonstyle\lstinline!#1!}}
+
+
+
+
+
+\usepackage{times}
+
+
+
+\usepackage{geometry}
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+\linespread{1.5}
+
+%Includes "References" in the table of contents
+\usepackage[nottoc]{tocbibind}
+
+
+
+
+\geometry{a4paper,left=3cm,right=3cm,top=2cm,bottom=3cm}
+% head
+\topskip=1cm
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{\includegraphics[scale=0.5]{figures/dtu_logo.pdf}} 
+
+\chead{}
+\rhead{\bfseries 02443 Stochastic Simulation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[CJKbookmarks=true]{hyperref}
+
+
+
+\begin{document}
+\input{Frontpage.tex}
+
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\input{Introduction.tex}
+\input{Task1.tex}
+\input{Task2.tex}
+\input{Task3.tex}
+\input{Task4.tex}
+\input{Task5.tex}
+\input{Reference.tex}
+\input{appendix.tex}
+\end{document}
+
+
+

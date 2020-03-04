@@ -1,0 +1,194 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+%\usepackage{amssymb,amsmath,graphicx}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{url}
+%\usepackage[margin=1.5cm]{geometry}
+\usepackage{listings}
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{eurosym}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{pgfgantt}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage[parfill]{parskip}
+\usepackage{pdfpages}
+\usepackage{perpage} %the perpage package
+\MakePerPage{footnote} %the perpage package command
+\usepackage[font={small,it}]{caption}
+\usepackage[colorlinks=true]{hyperref}
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+\usepackage[font={small,it}]{caption}
+\usepackage[toc,page]{appendix}
+% For inserting Matlab code into Sharelatex
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=Matlab,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  basicstyle=\footnotesize
+}
+
+\usepackage[a4paper, hmargin={1.5cm, 1.5cm}, vmargin={1.5cm, 1.5cm}]{geometry}
+
+\renewcommand{\listfigurename}{Figures}
+ 
+\renewcommand{\listtablename}{Tables}
+
+\begin{document}
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+
+\textsc{\LARGE Technical University of Denmark}\\[1.5cm] % Name of your university/college
+\textsc{\Large 02443 Stochastic Simulation}\\[0.5cm] % Major heading such as course name
+\textsc{\large Report of Exercises}\\[0.5cm] % Minor heading such as course title
+%\textsc{\large Data set: Forest fires in Portugal}\\[0.5cm]
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+%\HRule \\[0.4cm]
+%{ \huge \bfseries Supervised learning: Classification and regression}\\[0.4cm] % Title of your document
+%\HRule \\[1.3cm]
+ 
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}{0.4\textwidth}
+
+\begin{flushleft} \large
+\emph{Name:}\\
+Sanaz Behboodi\\% Your name
+Jie Xu \\
+
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Student \# :} \\
+\textsc{s180176}\\
+\textsc{s181238}% Supervisor's Name
+\end{flushright}
+\end{minipage}\\[2cm]
+
+% If you don't want a supervisor, uncomment the two lines below and remove the section above
+%\Large \emph{Author:}\\
+%John \textsc{Smith}\\[3cm] % Your name
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+
+{\large \today}\\[2cm] % Date, change the \today to a set date if you want to be precise
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\includegraphics[scale=0.07]{Figures/dtu_logo.png}\\ % Include a department/university logo - this will require the graphicx package
+ 
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+
+\thispagestyle{empty}
+ 
+
+\clearpage
+ 
+\pagenumbering{arabic}
+
+
+\section{Exercise 1: Random number generation}
+\input{Tex/Exercise1.tex}
+\section{Exercise 2: Generation of random variables-Discrete sample space}
+\input{Tex/Exercise2.tex}
+\section{Exercise 3: Generation of random variables-Continuous sample space}
+\input{Tex/Exercise3.tex}
+\section{Exercise 4: Discrete simulation/event-by-event}
+\input{Tex/Exercise4.tex}
+\section{Exercise 5: Variance reductions method}
+\input{Tex/Exercise5.tex}
+\section{Exercise 6: Markov Chain Monte Carlo}
+\input{Tex/Exercise6.tex}
+\section{Exercise 7: Simulated annealing}
+\input{Tex/Exercise7.tex}
+\section{Exercise 8: Bootstrap}
+\input{Tex/Exercise8.tex}
+\clearpage
+\appendix
+\section{Appendix: MATLAB codes}
+\subsection{Exercise 1} \label{app:main}
+\lstinputlisting{Matlab/Exercise1.m} 
+\subsection{Exercise 2} \label{app:main}
+\lstinputlisting{Matlab/Exercise2.m} 
+\subsection{Exercise 3, 4, 5, 6, 7, 8}
+See folder "code" in zip. The setup file is "setup.m". All the result is in "results" folder.
+\newpage
+%\bibliography{references.bib}
+\printbibliography
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
