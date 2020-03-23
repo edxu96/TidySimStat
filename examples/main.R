@@ -59,12 +59,16 @@ mod_1 <-
   as.data.frame() %>%
   {glm(know_el ~ age_new, data = ., family = "binomial")}
 
+plot_pred <- function(dist_know_el, mod, preds_mod){
+  dist_know_el %>%
+    mutate(pred = preds_mod) %>%
+    ggplot() +
+      geom_point(aes(age_new, log_odd)) +
+      geom_line(aes(age_new, pred), color = "red")
+}
+
 dist_know_el %>%
-  mutate(pred = predict(mod_1, 
-    newdata = tibble(age_new = seq(5) - 1))) %>%
-  ggplot() +
-    geom_point(aes(age_new, log_odd)) +
-    geom_line(aes(age_new, pred), color = "red")
+  plot_pred(mod_1, predict(mod_1, newdata = tibble(age_new = seq(5) - 1)))
 
 #### Mis-Specification Analysis ####
 
@@ -90,3 +94,48 @@ result_lmtest <-
 (critical_value <- qchisq(0.95, 3, lower.tail = TRUE, log.p = FALSE))
 (p_val <- pchisq(lr, 3, lower.tail = F, log.p = F))
 (lr <= critical_value)
+
+#### Model with 3 Degrees of Freedom ####
+
+dat %<>%
+  mutate(age_new_a = ifelse(age_new == 0, 1, 0))
+
+mod_3 <-
+  dat %>%
+  as.data.frame() %>%
+  {glm(know_el ~ age_new + age_new_a, data = ., family = "binomial")}
+
+summary(mod_3)
+
+dist_know_el %>%
+  plot_pred(mod_3, predict(mod_3, 
+    newdata = tibble(age_new = seq(5) - 1, age_new_a = c(1, 0, 0, 0 ,0))))
+
+(result_lmtest_2 <- lmtest::lrtest(mod_3, mod_2))  # mod_3 is nested in mod_2
+(critical_value <- qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE))
+(result_lmtest_2$Chisq[2] <= critical_value)
+
+#### Model Considering Family Types ####
+
+# Assign individuals to four groups
+dat %<>%
+  mutate(num_c = persons0.5 + persons6.10 + persons11.15 + persons16.18) %>%
+  # number of children in the family
+  mutate(num_g = persons18.30 + persons31.50 + persons51.65) %>%
+  # number of grow-ups (exclude elders) in the family
+  mutate(ocoe = ifelse(num_c == 0 & persons65 == 0, 1, 0)) %>%
+  mutate(wcoe = ifelse(num_c > 0 & persons65 == 0, 1, 0)) %>%
+  mutate(ocwe = ifelse(num_c == 0 & persons65 > 0, 1, 0)) %>%
+  mutate(wcwe = ifelse(num_c > 0 & persons65 > 0, 1, 0))
+
+## Check whether all individuals are assigned with a family type
+dat %>%
+  mutate(whe_assign = ocoe + wcoe + ocwe + wcwe) %>%
+  filter(whe_assign == 1) %>%
+  nrow()
+
+mod_4 <-
+  dat %>%
+  as.data.frame() %>%
+  {glm(know_el ~ ocoe + wcoe + ocwe + wcwe, data = ., family = "binomial")}
+
