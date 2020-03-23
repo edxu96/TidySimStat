@@ -63,3 +63,10 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 
 General Advice
 - Make a list for comments
+
+##
+
+- belonging to a family without children without elders (OCOE)
+- belonging to a family with children without elders (WCOE)
+- belonging to a family without children with elders (OCWE)
+- belonging to a family with children with elders (WCWE)
