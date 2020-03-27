@@ -1,0 +1,78 @@
+## Regression Model for 1980 US Census Data
+## according to hendry2007econometric
+## Edward J. Xu
+## Mar 27, 2020
+rm(list = ls())
+setwd("~/GitHub/TidySimStat/examples/1980-us-census")
+library(tidyverse)
+library(magrittr)
+library(lmtest)
+library(corrr)
+library(broom)
+library(tseries)
+library(readxl)
+library(propagate)
+library(het.test)
+
+dat <-
+  read_csv("./data.csv") %>%
+  mutate(wage_log = LwageW) %>%
+  select(educ, wage_log)
+
+dat %>%
+  ggplot(aes(educ, wage_log, group = cut_width(educ, 1))) +
+  geom_boxplot()
+
+mod_1 <-
+  lm(wage_log ~ educ, data = dat)
+
+mod_1 %>% summary()
+
+mod_2 <-
+  dat %>%
+  mutate(x1 = 1, x21 = educ - mean(.$educ)) %>%
+  {lm(wage_log ~ x1 + x21, data = .)}
+
+mod_2 %>% summary()
+
+mod_3 <-
+  dat %>%
+  {lm(wage_log ~ 1, data = .)}
+
+mod_3 %>% summary()
+
+anova(mod_3, mod_1)
+( - 3877 * log(summary(mod_1)$sigma / summary(mod_3)$sigma) )
+
+#### Jarque-Bera Test ####
+
+qchisq(0.95, summary(mod_1)$df[1], lower.tail = TRUE, log.p = FALSE)
+
+mod_1 %>%
+  residuals() %>%
+  tseries::jarque.bera.test() %>%
+  glance()
+
+mod_1 %>%
+  residuals() %>%
+  propagate::skewness() %>%
+  {.^2 * nrow(mod_1) / 6}
+
+mod_1 %>%
+  residuals() %>%
+  propagate::kurtosis() %>%
+  {.^2 * nrow(mod_1) / 24}
+
+#### White's Test ####
+
+dat %>%
+  mutate(resi2 = mod_1$residuals^2) %>%
+  {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. / 2 / (1 - .) * (nrow(dat) - 2)} 
+
+mod_1 %>%
+  bptest(~ educ + I(educ^2), data = dat)
+
+mod_1 %>%
+  whites.htest()
