@@ -71,8 +71,52 @@ dat %>%
   {summary(.)$r.squared} %>%
   {. / 2 / (1 - .) * (nrow(dat) - 2)} 
 
+dat %>%
+  mutate(resi2 = mod_1$residuals^2) %>%
+  {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
+
+dat %>%
+  mutate(resi2 = mod_1$residuals^2) %>%
+  {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. / 2 / (1 - .) * 3872}
+
+dat %>%
+  mutate(resi2 = mod_1$residuals^2) %>%
+  {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {1 - pchisq(. * nrow(dat), 2)}
+
 mod_1 %>%
   bptest(~ educ + I(educ^2), data = dat)
 
 mod_1 %>%
   whites.htest()
+
+#### RESET Test ####
+
+mod_1 %>%
+  reset()
+
+dat %>%
+  mutate(y_hat = fitted(mod_1)) %>%
+  {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. / 1 / (1 - .) * 3874} 
+
+dat %>%
+  mutate(y_hat = fitted(mod_1)) %>%
+  {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {1 - pchisq(. * nrow(dat), 2)}
+  
+dat %>%
+  mutate(y_hat = fitted(mod_1)) %>%
+  {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+
+
+
