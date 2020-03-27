@@ -81,12 +81,6 @@ dat %>%
   mutate(resi2 = mod_1$residuals^2) %>%
   {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
   {summary(.)$r.squared} %>%
-  {. / 2 / (1 - .) * 3872}
-
-dat %>%
-  mutate(resi2 = mod_1$residuals^2) %>%
-  {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
-  {summary(.)$r.squared} %>%
   {1 - pchisq(. * nrow(dat), 2)}
 
 mod_1 %>%
@@ -110,7 +104,7 @@ dat %>%
   mutate(y_hat = fitted(mod_1)) %>%
   {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
   {summary(.)$r.squared} %>%
-  {1 - pchisq(. * nrow(dat), 2)}
+  {1 - pchisq(. * nrow(dat), 1)}
   
 dat %>%
   mutate(y_hat = fitted(mod_1)) %>%
@@ -118,5 +112,28 @@ dat %>%
   {summary(.)$r.squared} %>%
   {. * nrow(dat) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
 
+#### 
 
+# t.test(wage_log ~ educ, dat, mu=0, alternative = 'greater')
+# 
+# data = c(52.7, 53.9, 41.7, 71.5, 47.6, 55.1,
+#          62.2, 56.5, 33.4, 61.8, 54.3, 50.0, 
+#          45.3, 63.4, 53.9, 65.5, 66.6, 70.0,
+#          52.4, 38.6, 46.1, 44.4, 60.7, 56.4)
+# 
+# t.test(data, mu=50, alternative = 'greater')
+# 
+# confint(mod_1)
+# 
+# 
+# 
+# linearHypothesis(mod_1, "educ = -1")
+# 
+# slope.test(wage_log, educ, test.value = 1, data = dat)
+
+
+mod %>%
+  summary() %>%
+  {pt(coef(.)[2, 3], mod$df, lower = FALSE)} %>%
+  {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
 
