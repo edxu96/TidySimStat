@@ -152,8 +152,6 @@ x1                  NA         NA
 x21         -0.2582395 -0.1589222
 ```
 
-
-
 ## 3. Assumption of Normality and Jarque-Bera Test
 
 Suppose (from now on) that the assumption of independence and the assumption of exogeneity of all regressors hold. We can then focus here on testing the assumption of normality and constant error variance.

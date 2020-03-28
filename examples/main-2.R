@@ -19,7 +19,7 @@ dat <-
   slice(sample(nrow(.), 300)) %>%
   mutate(y = log(KWH / NHSLDMEM)) %>%
   dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
-    x6 = HHAGE, x7 = ATHOME) %>%
+    x6 = HHAGE, x7 = ATHOME, x8 = log(NHSLDMEM)) %>%
   mutate_at(seq(2, 7), as.integer)  # make continuous variables discrete
 
 #### Correlation ####
@@ -117,4 +117,30 @@ dat %>%
 
 #### Other Regressor ####
 
+mods[[5]] <- lm(y ~ x2 + x6, data = dat)
+mods[[5]] %>% summary()
 
+mods[[6]] <- lm(y ~ x2 + I(x6^2), data = dat)
+mods[[6]] %>% summary()
+
+mods[[7]] <- lm(y ~ x2 + x4 + x6, data = dat)
+mods[[7]] %>% summary()
+
+mods[[8]] <- lm(y ~ x2 + x3 + x4 + x5 + x6, data = dat)
+mods[[8]] %>% summary()
+
+mods[[9]] <- step(mods[[8]])
+
+AIC(mods[[1]], mods[[5]], mods[[6]], mods[[7]], mods[[8]], mods[[9]])
+# mods[[9]] is the best model for now
+
+mods[[9]] %>% summary()
+
+# should we include "HHSEX" in the model?
+
+
+mods[[10]] <- lm(y ~ x2 + x4 + x6 + as.factor(x5), data = dat)
+mods[[10]] %>% summary()
+
+mods[[11]] <- lm(y ~ x2 + x4 + x6 + as.factor(x5) + x7, data = dat)
+mods[[11]] %>% summary()
