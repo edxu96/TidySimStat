@@ -4,11 +4,13 @@
 rm(list = ls())
 setwd("~/GitHub/TidySimStat/examples")
 library(tidyverse)
+library(conflicted)
 library(magrittr)
 library(lmtest)
 library(corrr)
 library(broom)
 library(tseries)
+library(car)
 
 #### Data ####
 set.seed(6)
@@ -16,7 +18,7 @@ dat <-
   read_csv("./data/recs.csv") %>%
   slice(sample(nrow(.), 300)) %>%
   mutate(y = log(KWH / NHSLDMEM)) %>%
-  select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
+  dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
     x6 = HHAGE, x7 = ATHOME) %>%
   mutate_at(seq(2, 7), as.integer)  # make continuous variables discrete
 
@@ -26,7 +28,7 @@ dat %>%
   cor() %>%
   as_cordf() %>%
   stretch() %>%
-  filter(y == "y" & x != "y")
+  dplyr::filter(y == "y" & x != "y")
 
 dat %>%
   ggplot(aes(x2, y, group = cut_width(x2, 1))) +
@@ -38,83 +40,81 @@ dat %>%
 
 #### Regression Model using X2 ####
 
-mod_1 <- 
-  dat %>% as.data.frame() %>%
+mods <- list()
+
+mods[[1]] <- lm(y ~ x2, data = dat)
+
+mods[[1]] %>% summary()
+
+par_orginal <- par()
+par(mfrow = c(2, 2), mai = c(0.3, 0.3, 0.3, 0.3))
+plot(mods[[1]])
+par(par_orginal)
+
+mods[[4]] <-
+  dat %>%
+  dplyr::filter(row_number() != 241 & row_number() != 163 & 
+    row_number() != 36) %>%
   {lm(y ~ x2, data = .)}
 
-mod_1 %>% summary()
+mods[[4]] %>% summary()
 
-mod_2 <- 
+mods[[4]]$residuals %>% 
+  qqPlot()
+
+mods[[2]] <- 
   dat %>%
   mutate(x1 = 1, x21 = x2 - mean(.$x2)) %>%
-  select(y, x1, x21)  %>%
-  as.data.frame() %>%
+  dplyr::select(y, x1, x21) %>%
   {lm(y ~ x1 + x21, data = .)}
 
-mod_2 %>% summary()
-mean(dat$y)
+mods[[2]] %>% summary()
+
 
 ####
 
-mod_3 <-
+mods[[3]] <-
   dat %>%
   as.data.frame() %>%
   {lm(y ~ 1, data = .)}
 
-mod_3 %>% summary()
+mods[[3]] %>% summary()
 
-anova(mod_3, mod_1)
+anova(mods[[3]], mods[[1]])
 
 #### JB-Test ####
 
-mod_1$residuals %>% 
+mods[[1]]$residuals %>% 
   tseries::jarque.bera.test()%>%  
-  {(.$p.value <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE))}
+  {(.$p.value <= qchisq(0.95, summary(mods[[1]])$df[1], lower.tail = TRUE, 
+    log.p = FALSE))}
 
 dat %>%
-  filter(x2 == 1 | x2 == 3 | x2 == 5 | x2 == 7) %>%
+  dplyr::filter(x2 == 1 | x2 == 3 | x2 == 5 | x2 == 7 | x2 == 9) %>%
   ggplot() + 
     geom_freqpoly(aes(y)) +
     facet_grid(rows = vars(x2))
 
-mod_1$residuals %>% 
-  qqPlot()
-
-par(mfrow = c(2, 2), oma = c(0, 0, 0, 0))
-par(mfrow = c(1, 1))
-plot(mod_1)
-
 #### White's Test
 
-mod_resi2 <-
-  dat %>%
-  mutate(resi2 = mod_1$residuals^2) %>%
-  {lm(resi2 ~ x2, data = .)}  #    + I(x2^2)
+dat %>%
+  mutate(resi2 = mods[[1]]$residuals^2) %>%
+  {lm(resi2 ~ x2 + I(x2^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
 
-mod_resi2 %>% summary()
-r.squared <- summary(mod_resi2)$r.squared
-
-( (r.squared / 1) / (1 - r.squared) / 299 )
-
-mod_1 %>% 
-  bptest(data = dat) %>%  # White's Test  ~ x2 + I(x2^2), 
-  glance() %>%
+mods[[1]] %>% 
+  bptest() %>%
   {(.$p.value <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE))}
 
-#### ####
+#### RESET Test ####
 
-mod_1 %>%
-  reset(data = dat) %>%  
-  {(.$p.value <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE))}
+dat %>%
+  mutate(y_hat = fitted(mods[[1]])) %>%
+  {lm(y ~ x2 + I(y_hat^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+
+#### Other Regressor ####
 
 
-
-# library(moments)
-# library(nortest)
-# library(e1071)
-library(car)
-x <- rnorm(250,10,1)
-qqnorm(x)
-qqline(x)
-probplot(x, qdist=qnorm)
-qqPlot(x)

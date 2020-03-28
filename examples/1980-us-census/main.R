@@ -17,123 +17,120 @@ library(het.test)
 dat <-
   read_csv("./data.csv") %>%
   mutate(wage_log = LwageW) %>%
-  select(educ, wage_log)
+  dplyr::select(educ, wage_log)
 
 dat %>%
   ggplot(aes(educ, wage_log, group = cut_width(educ, 1))) +
   geom_boxplot()
 
-mod_1 <-
-  lm(wage_log ~ educ, data = dat)
+mods <- list()
+mods[[1]] <- lm(wage_log ~ educ, data = dat)
+mods[[1]] %>% summary()
 
-mod_1 %>% summary()
-
-mod_2 <-
+mods[[2]] <-
   dat %>%
   mutate(x1 = 1, x21 = educ - mean(.$educ)) %>%
   {lm(wage_log ~ x1 + x21, data = .)}
 
-mod_2 %>% summary()
+mods[[2]] %>% summary()
 
-mod_3 <-
+mods[[3]] <-
   dat %>%
   {lm(wage_log ~ 1, data = .)}
 
-mod_3 %>% summary()
+mods[[3]] %>% summary()
 
-anova(mod_3, mod_1)
-( - 3877 * log(summary(mod_1)$sigma / summary(mod_3)$sigma) )
+anova(mods[[3]], mods[[1]])
+( - 3877 * log(summary(mods[[1]])$sigma / summary(mods[[3]])$sigma) )
 
 #### Jarque-Bera Test ####
 
-qchisq(0.95, summary(mod_1)$df[1], lower.tail = TRUE, log.p = FALSE)
+qchisq(0.95, summary(mods[[1]])$df[1], lower.tail = TRUE, log.p = FALSE)
+qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)
+1 - pchisq(3.841459, 1)
 
-mod_1 %>%
+mods[[1]] %>%
   residuals() %>%
   tseries::jarque.bera.test() %>%
   glance()
 
-mod_1 %>%
+mods[[1]] %>%
   residuals() %>%
   propagate::skewness() %>%
-  {.^2 * nrow(mod_1) / 6}
+  {.^2 * nrow(mods[[1]]) / 6}
 
-mod_1 %>%
+mods[[1]] %>%
   residuals() %>%
   propagate::kurtosis() %>%
-  {.^2 * nrow(mod_1) / 24}
+  {.^2 * nrow(mods[[1]]) / 24}
 
 #### White's Test ####
 
 dat %>%
-  mutate(resi2 = mod_1$residuals^2) %>%
+  mutate(resi2 = mods[[1]]$residuals^2) %>%
   {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
   {summary(.)$r.squared} %>%
   {. / 2 / (1 - .) * (nrow(dat) - 2)} 
 
 dat %>%
-  mutate(resi2 = mod_1$residuals^2) %>%
+  mutate(resi2 = mods[[1]]$residuals^2) %>%
   {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
   {summary(.)$r.squared} %>%
   {. * nrow(dat) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
 
 dat %>%
-  mutate(resi2 = mod_1$residuals^2) %>%
+  mutate(resi2 = mods[[1]]$residuals^2) %>%
   {lm(resi2 ~ educ + I(educ^2), data = .)} %>%
   {summary(.)$r.squared} %>%
   {1 - pchisq(. * nrow(dat), 2)}
 
-mod_1 %>%
+mods[[1]] %>%
   bptest(~ educ + I(educ^2), data = dat)
 
-mod_1 %>%
+mods[[1]] %>%
   whites.htest()
 
 #### RESET Test ####
 
-mod_1 %>%
+mods[[1]] %>%
   reset()
 
 dat %>%
-  mutate(y_hat = fitted(mod_1)) %>%
+  mutate(y_hat = fitted(mods[[1]])) %>%
   {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
   {summary(.)$r.squared} %>%
   {. / 1 / (1 - .) * 3874} 
 
 dat %>%
-  mutate(y_hat = fitted(mod_1)) %>%
+  mutate(y_hat = fitted(mods[[1]])) %>%
   {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
   {summary(.)$r.squared} %>%
   {1 - pchisq(. * nrow(dat), 1)}
   
 dat %>%
-  mutate(y_hat = fitted(mod_1)) %>%
+  mutate(y_hat = fitted(mods[[1]])) %>%
   {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
   {summary(.)$r.squared} %>%
   {. * nrow(dat) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
 
-#### 
+#### One-Sided Test ####
 
-# t.test(wage_log ~ educ, dat, mu=0, alternative = 'greater')
-# 
-# data = c(52.7, 53.9, 41.7, 71.5, 47.6, 55.1,
-#          62.2, 56.5, 33.4, 61.8, 54.3, 50.0, 
-#          45.3, 63.4, 53.9, 65.5, 66.6, 70.0,
-#          52.4, 38.6, 46.1, 44.4, 60.7, 56.4)
-# 
-# t.test(data, mu=50, alternative = 'greater')
-# 
-# confint(mod_1)
-# 
-# 
-# 
-# linearHypothesis(mod_1, "educ = -1")
-# 
-# slope.test(wage_log, educ, test.value = 1, data = dat)
-
-
-mod %>%
+mods[[1]] %>%
   summary() %>%
-  {pt(coef(.)[2, 3], mod$df, lower = FALSE)} %>%
+  {pt(coef(.)[2, 3], mods[[1]]$df, lower = FALSE)} %>%
   {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+
+####
+
+mods[[4]] <- lm(wage_log ~ educ + I(educ^2), data = dat)
+mods[[4]] %>% summary()
+
+mods[[5]] <- 
+  dat %>%
+  dplyr::filter(uhrswork != 0) %>%
+  mutate(uhrswork_log = log(uhrswork)) %>%
+  mutate(wage_log = LwageW) %>%
+  {lm(wage_log ~ educ + I(educ^2) + uhrswork_log, data = ., na.action = na.pass)}
+
+mods[[5]] %>% summary()
 
