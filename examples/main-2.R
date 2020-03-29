@@ -16,13 +16,34 @@ library(car)
 set.seed(6)
 dat <- 
   read_csv("./data/recs.csv") %>%
-  slice(sample(nrow(.), 300)) %>%
+  dplyr::slice(sample(nrow(.), 300)) %>%
   mutate(y = log(KWH / NHSLDMEM)) %>%
   dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
-    x6 = HHAGE, x7 = ATHOME, x8 = log(NHSLDMEM)) %>%
+    x6 = HHAGE, x7 = ATHOME) %>%
   mutate_at(seq(2, 7), as.integer)  # make continuous variables discrete
 
+# RECS <- read.csv("./data/recs.csv", sep=",", header = T) 
+# RECS.clean<-RECS[,complete.cases(t(RECS))]
+# sample.size<-300
+# dat<-RECS.clean[sample(nrow(RECS.clean), sample.size), ]
+# 
+# Y <- log(dat$KWH )/dat$NHSLDMEM
+# dat2 <- cbind(dat[,c("NHSLDMEM","EDUCATION","MONEYPY","HHSEX","HHAGE","ATHOME")], Y)
+# 
+# dat2 %>%
+#   ggplot(aes(factor(NHSLDMEM), Y)) +
+#   xlab("Number of household members") +
+#   ylab("Log of KWH/member") +
+#   geom_point()
+# 
+# mod_1 <- lm(Y ~ NHSLDMEM, data = dat2)
+# mod_1 %>% summary()
+
 #### Correlation ####
+
+dat %>%
+  ggplot(aes(x2, y, group = cut_width(x2, 1))) +
+  geom_boxplot()
 
 dat %>%
   cor() %>%
