@@ -1,81 +1,9 @@
 
-```
-glm(formula = know_el ~ age_new, family = "binomial", data = .)
-
-Deviance Residuals:
-    Min       1Q   Median       3Q      Max  
--1.9629   0.5611   0.6760   0.8085   1.1221  
-
-Coefficients:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  0.13145    0.15045   0.874    0.382    
-age_new      0.40943    0.05678   7.210 5.59e-13 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-(Dispersion parameter for binomial family taken to be 1)
-
-    Null deviance: 1324.9  on 1199  degrees of freedom
-Residual deviance: 1271.8  on 1198  degrees of freedom
-AIC: 1275.8
-
-Number of Fisher Scoring iterations: 4
-```
-
-```
-glm(formula = know_el ~ age_new_1 + age_new_2 + age_new_3 + age_new_4,
-    family = "binomial", data = .)
-
-Deviance Residuals:
-    Min       1Q   Median       3Q      Max  
--1.9364   0.5771   0.7147   0.7175   1.3141  
-
-Coefficients:
-            Estimate Std. Error z value Pr(>|z|)    
-(Intercept)  -0.3159     0.2223  -1.421 0.155311    
-age_new_1     1.0458     0.2940   3.557 0.000375 ***
-age_new_2     1.5415     0.2639   5.842 5.15e-09 ***
-age_new_3     1.5504     0.2535   6.117 9.55e-10 ***
-age_new_4     2.0242     0.2702   7.491 6.86e-14 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-(Dispersion parameter for binomial family taken to be 1)
-
-    Null deviance: 1324.9  on 1199  degrees of freedom
-Residual deviance: 1261.6  on 1195  degrees of freedom
-AIC: 1271.6
-
-Number of Fisher Scoring iterations: 4
-```
-
-```
-Likelihood ratio test
-
-Model 1: know_el ~ age_new
-Model 2: know_el ~ age_new_1 + age_new_2 + age_new_3 + age_new_4
-  #Df  LogLik Df  Chisq Pr(>Chisq)  
-1   2 -635.91                       
-2   5 -630.80  3 10.219    0.01679 *
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-```
-
-General Advice
-- Make a list for comments
-
-##
-
-- belonging to a family without children without elders (OCOE)
-- belonging to a family with children without elders (WCOE)
-- belonging to a family without children with elders (OCWE)
-- belonging to a family with children with elders (WCWE)
-
-## Regression Analysis
+# Regression Analysis
 
 - Solve the masking problem when many packages are loaded with `conflicted` package. https://www.tidyverse.org/blog/2018/06/conflicted/
 
-### 1. Data Visualization
+## 1. Data Visualization
 
 Briefly describe the variables in Table 1. You can use tabulation, histograms, plots, cross-plots.
 
@@ -94,7 +22,7 @@ Briefly describe the variables in Table 1. You can use tabulation, histograms, p
 
 ![](./images/3.png)
 
-### 2. First Regression Model
+## 2. First Regression Model
 
 Estimate a regression model of the log of KWH per person on a constant and numbers of household members.
 
@@ -102,25 +30,25 @@ Estimate a regression model of the log of KWH per person on a constant and numbe
 lm(formula = y ~ x2, data = dat)
 
 Residuals:
-    Min      1Q  Median      3Q     Max
--5.0238 -0.3795  0.0204  0.4560  1.6022
+     Min       1Q   Median       3Q      Max
+-2.10403 -0.41287  0.01591  0.46000  1.53154
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  8.82671    0.07662 115.200  < 2e-16 ***
-x2          -0.20858    0.02523  -8.266 4.62e-15 ***
+(Intercept)  9.03574    0.07526  120.06   <2e-16 ***
+x2          -0.26998    0.02631  -10.26   <2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.6556 on 298 degrees of freedom
-Multiple R-squared:  0.1865,	Adjusted R-squared:  0.1838
-F-statistic: 68.33 on 1 and 298 DF,  p-value: 4.622e-15
+Residual standard error: 0.6309 on 298 degrees of freedom
+Multiple R-squared:  0.2611,	Adjusted R-squared:  0.2586
+F-statistic: 105.3 on 1 and 298 DF,  p-value: < 2.2e-16
 ```
 
 ```
                  2.5 %     97.5 %
-(Intercept)  8.6759255  8.9774969
-x2          -0.2582395 -0.1589222
+(Intercept)  8.8876236  9.1838480
+x2          -0.3217532 -0.2182019
 ```
 
 Show how you may obtain your slope estimate <img src="/examples/tex/5b92c7b307005766f9e5819d7a2de343.svg?invert_in_darkmode&sanitize=true" align=middle width=15.85051049999999pt height=32.42016360000002pt/> in Q2 based on the orthogonal reparameterization.
@@ -129,30 +57,28 @@ Show how you may obtain your slope estimate <img src="/examples/tex/5b92c7b30700
 lm(formula = y ~ x1 + x21, data = .)
 
 Residuals:
-    Min      1Q  Median      3Q     Max
--5.0238 -0.3795  0.0204  0.4560  1.6022
+     Min       1Q   Median       3Q      Max
+-2.10403 -0.41287  0.01591  0.46000  1.53154
 
 Coefficients: (1 not defined because of singularities)
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  8.27606    0.03785 218.632  < 2e-16 ***
+(Intercept)  8.35989    0.03642  229.52   <2e-16 ***
 x1                NA         NA      NA       NA    
-x21         -0.20858    0.02523  -8.266 4.62e-15 ***
+x21         -0.26998    0.02631  -10.26   <2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 0.6556 on 298 degrees of freedom
-Multiple R-squared:  0.1865,	Adjusted R-squared:  0.1838
-F-statistic: 68.33 on 1 and 298 DF,  p-value: 4.622e-15
+Residual standard error: 0.6309 on 298 degrees of freedom
+Multiple R-squared:  0.2611,	Adjusted R-squared:  0.2586
+F-statistic: 105.3 on 1 and 298 DF,  p-value: < 2.2e-16
 ```
 
 ```
                  2.5 %     97.5 %
-(Intercept)  8.2015631  8.3505523
+(Intercept)  8.2882122  8.4315720
 x1                  NA         NA
-x21         -0.2582395 -0.1589222
+x21         -0.3217532 -0.2182019
 ```
-
-
 
 ## 3. Assumption of Normality and Jarque-Bera Test
 
