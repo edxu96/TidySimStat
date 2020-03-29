@@ -35,8 +35,9 @@ dat %>%
   dplyr::filter(y == "y" & x != "y")
 
 dat %>%
-  ggplot(aes(x2, y, group = cut_width(x2, 1))) +
-  geom_boxplot()
+  ggplot() +
+  geom_boxplot(aes(x2, y, group = cut_width(x2, 1))) +
+  geom_point(aes(x2, y))
 
 dat %>%
   ggplot(aes(x6, y, group = cut_width(x6, 5))) +
@@ -49,6 +50,7 @@ mods <- list()
 mods[[1]] <- lm(y ~ x2, data = dat)
 
 mods[[1]] %>% summary()
+mods[[1]] %>% confint()
 
 par_orginal <- par()
 par(mfrow = c(2, 2), mai = c(0.3, 0.3, 0.3, 0.3))
@@ -73,7 +75,7 @@ mods[[2]] <-
   {lm(y ~ x1 + x21, data = .)}
 
 mods[[2]] %>% summary()
-
+mods[[2]] %>% confint()
 
 ####
 
