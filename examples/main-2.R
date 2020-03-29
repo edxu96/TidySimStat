@@ -22,23 +22,6 @@ dat <-
     x6 = HHAGE, x7 = ATHOME) %>%
   mutate_at(seq(2, 7), as.integer)  # make continuous variables discrete
 
-# RECS <- read.csv("./data/recs.csv", sep=",", header = T) 
-# RECS.clean<-RECS[,complete.cases(t(RECS))]
-# sample.size<-300
-# dat<-RECS.clean[sample(nrow(RECS.clean), sample.size), ]
-# 
-# Y <- log(dat$KWH )/dat$NHSLDMEM
-# dat2 <- cbind(dat[,c("NHSLDMEM","EDUCATION","MONEYPY","HHSEX","HHAGE","ATHOME")], Y)
-# 
-# dat2 %>%
-#   ggplot(aes(factor(NHSLDMEM), Y)) +
-#   xlab("Number of household members") +
-#   ylab("Log of KWH/member") +
-#   geom_point()
-# 
-# mod_1 <- lm(Y ~ NHSLDMEM, data = dat2)
-# mod_1 %>% summary()
-
 #### Correlation ####
 
 dat %>%
