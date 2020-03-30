@@ -25,8 +25,9 @@ dat <-
 #### Correlation ####
 
 dat %>%
-  ggplot(aes(x2, y, group = cut_width(x2, 1))) +
-  geom_boxplot()
+  ggplot() +
+    geom_boxplot(aes(x2, y, group = cut_width(x2, 1))) +
+    geom_point(aes(x2, y), shape = 1)
 
 dat %>%
   cor() %>%
@@ -35,15 +36,10 @@ dat %>%
   dplyr::filter(y == "y" & x != "y")
 
 dat %>%
-  ggplot() +
-  geom_boxplot(aes(x2, y, group = cut_width(x2, 1))) +
-  geom_point(aes(x2, y))
-
-dat %>%
   ggplot(aes(x6, y, group = cut_width(x6, 5))) +
   geom_boxplot()
 
-#### Regression Model using X2 ####
+#### Regression Model using x2 ####
 
 mods <- list()
 
@@ -142,11 +138,4 @@ AIC(mods[[1]], mods[[5]], mods[[6]], mods[[7]], mods[[8]], mods[[9]])
 
 mods[[9]] %>% summary()
 
-# should we include "HHSEX" in the model?
 
-
-mods[[10]] <- lm(y ~ x2 + x4 + x6 + as.factor(x5), data = dat)
-mods[[10]] %>% summary()
-
-mods[[11]] <- lm(y ~ x2 + x4 + x6 + as.factor(x5) + x7, data = dat)
-mods[[11]] %>% summary()

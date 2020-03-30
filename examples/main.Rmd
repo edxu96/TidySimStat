@@ -1,0 +1,336 @@
+---
+title: "Linear Regression Analysis of Electricity Consumption"
+output: 
+  html_notebook: 
+    code_folding: hide
+    fig_caption: false
+    fig_height: 7.5
+    fig_width: 15
+    theme: default
+    toc: true
+    toc_float: false
+    smooth_scroll: true
+    df_print: paged
+author: Edward J. Xu (<edxu96@outlook.com>)
+date: "`r Sys.Date()`"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, message = FALSE}
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(conflicted)
+library(magrittr)
+library(lmtest)
+library(corrr)
+library(broom)
+library(tseries)
+library(car)
+source("./funcs.R")
+```
+
+```{r, include=FALSE}
+setwd("~/GitHub/TidySimStat/examples")
+options(width=80)
+knitr::opts_chunk$set(
+  comment = "#>",
+  echo = FALSE,
+  fig.align="center"
+)
+```
+
+```{r, message = FALSE}
+set.seed(6)
+dat <- 
+  read_csv("./data/recs.csv") %>%
+  dplyr::slice(sample(nrow(.), 300)) %>%
+  mutate(y = log(KWH / NHSLDMEM)) %>%
+  dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
+    x6 = HHAGE, x7 = ATHOME) %>%
+  mutate_at(seq(2, 7), as.integer)  # make continuous variables discrete
+```
+
+The first 5 rows can be visualized:
+
+```{r}
+head(dat, 5) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+## 1. Data Visualization
+
+It can be seen that `y` is highly correlated to `x2` and `x6` according to the following table.
+
+```{r}
+dat %>%
+  cor() %>%
+  as_cordf() %>%
+  stretch() %>%
+  dplyr::filter(y == "y" & x != "y") %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+For each level of `x2` a box indicating three quantiles (25%, 50%, 75%) of `y` is given. It shows that there is a tendency for `y` to decrease with `x2` by looking at the median. The sizes of different boxes seem to vary with different values of `x2`. Besides, there are many observations when `x2` is small. But it is assumed for now that the conditional variance is constant, which will be tested section 4. Three data points with extreme values `36`, `241` and `163` is discussed in sections 3 and 5. 
+
+```{r}
+dat %>%
+  mutate(index = row_number()) %>%
+  ggplot() +
+    geom_boxplot(aes(x2, y, group = cut_width(x2, 1)), outlier.alpha = 0) +
+    geom_point(aes(x2, y), shape = 1) +
+    geom_text(aes(x2, y, label = ifelse(index == 36 | index == 163 |
+      index == 241, as.character(index), "")), hjust=1.5, vjust=0)
+```
+
+The box plot of `y` by `x6` is given. It can be seen that the tendency is not strictly linear and the condition variance is not stable. So we will regress `y` on `x2` first and use `x6` as the second regressor in section 6.
+
+```{r}
+dat %>%
+  ggplot() +
+  geom_boxplot(aes(x6, y, group = cut_width(x6, 5)), outlier.alpha = 0)+
+    geom_point(aes(x6, y), shape = 1)
+```
+
+## 2. Regress `y` on `x2`
+
+`mods[[1]]` is obtained by regressing `y` on `x2`.
+
+```{r}
+mods <- list()
+mods[[1]] <- lm(y ~ x2, data = dat)
+mods[[1]] %>% summary()
+
+results <- new_results(mods[[1]], 1)
+```
+
+By orthogonalizing `x2` with respect to constant 1. the following reparameterized model can be obtained.
+
+```{r, echo = T}
+mods[[2]] <- 
+  dat %>%
+  mutate(x1 = 1, x21 = x2 - mean(.$x2)) %>%
+  dplyr::select(y, x1, x21) %>%
+  {lm(y ~ x1 + x21, data = .)}
+
+results %<>%
+  collect_glance(mods[[2]], 2)
+
+mods[[2]] %>% 
+  tidy()%>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+The estimated regression coefficient for `x2` in `mods[[1]]` equals that for `x21` in `mods[[2]]`. That is, slopes in these two models are the same.
+
+## 3. Normality and Jarque-Bera Test of `mods[[1]]`
+
+The following four plots can be used to check the plausibility of assumptions:
+  - The upper left plot shows residuals against fitted values of `mods[[1]]`. It can be seen that the variablity of the residuals is not stable with respect to the fitted values. The scale-location plot (lower left) indicate the nonuniformity as well. So the assumption of homoskedasticity is tested in section 4.
+  - Data points 36, 241 and 163 are mentioned several times. They are examined in section 5.
+  - The assumption of conditional normality looks reasonable according to upper right Q-Q plot. A formal Jarque-Bera test is performed later this section to examine this assumption in a quantitative manner.
+
+```{r, warning=FALSE}
+par_orginal <- par()
+par(mfrow = c(2, 2), mai = c(0.3, 0.3, 0.3, 0.3))
+plot(mods[[1]])
+par(par_orginal)
+```
+
+The Jarque-Bera test justifies the assumption of conditional normality as well.
+
+```{r, echo = T}
+test_jb(mods[[1]]$residuals)
+```
+
+Conditional distributions are visualized:
+
+```{r}
+dat %>%
+  dplyr::filter(x2 == 1 | x2 == 3 | x2 == 5 | x2 == 7 | x2 == 9) %>%
+  ggplot() + 
+    geom_freqpoly(aes(y)) +
+    facet_grid(rows = vars(x2))
+```
+
+## 4. Homoskedasticity and White's Test of `mods[[1]]`
+
+`mods[[1]]` doesn't pass the White's test, which means the variances of residuals do vary with different values of `y`.
+
+```{r, echo = T}
+dat %>%
+  mutate(resi2 = mods[[1]]$residuals^2) %>%
+  {lm(resi2 ~ x2 + I(x2^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
+```
+
+## 5. Functional Form and RESET Test of `mods[[1]]`
+
+`mods[[1]]` cannot pass RESET test.
+
+```{r}
+dat %>%
+  mutate(y_hat = fitted(mods[[1]])) %>%
+  {lm(y ~ x2 + I(y_hat^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+```
+
+## 5. Regress `y` on `x2` with `36`, `241` and `163` Data Points Excluded
+
+According to the scatter plot in section 1, the values of `y` in data points `36`, `241` and `163` are too small. With just 8 other points when `x2` equals 6, data point `36` will have a huge impact on the model, so it is excluded in the following model.
+
+```{r}
+dat %>%
+  mutate(index = row_number()) %>%
+  dplyr::filter(row_number() == 241 | row_number() == 163 | 
+    row_number() == 36) %>%
+  dplyr::select(index, y, x2) %>%
+  kable() %>%
+  kable_styling(full_width = F)
+```
+
+```{r}
+mods[[2]] <-
+  dat %>%
+  dplyr::filter(row_number() != 36) %>%
+  {lm(y ~ x2, data = .)}
+
+mods[[2]] %>% summary()
+```
+
+Compared with `mods[[1]]`, `mods[[2]]` has more accurate estimation. 
+
+Besides, `mods[[2]]` passes Jarque-Bera test and White's test at the same time. So data point `36` is exluded in the following models, and the corresponding new data set `dat2` is used.
+
+```{r, echo = T}
+test_jb(mods[[2]]$residuals)
+```
+
+```{r}
+dat_2 <-
+  dat %>%
+  dplyr::filter(row_number() != 36)
+```
+
+```{r, echo = T}
+dat_2 %>%
+  mutate(resi2 = mods[[2]]$residuals^2) %>%
+  {lm(resi2 ~ x2 + I(x2^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat_2) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
+```
+
+`mods[[2]]` cannot pass RESET test.
+
+```{r}
+dat_2 %>%
+  mutate(y_hat = fitted(mods[[2]])) %>%
+  {lm(y ~ x2 + I(y_hat^2), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat_2) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+```
+
+## 6. Models with More Regressors
+
+```{r}
+mods[[3]] <- lm(y ~ x2 + x6, data = dat_2)
+results %<>%
+  collect_glance(mods[[3]], 3)
+```
+
+`mods[[4]]` with all variables being regressors shows:
+
+```{r}
+mods[[4]] <- lm(y ~ x2 + x3 + x4 + x5 + x6, data = dat_2)
+results %<>%
+  collect_glance(mods[[4]], 4)
+
+mods[[4]] %>%
+  tidy() %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+`mods[[5]]` is determined by automated model selection using `mods[[4]]` with `stats::step` function.
+
+```{r}
+mods[[5]] <- step(mods[[4]])
+results %<>%
+  collect_glance(mods[[5]], 5)
+```
+
+According to results of five models, `mods[[5]]` with expression `y ~ x2 + x3 + x4 + x6` is choosen for now. Mis-specification analysis is performed in the next section 7.
+
+```{r}
+results %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+## 7. Mis-Specification Analysis of `mods[[5]]`
+
+```{r}
+test_jb(mods[[5]]$residuals)
+```
+
+There are two White's tests, and `mods[[5]]` cannot pass neither of them.
+
+```{r}
+dat_2 %>%
+  mutate(resi2 = mods[[5]]$residuals^2) %>%
+  {lm(resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) + I(x3^2) + I(x4^2) + I(x6^2), 
+    data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat_2) <= qchisq(0.95, 4, lower.tail = TRUE, log.p = FALSE)}
+```
+
+```{r}
+dat_2 %>%
+  mutate(resi2 = mods[[5]]$residuals^2) %>%
+  {lm(resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) + I(x3^2) + I(x4^2) + I(x6^2) +
+    I(x2 * x3) + I(x2 * x4) + I(x2 * x6) + I(x4 * x3) + I(x6 * x3) + 
+    (x4 * x6), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat_2) <= qchisq(0.95, 10, lower.tail = TRUE, log.p = FALSE)}
+```
+
+## 8. Mis-Specification Analysis of `mods[[3]]`
+
+`mods[[3]]` passes Jarque-Bera test and two White's tests.
+
+```{r}
+test_jb(mods[[3]]$residuals)
+```
+
+```{r}
+dat_2 %>%
+  mutate(resi2 = mods[[3]]$residuals^2) %>%
+  {lm(resi2 ~ x2 + x6 + I(x2^2) + I(x6^2), 
+    data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat_2) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
+```
+
+```{r}
+dat_2 %>%
+  mutate(resi2 = mods[[3]]$residuals^2) %>%
+  {lm(resi2 ~ x2 + x6 + I(x2^2) + I(x6^2) + I(x2 * x6), data = .)} %>%
+  {summary(.)$r.squared} %>%
+  {. * nrow(dat_2) <= qchisq(0.95, 3, lower.tail = TRUE, log.p = FALSE)}
+```
+
+## 8. One-Sided t-Test of `mods[[1]]`
+
+```{r}
+mods[[1]] %>%
+  summary() %>%
+  {pt(coef(.)[2, 3], mods[[1]]$df, lower = FALSE)} %>%
+  {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+```
+
