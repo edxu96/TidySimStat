@@ -14,7 +14,7 @@ output:
 author: Edward J. Xu (<edxu96@outlook.com>)
 date: "`r Sys.Date()`"
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ## Latest Updates
