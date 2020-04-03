@@ -24,7 +24,8 @@ editor_options:
 - The value 1 of `x5` will indicate a female respondent, while male respondents are represented using 0 instead 2. This modification will make it easier to intepret the intercepts in models containing `x5`.
 - Add section 11 causality of `x3` and `x4`.
 - Correct the degree of freedom in White's test for `mods[[5]]`.
-- Add hand-written RESET test.
+- Add hand-calculation RESET test.
+- Add hand-calculation JB test.
 
 ## To-Do
 
@@ -73,6 +74,10 @@ dat <-
   mutate(x5 = - x5 + 2) 
 ```
 
+## 1. Data Visualization
+
+Different variables are summarized in the following table.
+
 | Sym | Abbr      | Definition                              |
 | --- | --------- | --------------------------------------- |
 | z   | KWH       | electricity consumption                 |
@@ -83,8 +88,6 @@ dat <-
 | x5  | HHSEX     | gender                                  |
 | x6  | HHAGE     | age                                     |
 | x7  | ATHOME    | number of weekdays someone is at home   |
-
-## 1. Data Visualization
 
 The first 5 rows can be visualized:
 
@@ -213,14 +216,11 @@ dat %>%
 
 ## 5. Functional Form and RESET Test of `mods[[1]]`
 
-`mods[[1]]` cannot pass RESET test.
+`mods[[1]]` can pass RESET test.
 
 ```{r}
-dat %>%
-  mutate(y_hat = fitted(mods[[1]])) %>%
-  {lm(y ~ x2 + I(y_hat^2), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+mods[[1]] %>%
+  test_reset(dat)
 ```
 
 ## 6. Regress `y` on `x2` with `36`, `241` and `163` Data Points Excluded
@@ -318,120 +318,70 @@ results %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
-## 8. Mis-Specification Analysis of `mods[[5]]` and `mods[[4]]`
+`mods[[5]]` can pass two White's tests, but cannot pass Jarque-Bera test and RESET test.
 
 ```{r, echo = T}
-mods[[5]]$residuals %>% 
-  tseries::jarque.bera.test()%>%  
-  {(.$p.value <= qchisq(0.95, summary(mods[[5]])$df[1], lower.tail = TRUE, 
-    log.p = FALSE))}
+results <-
+  mods[[5]] %>%
+  test_jb(dat_2)
+
+results %<>%
+  bind_rows(test_white(mods[[5]], dat_2, resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) +
+    I(x3^2) + I(x4^2) + I(x6^2), 5)) %>%
+  bind_rows(test_white(mods[[5]], dat_2, resi2 ~ x2 + x3 + x4 + x6 + 
+    I(x2^2) + I(x3^2) + I(x4^2) + I(x6^2) + I(x2 * x3) + I(x2 * x4) + 
+    I(x2 * x6) + I(x4 * x3) + I(x6 * x3) +I(x4 * x6), 15)) %>%
+  bind_rows(test_reset(mods[[5]], dat_2))
+
+results %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
-There are two White's tests, and `mods[[5]]` cannot pass neither of them.
+`mods[[4]]` can pass two White's tests, but cannot pass Jarque-Bera test and RESET test.
 
 ```{r, echo = T}
-dat_2 %>%
-  mutate(resi2 = mods[[5]]$residuals^2) %>%
-  {lm(resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) + I(x3^2) + I(x4^2) + I(x6^2), 
-    data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 5, lower.tail = TRUE, log.p = FALSE)}
+results <-
+  mods[[4]] %>%
+  test_jb(dat_2)
+
+results %<>%
+  bind_rows(test_white(mods[[4]], dat_2, resi2 ~ x2 + x3 + x4 + x5 + x6 + x7 + 
+    I(x2^2) + I(x3^2) + I(x4^2) + I(x5^2) + I(x6^2) + I(x5^2), 7)) %>%
+  bind_rows(test_white(mods[[4]], dat_2, resi2 ~ x2 + x3 + x4 + x5 + x6 + x7 + 
+    I(x2^2) + I(x3^2) + I(x4^2) + I(x5^2) + I(x6^2) + I(x7^2) + I(x2 * x3) +
+    I(x2 * x4) + I(x2 * x5) + I(x2 * x6) + I(x2 * x7) + I(x4 * x3) + 
+    I(x5 * x3) + I(x6 * x3) + I(x3 * x7) + I(x4 * x5) + I(x4 * x6) + 
+    I(x4 * x7) + I(x5 * x6) + I(x5 * x7) + I(x6 * x7), 28)) %>%
+  bind_rows(test_reset(mods[[4]], dat_2))
+
+results %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
+
+`mods[[3]]` cannot pass all Jarque-Bera test.
 
 ```{r, echo = T}
-dat_2 %>%
-  mutate(resi2 = mods[[5]]$residuals^2) %>%
-  {lm(resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) + I(x3^2) + I(x4^2) + I(x6^2) +
-    I(x2 * x3) + I(x2 * x4) + I(x2 * x6) + I(x4 * x3) + I(x6 * x3) + 
-    I(x4 * x6), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 15, lower.tail = TRUE, log.p = FALSE)}
+results <-
+  mods[[3]] %>%
+  test_jb(dat_2)
+
+results %<>%
+  bind_rows(test_white(mods[[3]], dat_2, resi2 ~ x2 + x6 + I(x2^2) + I(x6^2),
+    3)) %>%
+  bind_rows(test_white(mods[[3]], dat_2, resi2 ~ x2 + x6 + I(x2^2) + I(x6^2) +
+    I(x2 * x6), 6)) %>%
+  bind_rows(test_reset(mods[[3]], dat_2))
+
+results %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
 ```
 
-```{r}
-dat_2 %>%
-  mutate(y_hat = fitted(mods[[5]])) %>%
-  {lm(y ~ x2 + x3 + x4 + x6 + I(y_hat^2), data = .)} %>%
-  lmSupport::modelEffectSizes() %>%
-  {.$Effects} %>%
-  {.[nrow(.), 3] * (nrow(dat_2) - 1)} %>%
-  {1 - pchisq(., 1)} %>%
-  {. >= 0.05}  # If true, the num hypothesis is rejected.
-```
 
-`mods[[4]]` has passed all tests.
-
-```{r}
-mods[[4]]$residuals %>% 
-  tseries::jarque.bera.test()%>%  
-  {(.$p.value <= qchisq(0.95, summary(mods[[4]])$df[1], lower.tail = TRUE, 
-    log.p = FALSE))}
-```
-
-```{r, echo = T}
-dat_2 %>%
-  mutate(resi2 = mods[[4]]$residuals^2) %>%
-  {lm(resi2 ~ x2 + x3 + x4 + x5 + x6 + x7 + I(x2^2) + I(x3^2) + I(x4^2) + 
-    I(x5^2) + I(x6^2) + I(x5^2), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 7, lower.tail = TRUE, log.p = FALSE)}
-```
-
-```{r, echo = T}
-dat_2 %>%
-  mutate(resi2 = mods[[4]]$residuals^2) %>%
-  {lm(resi2 ~ x2 + x3 + x4 + x5 + x6 + x7 + I(x2^2) + I(x3^2) + I(x4^2) + 
-    I(x5^2) + I(x6^2) + I(x7^2) + I(x2 * x3) + I(x2 * x4) + I(x2 * x5) + 
-    I(x2 * x6) + I(x2 * x7) + I(x4 * x3) + I(x5 * x3) + I(x6 * x3) + 
-    I(x3 * x7) + I(x4 * x5) + I(x4 * x6) + I(x4 * x7) + I(x5 * x6) + 
-    I(x5 * x7) + I(x6 * x7), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 28, lower.tail = TRUE, log.p = FALSE)}
-```
-
-```{r, echo = T}
-mods[[4]] %>%
-  resettest(power = 2:3, type = c("fitted", "regressor", "princomp"), 
-    data = dat_2) %>%
-  {.$p.value <= qchisq(0.95, 6, lower.tail = TRUE, log.p = FALSE)}
-```
-
-## 9. Mis-Specification Analysis of `mods[[3]]`
-
-`mods[[3]]` passes Jarque-Bera test and two White's tests.
-
-```{r}
-mods[[3]]$residuals %>% 
-  tseries::jarque.bera.test()%>%  
-  {(.$p.value <= qchisq(0.95, summary(mods[[3]])$df[1], lower.tail = TRUE, 
-    log.p = FALSE))}
-```
-
-```{r, echo = T}
-dat_2 %>%
-  mutate(resi2 = mods[[3]]$residuals^2) %>%
-  {lm(resi2 ~ x2 + x6 + I(x2^2) + I(x6^2), 
-    data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
-```
-
-```{r, echo = T}
-dat_2 %>%
-  mutate(resi2 = mods[[3]]$residuals^2) %>%
-  {lm(resi2 ~ x2 + x6 + I(x2^2) + I(x6^2) + I(x2 * x6), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 3, lower.tail = TRUE, log.p = FALSE)}
-```
-
-```{r, echo = T}
-mods[[3]] %>%
-  resettest(power = 2:3, type = c("fitted", "regressor", "princomp"), 
-    data = dat_2) %>%
-  {.$p.value <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
-```
-
-## 10. One-Sided t-Test of `mods[[1]]`
+## 8. One-Sided t-Test of `mods[[1]]`
 
 ```{r, echo = T}
 mods[[1]] %>%
@@ -440,7 +390,7 @@ mods[[1]] %>%
   {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
 ```
 
-## 11. Causality of `x3` and `x4`
+## 9. Causality of `x3` and `x4`
 
 ```{r, echo = T}
 mods[[7]] <-
@@ -468,7 +418,7 @@ mods[[9]] <-
 mods[[9]] %>% summary()
 ```
 
-## 12. Models with Squared Income
+## 10. Models with Squared Income
 
 ```{r}
 mods[[10]] <- lm(y ~ x2 + x3 + x4 + I(x4^2) + x5 + x6 + x7, data = dat_2)
