@@ -8,7 +8,7 @@ output:
     fig_width: 15
     theme: default
     toc: true
-    toc_float: false
+    toc_float: true
     smooth_scroll: true
     df_print: paged
 author: Edward J. Xu (<edxu96@outlook.com>)
@@ -22,22 +22,27 @@ editor_options:
 - Comments for graphic check of the contant variance assumption in section 3 are modified. From the left two plots, the assumption seems to hold, so we need the formal White's test.
 - The cross correlation matrix of regressors is visualized in section 1.
 - The value 1 of `x5` will indicate a female respondent, while male respondents are represented using 0 instead 2. This modification will make it easier to intepret the intercepts in models containing `x5`.
-- Add section 11 causality of `x3` and `x4`.
 - Correct the degree of freedom in White's test for `mods[[5]]`.
-- Add hand-calculation RESET test.
-- Add hand-calculation JB test.
+- Add hand-calculation RESET test and JB test.
+- Update section 8 causality.
+- Present the final model `mods[[7]]`.
 
 ## To-Do
 
 - To learn about sign tests (one-sided test). See 14.2 in _ross2017introductory_.
-- When there is a mediation variable, what should we do?
 - To discuss why we choose the final model.
 - To intepret the final model using economics.
-
-- To try powered regressors
 - Variance inflation factor
 
-```{r, message = FALSE}
+## Libraries and Data
+
+```{r}
+rm(list = ls())
+```
+
+Following packages and functions are used in the analysis.
+
+```{r, message = FALSE, echo=T}
 library(knitr)
 library(kableExtra)
 library(tidyverse)
@@ -62,32 +67,34 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, message = FALSE}
+The data set is defined as follows:
+
+```{r, message = FALSE, echo=T}
 set.seed(6)
 dat <- 
   read_csv("./data/recs.csv") %>%
   dplyr::slice(sample(nrow(.), 300)) %>%
   mutate(y = log(KWH / NHSLDMEM)) %>%
+  mutate(x8 = TOTROOMS + NCOMBATH + NHAFBATH) %>%
   dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
-    x6 = HHAGE, x7 = ATHOME) %>%
-  mutate_at(seq(2, 7), as.integer) %>%  # make continuous variables discrete
+    x6 = HHAGE, x7 = ATHOME, x8) %>%
+  mutate_at(seq(2, 8), as.integer) %>%  # make continuous variables discrete
   mutate(x5 = - x5 + 2) 
 ```
 
-## 1. Data Visualization
-
 Different variables are summarized in the following table.
 
-| Sym | Abbr      | Definition                              |
-| --- | --------- | --------------------------------------- |
-| z   | KWH       | electricity consumption                 |
-| y   | LKWH.pers | logarithm of KWH/NHSLDMEM               |
-| x2  | NHSLDMEM  | number of household members             |
-| x3  | EDUCATION | highest education completed             |
-| x4  | MONEYPY   | annual gross household income last year |
-| x5  | HHSEX     | gender                                  |
-| x6  | HHAGE     | age                                     |
-| x7  | ATHOME    | number of weekdays someone is at home   |
+| Sym | Abbr       | Definition                              |
+| --- | ---------- | --------------------------------------- |
+| z   | KWH        | electricity consumption                 |
+| y   | LKWH.pers  | logarithm of KWH/NHSLDMEM               |
+| x2  | NHSLDMEM   | number of household members             |
+| x3  | EDUCATION  | highest education completed             |
+| x4  | MONEYPY    | annual gross household income last year |
+| x5  | HHSEX      | gender                                  |
+| x6  | HHAGE      | age                                     |
+| x7  | ATHOME     | number of weekdays someone is at home   |
+| x8  | TOTROOMS + | number of rooms (including bathrooms)   |
 
 The first 5 rows can be visualized:
 
@@ -96,6 +103,8 @@ head(dat, 5) %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
+
+## 1. Data Visualization
 
 It can be seen that `y` is highly correlated to `x2` and `x6` according to the following table.
 
@@ -108,6 +117,8 @@ dat %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
+
+It can be seen from the following covariance matrix that `y` is highly correlated to `x2`, `x6` and `x8`. Besides, `x3`-`x4`, `x2`-`x6`, `x4`-`x8` are high correlated, which will be discussed in section 9.
 
 ```{r}
 dat %>%
@@ -183,13 +194,11 @@ plot(mods[[1]])
 par(par_orginal)
 ```
 
-The Jarque-Bera test justifies the assumption of conditional normality as well.
+The assumption of conditional normality is not justified by JB test.
 
 ```{r, echo = T}
-mods[[1]]$residuals %>% 
-  tseries::jarque.bera.test()%>%  
-  {(.$p.value <= qchisq(0.95, summary(mods[[1]])$df[1], lower.tail = TRUE, 
-    log.p = FALSE))}
+mods[[1]] %>%
+  test_jb(dat)
 ```
 
 Conditional distributions are visualized:
@@ -204,14 +213,11 @@ dat %>%
 
 ## 4. Homoskedasticity and White's Test of `mods[[1]]`
 
-`mods[[1]]` doesn't pass the White's test, which means the variances of residuals do vary with different values of `y`.
+`mods[[1]]` cannot pass the White's test, which means the variances of residuals do vary with different values of `y`.
 
 ```{r, echo = T}
-dat %>%
-  mutate(resi2 = mods[[1]]$residuals^2) %>%
-  {lm(resi2 ~ x2 + I(x2^2), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
+mods[[1]] %>%
+  test_white(dat, resi2 ~ x2 + I(x2^2), 2)
 ```
 
 ## 5. Functional Form and RESET Test of `mods[[1]]`
@@ -223,7 +229,7 @@ mods[[1]] %>%
   test_reset(dat)
 ```
 
-## 6. Regress `y` on `x2` with `36`, `241` and `163` Data Points Excluded
+## 6. Regress `y` on `x2` with `36` Data Points Excluded
 
 According to the scatter plot in section 1, the values of `y` in data points `36`, `241` and `163` are too small. With just 8 other points when `x2` equals 6, data point `36` will have a huge impact on the model, so it is excluded in the following model.
 
@@ -246,55 +252,45 @@ mods[[2]] <-
 mods[[2]] %>% summary()
 ```
 
-Compared with `mods[[1]]`, `mods[[2]]` has more accurate estimation. 
-
-Besides, `mods[[2]]` passes Jarque-Bera test and White's test at the same time. So data point `36` is exluded in the following models, and the corresponding new data set `dat2` is used.
-
-```{r, echo = T}
-mods[[2]]$residuals %>% 
-  tseries::jarque.bera.test()%>%  
-  {(.$p.value <= qchisq(0.95, summary(mods[[2]])$df[1], lower.tail = TRUE, 
-    log.p = FALSE))}
-```
+Compared with `mods[[1]]`, `mods[[2]]` has more accurate estimation. Besides, `mods[[2]]` passes RESET test and White's test at the same time. So data point `36` is exluded in the following models, and the corresponding new data set `dat_2` is used.
 
 ```{r}
 dat_2 <-
   dat %>%
   dplyr::filter(row_number() != 36)
-```
 
-```{r, echo = T}
-dat_2 %>%
-  mutate(resi2 = mods[[2]]$residuals^2) %>%
-  {lm(resi2 ~ x2 + I(x2^2), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 2, lower.tail = TRUE, log.p = FALSE)}
-```
+results_test <-
+  mods[[2]] %>%
+  test_jb(dat_2)
 
-`mods[[2]]` cannot pass RESET test.
+results_test %<>%
+  bind_rows(test_white(mods[[2]], dat_2, resi2 ~ x2 + I(x2^2), 2)) %>%
+  bind_rows(test_reset(mods[[2]], dat_2))
 
-```{r}
-dat_2 %>%
-  mutate(y_hat = fitted(mods[[2]])) %>%
-  {lm(y ~ x2 + I(y_hat^2), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+results_test %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
 ## 7. Models with More Regressors
 
+`mods[[3]]` with `x2` and `x6` being regressors shows:
+
 ```{r}
 mods[[3]] <- lm(y ~ x2 + x6, data = dat_2)
-results %<>%
-  collect_glance(mods[[3]], 3)
+results %<>% collect_glance(mods[[3]], 3)
+
+mods[[3]] %>%
+  tidy() %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
 `mods[[4]]` with all variables being regressors shows:
 
 ```{r}
 mods[[4]] <- lm(y ~ x2 + x3 + x4 + x5 + x6 + x7, data = dat_2)
-results %<>%
-  collect_glance(mods[[4]], 4)
+results %<>% collect_glance(mods[[4]], 4)
 
 mods[[4]] %>%
   tidy() %>%
@@ -321,11 +317,11 @@ results %>%
 `mods[[5]]` can pass two White's tests, but cannot pass Jarque-Bera test and RESET test.
 
 ```{r, echo = T}
-results <-
+results_test <-
   mods[[5]] %>%
   test_jb(dat_2)
 
-results %<>%
+results_test %<>%
   bind_rows(test_white(mods[[5]], dat_2, resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) +
     I(x3^2) + I(x4^2) + I(x6^2), 5)) %>%
   bind_rows(test_white(mods[[5]], dat_2, resi2 ~ x2 + x3 + x4 + x6 + 
@@ -333,7 +329,7 @@ results %<>%
     I(x2 * x6) + I(x4 * x3) + I(x6 * x3) +I(x4 * x6), 15)) %>%
   bind_rows(test_reset(mods[[5]], dat_2))
 
-results %>%
+results_test %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
@@ -341,13 +337,13 @@ results %>%
 `mods[[4]]` can pass two White's tests, but cannot pass Jarque-Bera test and RESET test.
 
 ```{r, echo = T}
-results <-
+results_test <-
   mods[[4]] %>%
   test_jb(dat_2)
 
-results %<>%
+results_test %<>%
   bind_rows(test_white(mods[[4]], dat_2, resi2 ~ x2 + x3 + x4 + x5 + x6 + x7 + 
-    I(x2^2) + I(x3^2) + I(x4^2) + I(x5^2) + I(x6^2) + I(x5^2), 7)) %>%
+    I(x2^2) + I(x3^2) + I(x4^2) + I(x5^2) + I(x6^2) + I(x7^2), 7)) %>%
   bind_rows(test_white(mods[[4]], dat_2, resi2 ~ x2 + x3 + x4 + x5 + x6 + x7 + 
     I(x2^2) + I(x3^2) + I(x4^2) + I(x5^2) + I(x6^2) + I(x7^2) + I(x2 * x3) +
     I(x2 * x4) + I(x2 * x5) + I(x2 * x6) + I(x2 * x7) + I(x4 * x3) + 
@@ -355,33 +351,141 @@ results %<>%
     I(x4 * x7) + I(x5 * x6) + I(x5 * x7) + I(x6 * x7), 28)) %>%
   bind_rows(test_reset(mods[[4]], dat_2))
 
-results %>%
+results_test %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
-`mods[[3]]` cannot pass all Jarque-Bera test.
+`mods[[3]]` can pass all tests.
 
 ```{r, echo = T}
-results <-
+results_test <-
   mods[[3]] %>%
   test_jb(dat_2)
 
-results %<>%
+results_test %<>%
   bind_rows(test_white(mods[[3]], dat_2, resi2 ~ x2 + x6 + I(x2^2) + I(x6^2),
     3)) %>%
   bind_rows(test_white(mods[[3]], dat_2, resi2 ~ x2 + x6 + I(x2^2) + I(x6^2) +
     I(x2 * x6), 6)) %>%
   bind_rows(test_reset(mods[[3]], dat_2))
 
-results %>%
+results_test %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
+
+## 8. Causality
+
+### 8-1. Causality of `x2`-`x6`
+
+It can be seen from the following two models that `y` is highly correlated to `x2` and `x6` separately. Besides, according to `mods[[3]]`, `y` is highly correlated to `x2` and `x6` at the same time. 
+
+```{r, echo = T}
+mods_62 <- list()
+mods_62[[1]] <- lm(y ~ x2, data = dat_2)
+mods_62[[1]] %>% summary()
 ```
 
+```{r, echo = T}
+mods_62[[2]] <- lm(y ~ x6, data = dat_2)
+mods_62[[2]] %>% summary()
+```
 
-## 8. One-Sided t-Test of `mods[[1]]`
+It is reasonable to assume that people tend to have more accompanies as age increases after 18. Also, the following model proves the relationship between `x2` and `x6`. We can say that the effect of `x6` on `y` is mediated by `x2`. With `x6` affecting `y` as well, `x2` does not mediate `x6` completely. So `x2` and `x6` are both supposed to appear in the model for `y`. The mediation factor `x2` may affect `y` though other ways, which will be explored in section 10. Besides, we find that `x6` does not affect `y` in other ways in section 10.
+
+```{r, echo = T}
+mods_62[[3]] <- lm(x2 ~ x6, data = dat_2)
+mods_62[[3]] %>% summary()
+```
+
+### 8-2. Causality of `x3`-`x4`
+
+When taking `x3` and `x4` into consideration, the models assocating `y` with `x3` or `x4` both show no significance, though `x3` and `x4` are highly correlated. So neither `x3` nor `x4` should be included in the model.
+
+### 8-3. Causality of `x4`-`x8`
+
+It can be seen that `y` is highly correlated to `x8`.
+
+```{r}
+mods_48 <- list()
+mods_48[[1]] <-  lm(y ~ x8, data = dat_2)
+mods_48[[1]] %>% summary()
+```
+
+Also, `x8` is highly related to `x4`, which makes sense, because people with more income tend to buy houses with more rooms.
+
+```{r}
+mods_48[[2]] <-  lm(x8 ~ x4, data = dat_2)
+mods_48[[2]] %>% summary()
+```
+
+However, from subsection 9.2 we already know that `y` is not highly correlated with `x4`, which is illustrated again by the following model. So we say that the effect of `x4` on `y` is completely mediated by `x8`. Though it makes sense that people with more income tend to consume more energy on average, the direct effect is mediated through `x8` and possibly other factors.
+
+```{r}
+mods_48[[3]] <-  lm(y ~ x8 + x4, data = dat_2)
+mods_48[[3]] %>% summary()
+```
+
+## 9. `mods[[3]]` with extra terms
+
+In `mods[[6]]`, `x2`, `x6` and `x8` are kept at the same time.
+
+```{r, echo = T}
+mods[[6]] <- lm(y ~ x2 + x6 + x8, data = dat_2)
+mods[[6]] %>% summary()
+```
+
+```{r}
+results_test <-
+  mods[[6]] %>%
+  test_jb(dat_2)
+
+results_test %<>%
+  bind_rows(test_white(mods[[6]], dat_2, resi2 ~ x2 + x6 + x8 + I(x2^2) +
+    I(x6^2) + I(x8^2), 4)) %>%
+  bind_rows(test_white(mods[[6]], dat_2, resi2 ~ x2 + x6 + x8 + I(x2^2) +
+    I(x6^2) + I(x8^2) + I(x2 * x6) + I(x2 * x8) + I(x6 * x8), 10)) %>%
+  bind_rows(test_reset(mods[[6]], dat_2))
+
+results_test %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+In `mods[[7]]`, `x6` is excluded because a new term `x2^2` is added, and `x6` becomes insignificant. The effect of `x6` on `y` seems to be mediated compeletely by `x2` and `x2^2`.
+
+```{r}
+mods[[7]] <- lm(y ~ x2 + x8 + I(x2^2), data = dat_2)
+mods[[7]] %>% summary()
+```
+
+```{r}
+results_test <-
+  mods[[7]] %>%
+  test_jb(dat_2)
+
+results_test %<>%
+  bind_rows(test_white(mods[[7]], dat_2, resi2 ~ x2 + x8 + I(x2^2) + I(x8^2),
+    3)) %>%
+  bind_rows(test_white(mods[[7]], dat_2, resi2 ~ x2 + x8 + I(x2^2) +
+    I(x8^2) + I(x2 * x8), 6)) %>%
+  bind_rows(test_reset(mods[[7]], dat_2))
+
+results_test %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+`mods[[7]]` has a lower AIC than `mods[[6]]` and `mods[[3]]`.
+
+```{r}
+AIC(mods[[7]], mods[[6]], mods[[3]]) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+## 10. One-Sided t-Test of `mods[[1]]`
 
 ```{r, echo = T}
 mods[[1]] %>%
@@ -389,42 +493,3 @@ mods[[1]] %>%
   {pt(coef(.)[2, 3], mods[[1]]$df, lower = FALSE)} %>%
   {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
 ```
-
-## 9. Causality of `x3` and `x4`
-
-```{r, echo = T}
-mods[[7]] <-
-  lm(y ~ x3, data = dat_2)
-mods[[7]] %>% summary()
-```
-
-```{r, echo = T}
-mods[[8]] <-
-  lm(x4 ~ x3, data = dat_2)
-mods[[8]] %>% summary()
-```
-
-```{r, warning=FALSE}
-par_orginal <- par()
-par(mfrow = c(2, 2), mai = c(0.3, 0.3, 0.3, 0.3))
-plot(mods[[8]])
-par(par_orginal)
-```
-
-
-```{r, echo = T}
-mods[[9]] <-
-  lm(y ~ x4 + x3, data = dat_2)
-mods[[9]] %>% summary()
-```
-
-## 10. Models with Squared Income
-
-```{r}
-mods[[10]] <- lm(y ~ x2 + x3 + x4 + I(x4^2) + x5 + x6 + x7, data = dat_2)
-results %<>%
-  collect_glance(mods[[10]], 10)
-```
-
-
-

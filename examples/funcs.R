@@ -1,4 +1,5 @@
 
+
 collect_glance <- function(results, model, idx){
   row_new <- 
     model %>%
@@ -45,7 +46,6 @@ test_jb <- function(mod, dat, prob){
   stat <- stat_skew + stat_kurt
     
   df1 <- 2
-  
   p_value <- 
     stat %>%
     {1 - pchisq(., df1)}
@@ -53,7 +53,7 @@ test_jb <- function(mod, dat, prob){
   results <- tibble(
     method = "Jarque-Bera", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
     p_value = p_value,prob = prob, if_accept = {p_value <= prob}, 
-    if_pass = {p_value <= prob}
+    if_pass = {p_value >= prob}
   )
   
   return(results)
@@ -72,7 +72,7 @@ test_white <- function(mod, dat, f, df1, prob){
   stat <-
     lm(f, data = dat) %>%
     {summary(.)$r.squared} %>%
-    {. * nrow(dat_2)}
+    {. * nrow(dat)}
   
   p_value <- 
     stat %>%

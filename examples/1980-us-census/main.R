@@ -25,7 +25,15 @@ dat %>%
 
 mod <- lm(wage_log ~ educ, data = dat)
 
-test_jb(mod, dat)
+mod %>%
+  residuals() %>%
+  tseries::jarque.bera.test()
+
+mod %>%  
+  resettest(power = 2:3, type = c("fitted", "regressor",  "princomp"),
+                data = dat)
+
+qqPlot(mod$residuals)
 
 mods[[2]] <-
   dat %>%
