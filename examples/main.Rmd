@@ -17,20 +17,23 @@ editor_options:
   chunk_output_type: inline
 ---
 
-### Latest Updates
+## Latest Updates
 
 - Comments for graphic check of the contant variance assumption in section 3 are modified. From the left two plots, the assumption seems to hold, so we need the formal White's test.
 - The cross correlation matrix of regressors is visualized in section 1.
 - The value 1 of `x5` will indicate a female respondent, while male respondents are represented using 0 instead 2. This modification will make it easier to intepret the intercepts in models containing `x5`.
-- Add section 11 causality of `x3` and `x4`
+- Add section 11 causality of `x3` and `x4`.
+- Correct the degree of freedom in White's test for `mods[[5]]`.
+- Add hand-written RESET test.
 
-### To-Do
+## To-Do
 
 - To learn about sign tests (one-sided test). See 14.2 in _ross2017introductory_.
 - When there is a mediation variable, what should we do?
-- To try powered regressors 
 - To discuss why we choose the final model.
 - To intepret the final model using economics.
+
+- To try powered regressors
 - Variance inflation factor
 
 ```{r, message = FALSE}
@@ -332,7 +335,7 @@ dat_2 %>%
   {lm(resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) + I(x3^2) + I(x4^2) + I(x6^2), 
     data = .)} %>%
   {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 4, lower.tail = TRUE, log.p = FALSE)}
+  {. * nrow(dat_2) <= qchisq(0.95, 5, lower.tail = TRUE, log.p = FALSE)}
 ```
 
 ```{r, echo = T}
@@ -342,7 +345,18 @@ dat_2 %>%
     I(x2 * x3) + I(x2 * x4) + I(x2 * x6) + I(x4 * x3) + I(x6 * x3) + 
     I(x4 * x6), data = .)} %>%
   {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 10, lower.tail = TRUE, log.p = FALSE)}
+  {. * nrow(dat_2) <= qchisq(0.95, 15, lower.tail = TRUE, log.p = FALSE)}
+```
+
+```{r}
+dat_2 %>%
+  mutate(y_hat = fitted(mods[[5]])) %>%
+  {lm(y ~ x2 + x3 + x4 + x6 + I(y_hat^2), data = .)} %>%
+  lmSupport::modelEffectSizes() %>%
+  {.$Effects} %>%
+  {.[nrow(.), 3] * (nrow(dat_2) - 1)} %>%
+  {1 - pchisq(., 1)} %>%
+  {. >= 0.05}  # If true, the num hypothesis is rejected.
 ```
 
 `mods[[4]]` has passed all tests.
@@ -360,7 +374,7 @@ dat_2 %>%
   {lm(resi2 ~ x2 + x3 + x4 + x5 + x6 + x7 + I(x2^2) + I(x3^2) + I(x4^2) + 
     I(x5^2) + I(x6^2) + I(x5^2), data = .)} %>%
   {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 6, lower.tail = TRUE, log.p = FALSE)}
+  {. * nrow(dat_2) <= qchisq(0.95, 7, lower.tail = TRUE, log.p = FALSE)}
 ```
 
 ```{r, echo = T}
@@ -372,7 +386,7 @@ dat_2 %>%
     I(x3 * x7) + I(x4 * x5) + I(x4 * x6) + I(x4 * x7) + I(x5 * x6) + 
     I(x5 * x7) + I(x6 * x7), data = .)} %>%
   {summary(.)$r.squared} %>%
-  {. * nrow(dat_2) <= qchisq(0.95, 21, lower.tail = TRUE, log.p = FALSE)}
+  {. * nrow(dat_2) <= qchisq(0.95, 28, lower.tail = TRUE, log.p = FALSE)}
 ```
 
 ```{r, echo = T}

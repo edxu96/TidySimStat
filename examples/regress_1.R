@@ -138,28 +138,4 @@ AIC(mods[[1]], mods[[5]], mods[[6]], mods[[7]], mods[[8]], mods[[9]])
 
 mods[[9]] %>% summary()
 
-## x5 as Dummy Variable ####
-
-dat_3 <- 
-  dat %>%
-  mutate(x5 = - x5 + 2) %>%
-  dplyr::filter(row_number() != 36)
-
-mods[[6]] <- 
-  lm(y ~ x2 + x3 + x4 + x5 + x6 + x7, data = dat_3)
-mods[[6]] %>% summary()
-
-mods[[7]] <- 
-  lm(y ~ x2 + x4 + x5 + x6, data = dat_3)
-mods[[7]] %>% summary()
-
-dat %<>%
-  mutate(x5 = as.factor(x5))
-
-mods[[10]] <- lm(y ~ x2 + x6 + x3 + x4 + x5, data = dat)
-mods[[10]] %>% summary()
-
-  
-## x3 and x4 ####
-
 

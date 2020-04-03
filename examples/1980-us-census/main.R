@@ -98,8 +98,27 @@ mods[[1]] %>%
 dat %>%
   mutate(y_hat = fitted(mods[[1]])) %>%
   {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
-  {summary(.)$r.squared} %>%
-  {. / 1 / (1 - .) * 3874} 
+  modelEffectSizes() %>%
+  {.$Effects} %>%
+  {.[3, nrow(.)] * 3873} %>%
+  {1 - pchisq(., 1)} %>%
+  {. >= 0.05}
+
+%>%
+  {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+
+
+
+mod %>%
+  {tidy(.)$p.value[3] * 3874}
+
+
+%>%
+  {tidy(.)$p.value[3]} %>%
+  {. * (nrow(dat) - 1)} %>%
+  {1 - pchisq(. * (nrow(dat) - 1), 1)}
+    
+    
 
 dat %>%
   mutate(y_hat = fitted(mods[[1]])) %>%
@@ -112,6 +131,16 @@ dat %>%
   {lm(wage_log ~ educ + I(y_hat^2), data = .)} %>%
   {summary(.)$r.squared} %>%
   {. * nrow(dat) <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+
+mods[[4]] <- 
+  lm(wage_log ~ educ + I(educ^2), data = dat)
+
+dat %>%
+  mutate(y_hat = fitted(mods[[4]])) %>%
+  {lm(wage_log ~ educ + I(educ^2) + I(y_hat^2), data = .)} %>%
+  modelEffectSizes() %>%
+  {.$Effects[3, 4] * 3873} %>%
+  {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
 
 #### One-Sided Test ####
 
