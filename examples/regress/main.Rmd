@@ -8,57 +8,53 @@ output:
     fig_width: 15
     theme: default
     toc: true
-    toc_float: true
+    toc_float: false
     smooth_scroll: true
     df_print: paged
 author: Edward J. Xu (<edxu96@outlook.com>)
 date: "`r Sys.Date()`"
 editor_options:
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ## Latest Updates
 
-- Comments for graphic check of the contant variance assumption in section 3 are modified. From the left two plots, the assumption seems to hold, so we need the formal White's test.
-- The cross correlation matrix of regressors is visualized in section 1.
 - The value 1 of `x5` will indicate a female respondent, while male respondents are represented using 0 instead 2. This modification will make it easier to intepret the intercepts in models containing `x5`.
 - Correct the degree of freedom in White's test for `mods[[5]]`.
 - Add hand-calculation RESET test and JB test.
 - Update section 8 causality.
 - Present the final model `mods[[7]]`.
+- Discuss why we choose the final model in detail.
+- Interpret the final model using economics.
+- Correct some small written mistakes.
 
-## To-Do
-
-- To learn about sign tests (one-sided test). See 14.2 in _ross2017introductory_.
-- To discuss why we choose the final model.
-- To intepret the final model using economics.
-- Variance inflation factor
-
-## Libraries and Data
+## Introduction
 
 ```{r}
 rm(list = ls())
 ```
 
-Following packages and functions are used in the analysis.
+Following packages and functions are used in this project.
 
 ```{r, message = FALSE, echo=T}
+## basic packages
 library(knitr)
 library(kableExtra)
 library(tidyverse)
 library(conflicted)
 library(magrittr)
+library(broom)
+# library(car)
+## paticular packages for this project
 library(lmtest)
 library(corrr)
-library(broom)
 library(tseries)
-library(car)
 library(corrplot)
 source("./funcs.R")
 ```
 
 ```{r, include=FALSE}
-setwd("~/GitHub/TidySimStat/examples")
+setwd("~/GitHub/TidySimStat/examples/regress")
 options(width=80)
 knitr::opts_chunk$set(
   comment = "#>",
@@ -67,7 +63,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The data set is defined as follows:
+The data set is defined as follows based on file `recs.csv`:
 
 ```{r, message = FALSE, echo=T}
 set.seed(6)
@@ -82,7 +78,7 @@ dat <-
   mutate(x5 = - x5 + 2) 
 ```
 
-Different variables are summarized in the following table.
+Different variables are summarized in the following table. `y`, the logarithm of averaged electricity consumption, is the variable that we are interested in. Specifically, The electricity consumption refers to the electricity usage of the house/studio where the respondent lives in 2015, measured in kilowatthours. The quantity is average by the number of household members in the house/studio. That way, it roughly represent the level of electricity consumption of the respondent. Other variables are discussion in the following table.
 
 | Sym | Abbr       | Definition                              |
 | --- | ---------- | --------------------------------------- |
@@ -96,13 +92,27 @@ Different variables are summarized in the following table.
 | x7  | ATHOME     | number of weekdays someone is at home   |
 | x8  | TOTROOMS + | number of rooms (including bathrooms)   |
 
-The first 5 rows can be visualized:
+Note that `x8` is a variable indicating the number of rooms of the house/studio of the respondent. It equals the summation of `TOTROOMS`, `NCOMBATH` and `NHAFBATH` in the original data set. `x8` is not included in the initial analysis (sections 1 to 7). 
+
+`x3`, the education level of the respondent, is considered as a continuous variable in this project for simplicity. The detailed definition of different levels is shown in the following table.
+
+| Level | Definition                                  |
+| ----- | ------------------------------------------- |
+| 1     | Less than high school diploma or GED        |
+| 2     | High school diploma or GED                  |
+| 3     | Some college or Associate’s degree          |
+| 4     | Bachelor’s degree (for example: BA, BS)     |
+| 5     | Master’s, Professional, or Doctorate degree |
+
+The first 5 rows of the data set used can be visualized:
 
 ```{r}
 head(dat, 5) %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
+
+In this project, we want to develop a model associating the continuous variable, average electricity consumption, with other variables. We will start by visualizing correlations between variables. In particular, the two variables `x2` and `x6`, which highly correlate with `y` will be explored. The model regressing `y` on `x2` will be discussed in section 2. Four assumptions will be made, three of which will be tested in section 3-5 by Jarque-Bera test (normality), White’s test (homoskedasticity) and RESET test (functional form) respectively. According the test results and discussion in section 6, data point `36` is excluded. Then, in section 7, more regressors are introduced and three new models are established. The detail regarding how regressors interact with each other, namely causality, is discussed in section 8. Based on the understanding of the underlying mechanism, a nonlinear term and `x8` are included as new regressors. Two new models are estimated, based on the only model passing all tests in section 7. Finally, the model called `mods[[7]]` is chosen as the final for presentation and it is interpreted in section 10.
 
 ## 1. Data Visualization
 
@@ -147,7 +157,7 @@ dat %>%
     geom_point(aes(x6, y), shape = 1)
 ```
 
-## 2. Regress `y` on `x2`
+## 2. Regress `y` on `x2`, Assumptions and Orthogonalization
 
 `mods[[1]]` is obtained by regressing `y` on `x2`.
 
@@ -171,20 +181,17 @@ mods[[2]] <-
 results %<>%
   collect_glance(mods[[2]], 2)
 
-mods[[2]] %>% 
-  tidy()%>%
-  kable() %>%
-  kable_styling(bootstrap_options = "condensed", full_width = F)
+mods[[2]] %>% summary()
 ```
 
-The estimated regression coefficient for `x2` in `mods[[1]]` equals that for `x21` in `mods[[2]]`. That is, slopes in these two models are the same.
+The estimated regression coefficient for `x2` in `mods[[1]]` equals that for `x21` in `mods[[2]]`. That is, slopes in these two models are the same. The standard error of the intercept is reduced by 51.60 %.
 
 ## 3. Normality and Jarque-Bera Test of `mods[[1]]`
 
 The following four plots can be used to check the plausibility of normality assumptions:
 
 - The upper left plot shows residuals against fitted values of `mods[[1]]`. It is hard to trust indication the flat trending line because there are few data points with low fitted values. The variance seems to be stable when fitted values are high. The assumption of homoskedasticity is tested formally in section 4.
-- Data points 36, 241 and 163 are mentioned several times. They are examined in section 5.
+- Data points `36`, `241` and `163` are mentioned in all but the lower right plots. They are examined in section 6.
 - The assumption of conditional normality looks reasonable according to the upper right Q-Q plot. A formal Jarque-Bera test is performed later this section to examine this assumption in a quantitative manner.
 
 ```{r, warning=FALSE}
@@ -194,14 +201,14 @@ plot(mods[[1]])
 par(par_orginal)
 ```
 
-The assumption of conditional normality is not justified by JB test.
+The assumption of conditional normality is justified by JB test.
 
 ```{r, echo = T}
 mods[[1]] %>%
   test_jb(dat)
 ```
 
-Conditional distributions are visualized:
+Conditional distributions are visualized as follows:
 
 ```{r}
 dat %>%
@@ -231,7 +238,7 @@ mods[[1]] %>%
 
 ## 6. Regress `y` on `x2` with `36` Data Points Excluded
 
-According to the scatter plot in section 1, the values of `y` in data points `36`, `241` and `163` are too small. With just 8 other points when `x2` equals 6, data point `36` will have a huge impact on the model, so it is excluded in the following model.
+`36`, `241` and `163` data points are mentioned in three plots regrading the analysis of residuals of `mods[[1]]` in section 3. According to the scatter plot in section 1, their values of `y` are too small compared to those with same values of `x2`. They seems to be well defined. 
 
 ```{r}
 dat %>%
@@ -243,6 +250,8 @@ dat %>%
   kable_styling(full_width = F)
 ```
 
+However, with just 8 other points when `x2` equals 6, data point `36` will have a huge impact on the model, so it is excluded in the following model `mods[[2]]`. That is, a new model is estimated with the same formula as `mods[[1]]` but the data set excluding data point `36`.
+
 ```{r}
 mods[[2]] <-
   dat %>%
@@ -252,7 +261,7 @@ mods[[2]] <-
 mods[[2]] %>% summary()
 ```
 
-Compared with `mods[[1]]`, `mods[[2]]` has more accurate estimation. Besides, `mods[[2]]` passes RESET test and White's test at the same time. So data point `36` is exluded in the following models, and the corresponding new data set `dat_2` is used.
+Compared with `mods[[1]]`, `mods[[2]]` has more accurate estimation. Besides, `mods[[2]]` passes all of the hypothesis tests. So data point `36` is exluded in the following models, and the corresponding new data set `dat_2` is used.
 
 ```{r}
 dat_2 <-
@@ -274,19 +283,33 @@ results_test %>%
 
 ## 7. Models with More Regressors
 
-`mods[[3]]` with `x2` and `x6` being regressors shows:
+`mods[[3]]` with `x2` and `x6` being regressors is a good model already and pass every test. 
 
 ```{r}
 mods[[3]] <- lm(y ~ x2 + x6, data = dat_2)
 results %<>% collect_glance(mods[[3]], 3)
 
-mods[[3]] %>%
-  tidy() %>%
+mods[[3]] %>% summary()
+```
+
+```{r, echo = T}
+results_test <-
+  mods[[3]] %>%
+  test_jb(dat_2)
+
+results_test %<>%
+  bind_rows(test_white(mods[[3]], dat_2, resi2 ~ x2 + x6 + I(x2^2) + I(x6^2),
+    3)) %>%
+  bind_rows(test_white(mods[[3]], dat_2, resi2 ~ x2 + x6 + I(x2^2) + I(x6^2) +
+    I(x2 * x6), 6)) %>%
+  bind_rows(test_reset(mods[[3]], dat_2))
+
+results_test %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
-`mods[[4]]` with all variables being regressors shows:
+To construct `mods[[4]]`, all of the variables (excluding `x8`) are included. `mods[[4]]` can pass Jarque-Bera test and two White's tests, but cannot pass  RESET test.
 
 ```{r}
 mods[[4]] <- lm(y ~ x2 + x3 + x4 + x5 + x6 + x7, data = dat_2)
@@ -297,44 +320,6 @@ mods[[4]] %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
-
-`mods[[5]]` is determined by automated model selection using `mods[[4]]` with `stats::step` function.
-
-```{r}
-mods[[5]] <- step(mods[[4]])
-results %<>%
-  collect_glance(mods[[5]], 5)
-```
-
-According to results of five models, `mods[[5]]` with expression `y ~ x2 + x3 + x4 + x6` is choosen for now. Mis-specification analysis is performed in the next section 7.
-
-```{r}
-results %>%
-  kable() %>%
-  kable_styling(bootstrap_options = "condensed", full_width = F)
-```
-
-`mods[[5]]` can pass two White's tests, but cannot pass Jarque-Bera test and RESET test.
-
-```{r, echo = T}
-results_test <-
-  mods[[5]] %>%
-  test_jb(dat_2)
-
-results_test %<>%
-  bind_rows(test_white(mods[[5]], dat_2, resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) +
-    I(x3^2) + I(x4^2) + I(x6^2), 5)) %>%
-  bind_rows(test_white(mods[[5]], dat_2, resi2 ~ x2 + x3 + x4 + x6 + 
-    I(x2^2) + I(x3^2) + I(x4^2) + I(x6^2) + I(x2 * x3) + I(x2 * x4) + 
-    I(x2 * x6) + I(x4 * x3) + I(x6 * x3) +I(x4 * x6), 15)) %>%
-  bind_rows(test_reset(mods[[5]], dat_2))
-
-results_test %>%
-  kable() %>%
-  kable_styling(bootstrap_options = "condensed", full_width = F)
-```
-
-`mods[[4]]` can pass two White's tests, but cannot pass Jarque-Bera test and RESET test.
 
 ```{r, echo = T}
 results_test <-
@@ -356,21 +341,38 @@ results_test %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
-`mods[[3]]` can pass all tests.
+`mods[[5]]` is determined by automated model selection using `mods[[4]]` with `stats::step` function. `mods[[5]]` can pass Jarque-Bera test and two White's tests, but cannot pass RESET test.
+
+```{r}
+mods[[5]] <- quiet(step(mods[[4]]))
+results %<>%
+  collect_glance(mods[[5]], 5)
+
+mods[[5]] %>% summary()
+```
 
 ```{r, echo = T}
 results_test <-
-  mods[[3]] %>%
+  mods[[5]] %>%
   test_jb(dat_2)
 
 results_test %<>%
-  bind_rows(test_white(mods[[3]], dat_2, resi2 ~ x2 + x6 + I(x2^2) + I(x6^2),
-    3)) %>%
-  bind_rows(test_white(mods[[3]], dat_2, resi2 ~ x2 + x6 + I(x2^2) + I(x6^2) +
-    I(x2 * x6), 6)) %>%
-  bind_rows(test_reset(mods[[3]], dat_2))
+  bind_rows(test_white(mods[[5]], dat_2, resi2 ~ x2 + x3 + x4 + x6 + I(x2^2) +
+    I(x3^2) + I(x4^2) + I(x6^2), 5)) %>%
+  bind_rows(test_white(mods[[5]], dat_2, resi2 ~ x2 + x3 + x4 + x6 + 
+    I(x2^2) + I(x3^2) + I(x4^2) + I(x6^2) + I(x2 * x3) + I(x2 * x4) + 
+    I(x2 * x6) + I(x4 * x3) + I(x6 * x3) +I(x4 * x6), 15)) %>%
+  bind_rows(test_reset(mods[[5]], dat_2))
 
 results_test %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "condensed", full_width = F)
+```
+
+According to results of five models, though `mods[[4]]` and `mods[[5]]` have lower AIC, `mods[[3]]` is the one with all tests passed and lowst AIC. It is discussed intensively in subsection 8-1, and acts as the benchmark model in section 9.
+
+```{r}
+results %>%
   kable() %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
@@ -402,6 +404,13 @@ mods_62[[3]] %>% summary()
 ### 8-2. Causality of `x3`-`x4`
 
 When taking `x3` and `x4` into consideration, the models assocating `y` with `x3` or `x4` both show no significance, though `x3` and `x4` are highly correlated. So neither `x3` nor `x4` should be included in the model.
+
+```{r}
+mods_34 <- list()
+mods_34[[1]] <- lm(x4 ~ x3, data = dat_2)
+mods_34[[1]] %>% summary()
+```
+
 
 ### 8-3. Causality of `x4`-`x8`
 
@@ -453,7 +462,7 @@ results_test %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
-In `mods[[7]]`, `x6` is excluded because a new term `x2^2` is added, and `x6` becomes insignificant. The effect of `x6` on `y` seems to be mediated compeletely by `x2` and `x2^2`.
+With the idea of diminishing effects of the number of household members in mind, it is natural to include the square of the household numbers. In addition, `x8` is included according to the discussion in subsection 8-3. Thus, `mods[[7]]` is estimated. Being insignificant, `x6` is excluded, beccause the effect of `x6` on `y` seems to be mediated compeletely by `x2` and `x2^2`.
 
 ```{r}
 mods[[7]] <- lm(y ~ x2 + x8 + I(x2^2), data = dat_2)
@@ -477,7 +486,7 @@ results_test %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
-`mods[[7]]` has a lower AIC than `mods[[6]]` and `mods[[3]]`.
+`mods[[7]]` has a lower AIC than `mods[[6]]` and `mods[[3]]`, so it is choosen as the final model for presentation and conclusion.
 
 ```{r}
 AIC(mods[[7]], mods[[6]], mods[[3]]) %>%
@@ -485,7 +494,29 @@ AIC(mods[[7]], mods[[6]], mods[[3]]) %>%
   kable_styling(bootstrap_options = "condensed", full_width = F)
 ```
 
-## 10. One-Sided t-Test of `mods[[1]]`
+## 10. Interpretation of `mods[[7]]`
+
+Electricity consumption is highly correlated to the number of household members of the respondent. When there are not too many household members, with more members, the quantity of consumption decreases, probably due to the fact that people tend to share the kitchen. However, the effect diminishes gradually when there are many household members (around 5-8).
+
+```{r}
+ti <- tibble(x = seq(1:8), y = 8.77946 + 0.03563 * seq(1:8)^2 - 
+  0.52071 * seq(1:8) + 0.07329 * mean(dat$x8))
+
+dat %>%
+  mutate(index = row_number()) %>%
+  ggplot() +
+    geom_boxplot(aes(x2, y, group = cut_width(x2, 1)), outlier.alpha = 0) +
+    geom_point(aes(x2, y), shape = 1) +
+    geom_text(aes(x2, y, label = ifelse(index == 36 | index == 163 |
+      index == 241, as.character(index), "")), hjust=1.5, vjust=0) +
+    geom_line(data = ti, mapping = aes(x, y), color = "#F8766D", size = 2)
+```
+
+Because `y` is the log of average electricity consumptions, the final relationship between electricity consumptions and numbers of household members and numbers of rooms are:
+
+To reduce average electricity consumptions, people are encouraged to live together.
+
+## 11. One-Sided t-Test of `mods[[1]]`
 
 ```{r, echo = T}
 mods[[1]] %>%

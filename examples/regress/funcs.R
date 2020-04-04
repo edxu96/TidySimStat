@@ -27,7 +27,8 @@ new_results <- function(model, idx){
 
 #' Perform Jarque-Bera test
 #' @author Edward J. Xu
-#' @description If `if_accept` is true, the model is accepted.
+#' @description If `if_accept` is true, the null hypothesis is accepted. Then
+#' the assumption is not justified.
 test_jb <- function(mod, dat, prob){
   if(missing(prob)){prob = 0.05}
   
@@ -51,7 +52,7 @@ test_jb <- function(mod, dat, prob){
     {1 - pchisq(., df1)}
   
   results <- tibble(
-    method = "Jarque-Bera", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
+    whi = "Jarque-Bera", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
     p_value = p_value,prob = prob, if_accept = {p_value <= prob}, 
     if_pass = {p_value >= prob}
   )
@@ -62,7 +63,8 @@ test_jb <- function(mod, dat, prob){
 
 #' Perform White's test
 #' @author Edward J. Xu
-#' @description If `if_accept` is true, the null hypothesis is accepted.
+#' @description If `if_accept` is true, the null hypothesis is accepted. Then
+#' the assumption is not justified.
 test_white <- function(mod, dat, f, df1, prob){
   if(missing(prob)){prob = 0.05}
   
@@ -79,7 +81,7 @@ test_white <- function(mod, dat, f, df1, prob){
     {1 - pchisq(., df1)}
   
   results <- tibble(
-    method = "White", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
+    whi = "White", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
     p_value = p_value,prob = prob, if_accept = {p_value <= prob}, 
     if_pass = {p_value >= prob}
   )
@@ -90,7 +92,8 @@ test_white <- function(mod, dat, f, df1, prob){
 
 #' Perform RESET test
 #' @author Edward J. Xu
-#' @description If `if_accept` is true, the null hypothesis is accepted.
+#' @description If `if_accept` is true, the null hypothesis is accepted. Then
+#' the assumption is not justified.
 test_reset <- function(mod, dat, prob){
   if(missing(prob)){prob = 0.05}
   
@@ -116,7 +119,7 @@ test_reset <- function(mod, dat, prob){
     {1 - pchisq(., df1)}
 
   results <- tibble(
-    method = "RESET", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
+    whi = "RESET", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
     p_value = p_value,prob = prob, if_accept = {p_value <= prob}, 
     if_pass = {p_value >= prob}
     )
