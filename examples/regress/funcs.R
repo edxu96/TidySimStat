@@ -25,10 +25,83 @@ new_results <- function(model, idx){
 }
 
 
+kable_latex <- function(ti){
+  ti %>%
+    mutate_if(is.numeric, format, digits = 2) %>%
+    kable("latex", booktabs = T, linesep = "") %>%
+    kable_styling(full_width = F)
+}
+
+
+kable_inline <- function(ti){
+  ti %>%
+    mutate_if(is.numeric, format, digits = 4) %>%
+    # mutate_if(is.numeric, round, 4) %>%
+    kable() %>%
+    kable_styling(full_width = F, 
+      bootstrap_options = c("condensed", "responsive"))
+}
+
+
+tab_tidy <- function(model, whe_latex){
+  if(missing(whe_latex)){whe_latex <- F}
+  
+  ti <-
+    model %>% 
+    tidy() %>%
+    mutate(p.r.squared = quiet(lmSupport::modelEffectSizes(model))$
+      Effects[,3])
+    
+  if(whe_latex){
+    kable_latex(ti)
+  } else {
+    kable_inline(ti)
+  }
+}
+
+
+tab_ti <- function(ti, whe_latex){
+  if(missing(whe_latex)){whe_latex = F}
+  
+  if(whe_latex){
+    kable_latex(ti)
+  } else {
+    kable_inline(ti)
+  }
+}
+
+
+#' Perform Likelihood Test
+#' @author Edward J. Xu
+#' @description If `if_reject` is true, the hypothesis of restricted model is
+#'   rejected. So the restricted model cannot be kept.
+test_lik <- function(origin, restrict, prob){
+  if(missing(prob)){prob = 0.05}
+  
+  stat <- - 2 * (logLik(restrict)[1] - logLik(origin)[1])
+  
+  df1 <- summary(origin)$df[1] - summary(restrict)$df[1]
+  if(df1 <= 0){
+    warning("origin and restrict are wrong")
+    df1 = - df1
+    stat = - stat
+  }
+  
+  p_value <- (1 - pchisq(stat, 1))
+  
+  results <- tibble(
+    whi = "logLik", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
+    p_value = p_value, prob = prob, # if_accept = {p_value <= prob}, 
+    if_reject = {p_value <= prob}
+  )
+  return(results)
+}
+
+
 #' Perform Jarque-Bera test
 #' @author Edward J. Xu
-#' @description If `if_accept` is true, the null hypothesis is accepted. Then
-#' the assumption is not justified.
+#' @description If `if_reject` is true, the hypothesis is rejected. Then
+#'   the assumption is not justified.
 test_jb <- function(mod, dat, prob){
   if(missing(prob)){prob = 0.05}
   
@@ -53,8 +126,8 @@ test_jb <- function(mod, dat, prob){
   
   results <- tibble(
     whi = "Jarque-Bera", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
-    p_value = p_value,prob = prob, if_accept = {p_value <= prob}, 
-    if_pass = {p_value >= prob}
+    p_value = p_value,prob = prob, # if_accept = {p_value <= prob}, 
+    if_reject = {p_value <= prob}
   )
   
   return(results)
@@ -63,8 +136,8 @@ test_jb <- function(mod, dat, prob){
 
 #' Perform White's test
 #' @author Edward J. Xu
-#' @description If `if_accept` is true, the null hypothesis is accepted. Then
-#' the assumption is not justified.
+#' @description If `if_reject` is true, the hypothesis is rejected. Then
+#'   the assumption is not justified.
 test_white <- function(mod, dat, f, df1, prob){
   if(missing(prob)){prob = 0.05}
   
@@ -82,8 +155,8 @@ test_white <- function(mod, dat, f, df1, prob){
   
   results <- tibble(
     whi = "White", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
-    p_value = p_value,prob = prob, if_accept = {p_value <= prob}, 
-    if_pass = {p_value >= prob}
+    p_value = p_value,prob = prob, # if_accept = {p_value <= prob}, 
+    if_reject = {p_value <= prob}
   )
 
   return(results)
@@ -92,8 +165,8 @@ test_white <- function(mod, dat, f, df1, prob){
 
 #' Perform RESET test
 #' @author Edward J. Xu
-#' @description If `if_accept` is true, the null hypothesis is accepted. Then
-#' the assumption is not justified.
+#' @description If `if_reject` is true, the hypothesis is rejected. Then
+#'   the assumption is not justified.
 test_reset <- function(mod, dat, prob){
   if(missing(prob)){prob = 0.05}
   
@@ -120,8 +193,8 @@ test_reset <- function(mod, dat, prob){
 
   results <- tibble(
     whi = "RESET", stat = stat, df1 = df1, df2 = nrow(dat) - df1,  
-    p_value = p_value,prob = prob, if_accept = {p_value <= prob}, 
-    if_pass = {p_value >= prob}
+    p_value = p_value,prob = prob, # if_accept = {p_value <= prob}, 
+    if_reject = {p_value <= prob}
     )
 
   return(results)
