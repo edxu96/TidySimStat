@@ -75,16 +75,17 @@ knitr::opts_chunk$set(
 The data set is defined as follows based on file `recs.csv`:
 
 ```{r, message = FALSE, echo=T}
-set.seed(6)
-dat <- 
-  read_csv("./data/recs.csv") %>%
-  dplyr::slice(sample(nrow(.), 300)) %>%
-  mutate(y = log(KWH / NHSLDMEM)) %>%
-  mutate(x8 = TOTROOMS + NCOMBATH + NHAFBATH) %>%
-  dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
-    x6 = HHAGE, x7 = ATHOME, x8) %>%
-  mutate_at(seq(2, 8), as.integer) %>%  # make continuous variables discrete
-  mutate(x5 = - x5 + 2) 
+dat <- read_csv("./recs_group6.csv")
+# set.seed(6)
+# dat <- 
+#   read_csv("./data/recs.csv") %>%
+#   dplyr::slice(sample(nrow(.), 300)) %>%
+#   mutate(y = log(KWH / NHSLDMEM)) %>%
+#   mutate(x8 = TOTROOMS + NCOMBATH + NHAFBATH) %>%
+#   dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
+#     x6 = HHAGE, x7 = ATHOME, x8) %>%
+#   mutate_at(seq(2, 8), as.integer) %>%  # make continuous variables discrete
+#   mutate(x5 = - x5 + 2) 
 ```
 
 Different variables are summarized in the following table. `y`, the logarithm of averaged electricity consumption, is the variable that we are interested in. Specifically, The electricity consumption refers to the electricity usage of the house/studio where the respondent lives in 2015, measured in kilowatthours. The quantity is average by the number of household members in the house/studio. That way, it roughly represent the level of electricity consumption of the respondent. Other variables are discussion in the following table.
