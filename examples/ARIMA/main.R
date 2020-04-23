@@ -1,42 +1,6 @@
 ## for: GitHub/edxu96/TidySimStat/examples/ARIMA
 ## Edward J. Xu
-## April 16, 2020
-rm(list = ls())
-setwd("~/GitHub/TidySimStat/examples/ARIMA")
-library(tidyverse)
-library(magrittr)
-library(tsibble)
-library(lubridate)
-library(forecast)
-
-#### Time Domain ####
-
-tsi <- read_csv("../../data/Fulton.csv") %>%
-  # mutate(p = exp(LogPrice)) %>% 
-  mutate(t = ymd(Date)) %>%
-  mutate(p.log = LogPrice) %>%
-  select(t, p.log) %>%
-  as_tsibble(index = t)
-  
-tsi %>% ggplot() +
-  geom_line(aes(t, p.log))
-
-tsi %>% acf(na.action = na.pass) %>%
-  autoplot()
-
-tsi %>% pacf(na.action = na.pass) %>%
-  autoplot()
-
-mods <- list()
-
-mods[[1]] <- tsi %>%
-  ar.ols(aic = FALSE, order.max = 1, demean = F, intercept = T, 
-    na.action = na.pass)
-mods[[1]] %>% summary
-
-mods[[1]] %>% plot()
-
-mods[[1]] %>% logLik()
+## April 23, 2020
 
 #### Frequency Domain ####
 
@@ -67,3 +31,12 @@ plot.ts(x)
 plot.ts(x, col=8, ylab=expression(hat(x))) 
 lines(fitted(fit), col=2)
 
+
+
+n = 1000
+x = arima.sim(list(order = c(2, 0, 1), ar = c(1, -.9), ma = .8), n=n)
+P = Mod(2 * fft(x) / n)^2;  
+Fr = 0:(n-1) / n
+plot(Fr[1:(.5 * n)], P[1:(.5 * n)], type="o", xlab="frequency", ylab="scaled periodogram")
+
+arma.spec(ar = c(1, -.9), ma = .8)

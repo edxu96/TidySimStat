@@ -1,0 +1,133 @@
+---
+title: "ARIMA Models for Prices and Mis-Specification Tests"
+author: "Edward J. Xu (<edxu96@outlook.com>)"
+date: "`r Sys.Date()`"
+documentclass: article
+classoption: a4paper
+output:
+  html_notebook:
+    code_folding: show
+    df_print: paged
+    fig_caption: no
+    fig_height: 7.5
+    fig_width: 15
+    smooth_scroll: yes
+    theme: default
+    toc: yes
+    toc_float: no
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, echo=F}
+rm(list = ls())
+setwd("~/GitHub/TidySimStat/examples/ARIMA")
+```
+
+```{r, message = FALSE}
+## Basic packages
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(magrittr)
+library(tsibble)
+library(lubridate)
+## Specialized packages
+library(forecast)
+library(fable)
+library(feasts)
+library(fabletools)
+library(stats)
+library(gets)
+library(car)
+source("~/GitHub/TidySimStat/examples/funcs.R")
+```
+
+```{r, warning=F, message=F, echo=T}
+tsi <- read_csv("../../data/Fulton.csv") %>%
+  # mutate(p = exp(LogPrice)) %>% 
+  mutate(t = ymd(Date)) %>%
+  mutate(p.log = LogPrice) %>%
+  mutate(i = row_number()) %>%
+  select(i, t, p.log) %>%
+  as_tsibble(index = i)
+```
+
+## 1. Visualization
+
+```{r}
+tsi %>% ggplot() +
+  geom_line(aes(t, p.log))
+```
+
+When using other functions in `feasts`, the univaraite time series must be specified.
+
+```{r}
+tsi %>% gg_tsdisplay(p.log)
+```
+
+```{r}
+tsi %>% ACF(p.log) %>%
+  autoplot()
+```
+
+## 2. AR Model
+
+```{r}
+mods <- list()
+mods[[1]] <- tsi %>%
+  model(fable::ARIMA(p.log ~ 1 + pdq(1, 0, 0)))
+
+mods[[1]] %>% glance()
+```
+
+```{r}
+mods[[1]] %>% tidy() 
+```
+
+```{r}
+tsi %>% 
+  mutate(fit = fitted(mods[[1]])$.fitted) %>%
+  gather(fit, p.log, key = "key", value = "price") %>%
+  ggplot() +
+    geom_line(aes(t, price, color = key))
+```
+
+```{r}
+mods[[1]] %>% gg_tsresiduals()
+```
+
+```{r}
+mods[[1]] %>% residuals() %>% 
+  {.$.resid} %>%
+  qqPlot()
+```
+
+## Inference
+
+```{r}
+mods[[2]] <- tsi %>%
+  model(fable::ARIMA(p.log ~ 1 + pdq(0, 0, 0)))
+
+mods[[2]] %>% glance()
+```
+
+```{R}
+(stat <- 2 * (glance(mods[[1]])$log_lik - glance(mods[[2]])$log_lik))
+(p_value <- (1 - pchisq(stat, 1)) <= 0.05)
+```
+
+## MSA
+
+```{r}
+mods[[1]] %>% test_jb_tsi()
+```
+
+```{r}
+mods[[1]] %>% 
+  residuals() %>%
+  features(.resid, ljung_box)
+```
+
+
+

@@ -5,37 +5,22 @@ date: "`r Sys.Date()`"
 documentclass: article
 classoption: a4paper
 output:
-  pdf_document:
+  html_notebook:
+    code_folding: hide
+    df_print: paged
+    fig_caption: no
+    fig_height: 7.5
+    fig_width: 15
+    smooth_scroll: yes
+    theme: default
     toc: yes
-    keep_tex: yes
-  # html_notebook:
-  #   code_folding: hide
-  #   df_print: paged
-  #   fig_caption: no
-  #   fig_height: 7.5
-  #   fig_width: 15
-  #   smooth_scroll: yes
-  #   theme: default
+    toc_float: no
   #   toc: yes
-  #   toc_float: no
+  #   keep_tex: yes
+  # pdf_document:
 editor_options:
   chunk_output_type: inline
 ---
-
-## Latest Updates
-
-- The value 1 of `x5` will indicate a female respondent, while male respondents are represented using 0 instead 2. This modification will make it easier to intepret the intercepts in models containing `x5`.
-- Correct the degree of freedom in White's test for `mods[[5]]`.
-- Add hand-calculation RESET test and JB test.
-- Update section 8 causality.
-- Present the final model `mods[[7]]`.
-- Discuss why we choose the final model in detail.
-- Interpret the final model using economics.
-- Correct some small written mistakes.
-- Add more comments on the data set and final results.
-- Add hand-written calculation for likelihood tests.
-- Add subsection 10-3 orthogonalization of multiple regressors.
-- Talk about model selection in more detail.
 
 ## Introduction
 
@@ -75,17 +60,16 @@ knitr::opts_chunk$set(
 The data set is defined as follows based on file `recs.csv`:
 
 ```{r, message = FALSE, echo=T}
-dat <- read_csv("./recs_group6.csv")
-# set.seed(6)
-# dat <- 
-#   read_csv("./data/recs.csv") %>%
-#   dplyr::slice(sample(nrow(.), 300)) %>%
-#   mutate(y = log(KWH / NHSLDMEM)) %>%
-#   mutate(x8 = TOTROOMS + NCOMBATH + NHAFBATH) %>%
-#   dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX, 
-#     x6 = HHAGE, x7 = ATHOME, x8) %>%
-#   mutate_at(seq(2, 8), as.integer) %>%  # make continuous variables discrete
-#   mutate(x5 = - x5 + 2) 
+set.seed(6)
+dat <-
+  read_csv("../../data/recs.csv") %>%
+  dplyr::slice(sample(nrow(.), 300)) %>%
+  mutate(y = log(KWH / NHSLDMEM)) %>%
+  mutate(x8 = TOTROOMS + NCOMBATH + NHAFBATH) %>%
+  dplyr::select(y, x2 = NHSLDMEM, x3 = EDUCATION, x4 = MONEYPY, x5 = HHSEX,
+    x6 = HHAGE, x7 = ATHOME, x8) %>%
+  mutate_at(seq(2, 8), as.integer) %>%  # make continuous variables discrete
+  mutate(x5 = - x5 + 2)
 ```
 
 Different variables are summarized in the following table. `y`, the logarithm of averaged electricity consumption, is the variable that we are interested in. Specifically, The electricity consumption refers to the electricity usage of the house/studio where the respondent lives in 2015, measured in kilowatthours. The quantity is average by the number of household members in the house/studio. That way, it roughly represent the level of electricity consumption of the respondent. Other variables are discussion in the following table.
@@ -117,7 +101,7 @@ Note that `x8` is a variable indicating the number of rooms of the house/studio 
 The first 5 rows of the data set used can be visualized:
 
 ```{r}
-head(dat, 5) %>% tab_ti(T)
+head(dat, 5) %>% tab_ti(F)
 ```
 
 In this project, we want to develop a model associating the continuous variable, average electricity consumption, with other variables. We will start by visualizing correlations between variables. In particular, the two variables `x2` and `x6`, which highly correlate with `y` will be explored. The model regressing `y` on `x2` will be discussed in section 2. Four assumptions will be made, three of which will be tested in section 3-5 by Jarque-Bera test (normality), White’s test (homoskedasticity) and RESET test (functional form) respectively. According the test results and discussion in section 6, data point `36` is excluded. Then, in section 7, more regressors are introduced and three new models are established. The detail regarding how regressors interact with each other, namely causality, is discussed in section 8. Based on the understanding of the underlying mechanism, a nonlinear term and `x8` are included as new regressors. Two new models are estimated, based on the only model passing all tests in section 7. Finally, the model called `mods[[7]]` is chosen as the final for presentation and it is interpreted in section 10.
@@ -132,7 +116,7 @@ dat %>%
   as_cordf() %>%
   stretch() %>%
   dplyr::filter(y == "y" & x != "y") %>%
-  tab_ti(T)
+  tab_ti(F)
 ```
 
 It can be seen from the following covariance matrix that `y` is highly correlated to `x2`, `x6` and `x8`. Besides, `x3`-`x4`, `x2`-`x6`, `x4`-`x8` are high correlated, which will be discussed in section 9.
@@ -174,8 +158,8 @@ mods[[1]] <- lm(y ~ x2, data = dat)
 
 mods[[1]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 
 results <- new_results(mods[[1]], 1)
@@ -197,8 +181,8 @@ results %<>%
 
 mods[[2]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -222,7 +206,7 @@ par(par_orginal)
 The assumption of conditional normality is justified by JB test.
 
 ```{r}
-mods[[1]] %>% test_jb(dat) %>% tab_ti(T)
+mods[[1]] %>% test_jb(dat) %>% tab_ti(F)
 ```
 
 ## 4. Homoskedasticity and White's Test of `mods[[1]]`
@@ -230,7 +214,7 @@ mods[[1]] %>% test_jb(dat) %>% tab_ti(T)
 `mods[[1]]` cannot pass the White's test, which means the variances of residuals do vary with different values of `y`.
 
 ```{r, echo=T}
-mods[[1]] %>% test_white(dat, resi2 ~ x2 + I(x2^2), 2) %>% tab_ti(T)
+mods[[1]] %>% test_white(dat, resi2 ~ x2 + I(x2^2), 2) %>% tab_ti(F)
 ```
 
 ## 5. Functional Form and RESET Test of `mods[[1]]`
@@ -238,7 +222,7 @@ mods[[1]] %>% test_white(dat, resi2 ~ x2 + I(x2^2), 2) %>% tab_ti(T)
 `mods[[1]]` can pass RESET test.
 
 ```{r}
-mods[[1]] %>% test_reset(dat) %>% tab_ti(T)
+mods[[1]] %>% test_reset(dat) %>% tab_ti(F)
 ```
 
 ## 6. Regress `y` on `x2` with `36` Data Point Excluded
@@ -251,7 +235,7 @@ dat %>%
   dplyr::filter(row_number() == 241 | row_number() == 163 | 
     row_number() == 36) %>%
   dplyr::select(index, y, x2) %>%
-  tab_ti(T)
+  tab_ti(F)
 ```
 
 However, with just 8 other points when `x2` equals 6, data point `36` will have a huge impact on the model, so it is excluded in the following model `mods[[2]]`. That is, a new model is estimated with the same formula as `mods[[1]]` but the data set excluding data point `36`.
@@ -264,8 +248,8 @@ mods[[2]] <-
 
 mods[[2]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -284,7 +268,7 @@ results_test %<>%
   bind_rows(test_white(mods[[2]], dat_2, resi2 ~ x2 + I(x2^2), 2)) %>%
   bind_rows(test_reset(mods[[2]], dat_2))
 
-results_test %>% tab_ti(T)
+results_test %>% tab_ti(F)
 ```
 
 ## 7. Models with More Regressors
@@ -300,8 +284,8 @@ results %<>% collect_glance(mods[[3]], 3)
 ## Print model summary
 model <- mods[[3]]
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -315,7 +299,7 @@ results_test %<>%
     I(x2 * x6), 6)) %>%
   bind_rows(test_reset(mods[[3]], dat_2))
 
-results_test %>% tab_ti(T)
+results_test %>% tab_ti(F)
 ```
 
 ### 7-2. Model with All Regressors
@@ -341,7 +325,7 @@ results_test %<>%
     I(x4 * x7) + I(x5 * x6) + I(x5 * x7) + I(x6 * x7), 28)) %>%
   bind_rows(test_reset(mods[[4]], dat_2))
 
-results_test %>% tab_ti(T)
+results_test %>% tab_ti(F)
 ```
 
 ### 7-3. Likelihood Ratio Test
@@ -356,18 +340,18 @@ lr_x5 <- - 299 * log(1 - 0.0003170)
 ```{r}
 mods_lik <- list()
 mods_lik[[1]] <- lm(y ~ x2 + x3 + x4 + x6 + x7, data = dat_2)
-test_lik(mods[[4]], mods_lik[[1]]) %>% tab_ti(T)
+test_lik(mods[[4]], mods_lik[[1]]) %>% tab_ti(F)
 ```
 
 Likelihood tests for restricting more than one parameter can be only performed by using values of log likelihood in the original and restricted models. For example, to test the hypothesis that coefficients for `x5` and `x7` are both 0 in `mods[[4]]`, following calculation can be conducted. We cannot reject the hypothesis according the function output.
 
 ```{r}
 mods_lik[[2]] <- lm(y ~ x2 + x3 + x4 + x6, data = dat_2)
-test_lik(mods[[4]], mods_lik[[2]]) %>% tab_ti(T)
+test_lik(mods[[4]], mods_lik[[2]]) %>% tab_ti(F)
 ```
 
 ```{r}
-test_lik(mods_lik[[1]], mods_lik[[2]]) %>% tab_ti(T)
+test_lik(mods_lik[[1]], mods_lik[[2]]) %>% tab_ti(F)
 ```
 
 The above three test statistics are related in an additive manner, so models with multiple regressors can be reduced in a step-wise procedure. During every step, partial correlations for regressors can be used as the indication of the next term to be reduced.
@@ -388,8 +372,8 @@ results %<>% collect_glance(mods[[5]], 5)
 
 mods[[5]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -404,13 +388,13 @@ results_test %<>%
     I(x2 * x6) + I(x4 * x3) + I(x6 * x3) +I(x4 * x6), 15)) %>%
   bind_rows(test_reset(mods[[5]], dat_2))
 
-results_test %>% tab_ti(T)
+results_test %>% tab_ti(F)
 ```
 
 According to results of five models, though `mods[[4]]` and `mods[[5]]` have lower AIC, `mods[[3]]` is the one with all tests passed and lowst AIC. It is discussed intensively in subsection 8-1, and acts as the benchmark model in section 9. Besides, `mods[[3]]` has the lowest BIC.
 
 ```{r}
-results %>% tab_ti(T)
+results %>% tab_ti(F)
 ```
 
 Additionally, `mods[[4]]` has the highest `r.squared` for including more regressors, but its `adj.r.squared` is penalized for that. The AIC and BIC are not low as well compared to those of `mods[[3]]` and `mods[[5]]`. 
@@ -427,8 +411,8 @@ mods_62[[1]] <- lm(y ~ x2, data = dat_2)
 
 mods_62[[1]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -437,8 +421,8 @@ mods_62[[2]] <- lm(y ~ x6, data = dat_2)
 
 mods_62[[2]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -449,8 +433,8 @@ mods_62[[3]] <- lm(x2 ~ x6, data = dat_2)
 
 mods_62[[3]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -464,8 +448,8 @@ mods_34[[1]] <- lm(x4 ~ x3, data = dat_2)
 
 mods_34[[1]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -474,8 +458,8 @@ mods_34[[2]] <- lm(formula = y ~ x3 + x4, data = dat_2)
 
 mods_34[[2]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -490,8 +474,8 @@ mods_48[[1]] <-  lm(y ~ x8, data = dat_2)
 
 mods_48[[1]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -502,8 +486,8 @@ mods_48[[2]] <-  lm(x8 ~ x4, data = dat_2)
 
 mods_48[[2]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -514,8 +498,8 @@ mods_48[[3]] <- lm(y ~ x8 + x4, data = dat_2)
 
 mods_48[[3]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -528,8 +512,8 @@ mods[[6]] <- lm(y ~ x2 + x6 + x8, data = dat_2)
 
 mods[[6]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -543,7 +527,7 @@ results_test %<>%
     I(x6^2) + I(x8^2) + I(x2 * x6) + I(x2 * x8) + I(x6 * x8), 10)) %>%
   bind_rows(test_reset(mods[[6]], dat_2))
 
-results_test %>% tab_ti(T)
+results_test %>% tab_ti(F)
 ```
 
 With the idea of diminishing effects of the number of household members in mind, it is natural to include the square of the household numbers. In addition, `x8` is included according to the discussion in subsection 8-3. Thus, `mods[[7]]` is estimated. Being insignificant, `x6` is excluded, beccause the effect of `x6` on `y` seems to be mediated compeletely by `x2` and `x2^2`.
@@ -570,13 +554,13 @@ results_test %<>%
     I(x8^2) + I(x2 * x8), 6)) %>%
   bind_rows(test_reset(mods[[7]], dat_2))
 
-results_test %>% tab_ti(T)
+results_test %>% tab_ti(F)
 ```
 
 `mods[[7]]` has a lower AIC than `mods[[6]]` and `mods[[3]]`, so it is choosen as the final model for presentation and conclusion.
 
 ```{r}
-AIC(mods[[7]], mods[[6]], mods[[3]]) %>% tab_ti(T)
+AIC(mods[[7]], mods[[6]], mods[[3]]) %>% tab_ti(F)
 ```
 
 ## 10. Interpretation of `mods[[7]]`
@@ -585,7 +569,7 @@ AIC(mods[[7]], mods[[6]], mods[[3]]) %>% tab_ti(T)
 
 The overall structure can be illustrated in the following figure. The income is correlated to the number of household memebers, which is probably caused by the correlation between numbers of people and rooms. Because those relations don't contribute to the interpretation of consumptions directly, they are omitted.
 
-![Illustration of the model structure.](./1.png)
+![Illustration of the model structure.](./images/1.png)
 
 ### 10-2. Regressors
 
@@ -636,8 +620,8 @@ mods[[8]] <-
 ```{r}
 mods[[8]] -> model  # Print model summary
 model$call
-model %>% tidy() %>% tab_ti(T)
-model %>% glance() %>% tab_ti(T)
+model %>% tidy() %>% tab_ti(F)
+model %>% glance() %>% tab_ti(F)
 rm(model)
 ```
 
@@ -656,11 +640,11 @@ mods[[8]] %>% confint()
 
 To reduce average electricity consumptions, people are encouraged to live together in houses with fewer rooms.
 
-## 11. One-Sided t-Test of `mods[[1]]`
+<!-- ## 11. One-Sided t-Test of `mods[[1]]` -->
 
-```{r, echo=T}
-mods[[1]] %>%
-  summary() %>%
-  {pt(coef(.)[2, 3], mods[[1]]$df, lower = FALSE)} %>%
-  {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
-```
+<!-- ```{r, echo=T} -->
+<!-- mods[[1]] %>% -->
+<!--   summary() %>% -->
+<!--   {pt(coef(.)[2, 3], mods[[1]]$df, lower = FALSE)} %>% -->
+<!--   {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)} -->
+<!-- ``` -->
