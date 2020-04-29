@@ -47,9 +47,9 @@ dat <-
   mutate(x5 = - x5 + 2)
 ```
 
-```{r child = '../docs/1-1.Rmd'}
-```
+<!-- ```{r child = '../docs/1-1.Rmd'} -->
+<!-- ``` -->
 
-```{r child = '../docs/1-2.Rmd'}
-```
+<!-- ```{r child = '../docs/1-2.Rmd'} -->
+<!-- ``` -->
 
