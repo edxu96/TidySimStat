@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>2.1 Visualization | TidySimStat</title>
+  <title>2.5 Factor | TidySimStat</title>
   <meta name="description" content="Stochastic Simulation and Statistics in Tidyverse." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="2.1 Visualization | TidySimStat" />
+  <meta property="og:title" content="2.5 Factor | TidySimStat" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="edxu96/TidySimStat" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="2.1 Visualization | TidySimStat" />
+  <meta name="twitter:title" content="2.5 Factor | TidySimStat" />
   
   <meta name="twitter:description" content="Stochastic Simulation and Statistics in Tidyverse." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="LRA.html"/>
-<link rel="next" href="mis-specification-analyis-msa.html"/>
+<link rel="prev" href="model.html"/>
+<link rel="next" href="GAM.html"/>
 <script src="libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -185,283 +185,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="visualization" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Visualization</h2>
-<p>The first 5 rows of the data set used can be visualized:</p>
-<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-y
-</th>
-<th style="text-align:left;">
-x2
-</th>
-<th style="text-align:left;">
-x3
-</th>
-<th style="text-align:left;">
-x4
-</th>
-<th style="text-align:left;">
-x5
-</th>
-<th style="text-align:left;">
-x6
-</th>
-<th style="text-align:left;">
-x7
-</th>
-<th style="text-align:left;">
-x8
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-7.540
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-8
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-39
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-15
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-8.193
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-85
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-14
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-8.678
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-71
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-7.846
-</td>
-<td style="text-align:left;">
-4
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-39
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-9.755
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-57
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-10
-</td>
-</tr>
-</tbody>
-</table>
-<div id="covariance-matrix" class="section level3" number="2.1.1">
-<h3><span class="header-section-number">2.1.1</span> Covariance Matrix</h3>
-<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-x
-</th>
-<th style="text-align:left;">
-y
-</th>
-<th style="text-align:left;">
-r
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-x2
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
--0.51098
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x3
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.03410
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x4
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.04098
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x5
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
--0.04260
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x6
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.35346
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x7
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.03966
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x8
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.21329
-</td>
-</tr>
-</tbody>
-</table>
+<div id="factor" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Factor</h2>
+
 </div>
-<div id="box-plot" class="section level3" number="2.1.2">
-<h3><span class="header-section-number">2.1.2</span> Box Plot</h3>
-<p>For each level of <code>x2</code> a box indicating three quantiles (25%, 50%, 75%) of <code>y</code> is given. It shows that there is a tendency for <code>y</code> to decrease with <code>x2</code> by looking at the median. The sizes of different boxes seem to vary with different values of <code>x2</code>. Besides, there are many observations when <code>x2</code> is small. But it is assumed for now that the conditional variance is constant, which will be tested section 4. Three data points with extreme values <code>36</code>, <code>241</code> and <code>163</code> is discussed in sections 3 and 5.</p>
-<p><img src="01-LRA_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The box plot of <code>y</code> by <code>x6</code> is given. It can be seen that the tendency is not strictly linear and the condition variance is not stable. So we will regress <code>y</code> on <code>x2</code> first and use <code>x6</code> as the second regressor in section 6.</p>
-<p><img src="01-LRA_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-</div>
+<!-- </div> -->
             </section>
 
           </div>
         </div>
       </div>
-<a href="LRA.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="mis-specification-analyis-msa.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="model.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="GAM.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

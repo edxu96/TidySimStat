@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>2.1 Visualization | TidySimStat</title>
+  <title>2.1 Multiple Linear Regression | TidySimStat</title>
   <meta name="description" content="Stochastic Simulation and Statistics in Tidyverse." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="2.1 Visualization | TidySimStat" />
+  <meta property="og:title" content="2.1 Multiple Linear Regression | TidySimStat" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="edxu96/TidySimStat" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="2.1 Visualization | TidySimStat" />
+  <meta name="twitter:title" content="2.1 Multiple Linear Regression | TidySimStat" />
   
   <meta name="twitter:description" content="Stochastic Simulation and Statistics in Tidyverse." />
   
@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="LRA.html"/>
-<link rel="next" href="mis-specification-analyis-msa.html"/>
+<link rel="next" href="GAM.html"/>
 <script src="libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -138,28 +138,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="part"><span><b>I Statistics</b></span></li>
 <li class="chapter" data-level="2" data-path="LRA.html"><a href="LRA.html"><i class="fa fa-check"></i><b>2</b> Linear Regression Analysis</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="visualization.html"><a href="visualization.html"><i class="fa fa-check"></i><b>2.1</b> Visualization</a>
-<ul>
-<li class="chapter" data-level="2.1.1" data-path="visualization.html"><a href="visualization.html#covariance-matrix"><i class="fa fa-check"></i><b>2.1.1</b> Covariance Matrix</a></li>
-<li class="chapter" data-level="2.1.2" data-path="visualization.html"><a href="visualization.html#box-plot"><i class="fa fa-check"></i><b>2.1.2</b> Box Plot</a></li>
-</ul></li>
-<li class="chapter" data-level="2.2" data-path="mis-specification-analyis-msa.html"><a href="mis-specification-analyis-msa.html"><i class="fa fa-check"></i><b>2.2</b> Mis-Specification Analyis (MSA)</a>
-<ul>
-<li class="chapter" data-level="2.2.1" data-path="mis-specification-analyis-msa.html"><a href="mis-specification-analyis-msa.html#normality-and-jarque-bera-test-of-mods1"><i class="fa fa-check"></i><b>2.2.1</b> Normality and Jarque-Bera Test of <code>mods[[1]]</code></a></li>
-<li class="chapter" data-level="2.2.2" data-path="mis-specification-analyis-msa.html"><a href="mis-specification-analyis-msa.html#homoskedasticity-and-whites-test-of-mods1"><i class="fa fa-check"></i><b>2.2.2</b> Homoskedasticity and White’s Test of <code>mods[[1]]</code></a></li>
-<li class="chapter" data-level="2.2.3" data-path="mis-specification-analyis-msa.html"><a href="mis-specification-analyis-msa.html#functional-form-and-reset-test-of-mods1"><i class="fa fa-check"></i><b>2.2.3</b> Functional Form and RESET Test of <code>mods[[1]]</code></a></li>
-</ul></li>
-<li class="chapter" data-level="2.3" data-path="multi.html"><a href="multi.html"><i class="fa fa-check"></i><b>2.3</b> Multiple Linear Regression</a>
-<ul>
-<li class="chapter" data-level="2.3.1" data-path="multi.html"><a href="multi.html#standardization"><i class="fa fa-check"></i><b>2.3.1</b> Standardization</a></li>
-<li class="chapter" data-level="2.3.2" data-path="multi.html"><a href="multi.html#multicollinearity-diagnosis"><i class="fa fa-check"></i><b>2.3.2</b> Multicollinearity Diagnosis</a></li>
-<li class="chapter" data-level="2.3.3" data-path="multi.html"><a href="multi.html#orthogonalization"><i class="fa fa-check"></i><b>2.3.3</b> Orthogonalization</a></li>
-</ul></li>
-<li class="chapter" data-level="2.4" data-path="model.html"><a href="model.html"><i class="fa fa-check"></i><b>2.4</b> Modelling</a>
-<ul>
-<li class="chapter" data-level="2.4.1" data-path="model.html"><a href="model.html#cause-and-effect-relationship"><i class="fa fa-check"></i><b>2.4.1</b> Cause-and-Effect Relationship</a></li>
-</ul></li>
-<li class="chapter" data-level="2.5" data-path="factor.html"><a href="factor.html"><i class="fa fa-check"></i><b>2.5</b> Factor</a></li>
+<li class="chapter" data-level="2.1" data-path="multi.html"><a href="multi.html"><i class="fa fa-check"></i><b>2.1</b> Multiple Linear Regression</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="GAM.html"><a href="GAM.html"><i class="fa fa-check"></i><b>3</b> Generalized Additive Model</a></li>
 <li class="chapter" data-level="4" data-path="TSA.html"><a href="TSA.html"><i class="fa fa-check"></i><b>4</b> Time Series Analysis (TSA)</a></li>
@@ -185,274 +164,345 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="visualization" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Visualization</h2>
-<p>The first 5 rows of the data set used can be visualized:</p>
-<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-y
-</th>
-<th style="text-align:left;">
-x2
-</th>
-<th style="text-align:left;">
-x3
-</th>
-<th style="text-align:left;">
-x4
-</th>
-<th style="text-align:left;">
-x5
-</th>
-<th style="text-align:left;">
-x6
-</th>
-<th style="text-align:left;">
-x7
-</th>
-<th style="text-align:left;">
-x8
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-7.540
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-8
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-39
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-15
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-8.193
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-85
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-14
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-8.678
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-71
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-7.846
-</td>
-<td style="text-align:left;">
-4
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-39
-</td>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-9.755
-</td>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-57
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-10
-</td>
-</tr>
-</tbody>
-</table>
-<div id="covariance-matrix" class="section level3" number="2.1.1">
-<h3><span class="header-section-number">2.1.1</span> Covariance Matrix</h3>
-<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-x
-</th>
-<th style="text-align:left;">
-y
-</th>
-<th style="text-align:left;">
-r
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-x2
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
--0.51098
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x3
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.03410
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x4
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.04098
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x5
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
--0.04260
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x6
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.35346
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x7
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.03966
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-x8
-</td>
-<td style="text-align:left;">
-y
-</td>
-<td style="text-align:left;">
-0.21329
-</td>
-</tr>
-</tbody>
-</table>
+<div id="multi" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Multiple Linear Regression</h2>
+<div id="standardization" class="section level3" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Standardization</h3>
 </div>
-<div id="box-plot" class="section level3" number="2.1.2">
-<h3><span class="header-section-number">2.1.2</span> Box Plot</h3>
-<p>For each level of <code>x2</code> a box indicating three quantiles (25%, 50%, 75%) of <code>y</code> is given. It shows that there is a tendency for <code>y</code> to decrease with <code>x2</code> by looking at the median. The sizes of different boxes seem to vary with different values of <code>x2</code>. Besides, there are many observations when <code>x2</code> is small. But it is assumed for now that the conditional variance is constant, which will be tested section 4. Three data points with extreme values <code>36</code>, <code>241</code> and <code>163</code> is discussed in sections 3 and 5.</p>
-<p><img src="01-LRA_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The box plot of <code>y</code> by <code>x6</code> is given. It can be seen that the tendency is not strictly linear and the condition variance is not stable. So we will regress <code>y</code> on <code>x2</code> first and use <code>x6</code> as the second regressor in section 6.</p>
-<p><img src="01-LRA_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="multi-diag" class="section level3 unnumbered" number="">
+<h3>Multicollinearity Diagnosis</h3>
+<blockquote>
+<p>In some situations the regressors are nearly perfectly linearly related, and in such cases the inferences based on the regression model can be misleading or erroneous. When there are near-linear dependencies among the regressors, the problem of multicollinearity is said to exist. <span class="citation">(9, Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span></p>
+</blockquote>
+<p>There are four primary sources of multicollinearity: <span class="citation">(9, Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span></p>
+<ol style="list-style-type: decimal">
+<li>The data collection method employed</li>
+<li>Constraints on the model or in the population</li>
+<li>Model specification</li>
+<li>An overdefined model</li>
+</ol>
+<blockquote>
+<p>To really establish causation, it is usually necessary to do an experiment in which the putative causative variable is manipulated to see what effect it has on the response. <span class="citation">(1.5.7, Wood <a href="#ref-wood2017generalized" role="doc-biblioref">2017</a>)</span></p>
+</blockquote>
+<div id="covariance-matrix" class="section level4 unnumbered" number="">
+<h4>(1) Covariance Matrix</h4>
+<blockquote>
+<p>Inspection of the covariance matrix is not sufficient for detecting anything more complex than pair- wise multicollinearity. <span class="citation">(9.4.1 Examination of the Correlation Matrix, Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span></p>
+</blockquote>
+
+<div class="example">
+<span id="exm:unnamed-chunk-5" class="example"><strong>Example 2.1  </strong></span>It can be seen from the following covariance matrix that <code>y</code> is highly correlated to <code>x2</code>, <code>x6</code> and <code>x8</code>. Besides, <code>x3</code>-<code>x4</code>, <code>x2</code>-<code>x6</code>, <code>x4</code>-<code>x8</code> are high correlated.
+</div>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-6"></span>
+<img src="01-LRA_files/figure-html/unnamed-chunk-6-1.png" alt="Heat map for the covariance matrix of recs." width="672" />
+<p class="caption">
+Figure 2.1: Heat map for the covariance matrix of <code>recs</code>.
+</p>
+</div>
+
+<p><em>Variance Inflation Factors (VIF)</em></p>
+<p>The collinearity diagnostics in R require the packages “perturb” and “car”. The R code to generate the collinearity diagnostics for the delivery data is:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="multi.html#cb3-1"></a>deliver.model &lt;-<span class="st"> </span><span class="kw">lm</span>(time∼cases<span class="op">+</span>dist, <span class="dt">data=</span>deliver)</span>
+<span id="cb3-2"><a href="multi.html#cb3-2"></a><span class="kw">print</span>(<span class="kw">vif</span>(deliver.model))</span>
+<span id="cb3-3"><a href="multi.html#cb3-3"></a><span class="kw">print</span>(<span class="kw">colldiag</span>(deliver.model))</span></code></pre></div>
+</div>
+</div>
+<div id="orthogonalization" class="section level3" number="2.1.2">
+<h3><span class="header-section-number">2.1.2</span> Orthogonalization</h3>
+<hr />
+<p>Regress <code>y</code> on <code>x2</code>, Assumptions and Orthogonalization</p>
+<p><code>mods[[1]]</code> is obtained by regressing <code>y</code> on <code>x2</code>.</p>
+<pre><code>#&gt; lm(formula = y ~ x2, data = dat)</code></pre>
+<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+term
+</th>
+<th style="text-align:left;">
+estimate
+</th>
+<th style="text-align:left;">
+std.error
+</th>
+<th style="text-align:left;">
+statistic
+</th>
+<th style="text-align:left;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:left;">
+9.036
+</td>
+<td style="text-align:left;">
+0.07526
+</td>
+<td style="text-align:left;">
+120.06
+</td>
+<td style="text-align:left;">
+2.214e-254
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x2
+</td>
+<td style="text-align:left;">
+-0.270
+</td>
+<td style="text-align:left;">
+0.02631
+</td>
+<td style="text-align:left;">
+-10.26
+</td>
+<td style="text-align:left;">
+2.352e-21
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+r.squared
+</th>
+<th style="text-align:left;">
+adj.r.squared
+</th>
+<th style="text-align:left;">
+sigma
+</th>
+<th style="text-align:left;">
+statistic
+</th>
+<th style="text-align:left;">
+p.value
+</th>
+<th style="text-align:left;">
+df
+</th>
+<th style="text-align:left;">
+logLik
+</th>
+<th style="text-align:left;">
+AIC
+</th>
+<th style="text-align:left;">
+BIC
+</th>
+<th style="text-align:left;">
+deviance
+</th>
+<th style="text-align:left;">
+df.residual
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0.2611
+</td>
+<td style="text-align:left;">
+0.2586
+</td>
+<td style="text-align:left;">
+0.6309
+</td>
+<td style="text-align:left;">
+105.3
+</td>
+<td style="text-align:left;">
+2.352e-21
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-286.5
+</td>
+<td style="text-align:left;">
+579
+</td>
+<td style="text-align:left;">
+590.1
+</td>
+<td style="text-align:left;">
+118.6
+</td>
+<td style="text-align:left;">
+298
+</td>
+</tr>
+</tbody>
+</table>
+<p>By orthogonalizing <code>x2</code> with respect to constant 1. the following reparameterized model can be obtained.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="multi.html#cb5-1"></a>mods[[<span class="dv">2</span>]] &lt;-</span>
+<span id="cb5-2"><a href="multi.html#cb5-2"></a><span class="st">  </span>dat <span class="op">%&gt;%</span></span>
+<span id="cb5-3"><a href="multi.html#cb5-3"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">x1 =</span> <span class="dv">1</span>, <span class="dt">x21 =</span> x2 <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(.<span class="op">$</span>x2)) <span class="op">%&gt;%</span></span>
+<span id="cb5-4"><a href="multi.html#cb5-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(y, x1, x21) <span class="op">%&gt;%</span></span>
+<span id="cb5-5"><a href="multi.html#cb5-5"></a><span class="st">  </span>{<span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x1 <span class="op">+</span><span class="st"> </span>x21, <span class="dt">data =</span> .)}</span></code></pre></div>
+<pre><code>#&gt; lm(formula = y ~ x1 + x21, data = .)</code></pre>
+<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+term
+</th>
+<th style="text-align:left;">
+estimate
+</th>
+<th style="text-align:left;">
+std.error
+</th>
+<th style="text-align:left;">
+statistic
+</th>
+<th style="text-align:left;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:left;">
+8.36
+</td>
+<td style="text-align:left;">
+0.03642
+</td>
+<td style="text-align:left;">
+229.52
+</td>
+<td style="text-align:left;">
+0.000e+00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+x21
+</td>
+<td style="text-align:left;">
+-0.27
+</td>
+<td style="text-align:left;">
+0.02631
+</td>
+<td style="text-align:left;">
+-10.26
+</td>
+<td style="text-align:left;">
+2.352e-21
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+r.squared
+</th>
+<th style="text-align:left;">
+adj.r.squared
+</th>
+<th style="text-align:left;">
+sigma
+</th>
+<th style="text-align:left;">
+statistic
+</th>
+<th style="text-align:left;">
+p.value
+</th>
+<th style="text-align:left;">
+df
+</th>
+<th style="text-align:left;">
+logLik
+</th>
+<th style="text-align:left;">
+AIC
+</th>
+<th style="text-align:left;">
+BIC
+</th>
+<th style="text-align:left;">
+deviance
+</th>
+<th style="text-align:left;">
+df.residual
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+0.2611
+</td>
+<td style="text-align:left;">
+0.2586
+</td>
+<td style="text-align:left;">
+0.6309
+</td>
+<td style="text-align:left;">
+105.3
+</td>
+<td style="text-align:left;">
+2.352e-21
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-286.5
+</td>
+<td style="text-align:left;">
+579
+</td>
+<td style="text-align:left;">
+590.1
+</td>
+<td style="text-align:left;">
+118.6
+</td>
+<td style="text-align:left;">
+298
+</td>
+</tr>
+</tbody>
+</table>
+<p>The estimated regression coefficient for <code>x2</code> in <code>mods[[1]]</code> equals that for <code>x21</code> in <code>mods[[2]]</code>. That is, slopes in these two models are the same. The standard error of the intercept is reduced by 51.60 %.</p>
+<hr />
+<!-- ```{r child = '../docs/LRA-model.Rmd'} -->
+<!-- ``` -->
+<!-- ```{r child = '../docs/LRA-factor.Rmd'} -->
+<!-- ``` -->
+
+</div>
+</div>
+<!-- </div> -->
+<h3> Simulation Generator</h3>
+<div id="refs" class="references">
+<div id="ref-montgomery2012introduction">
+<p>Montgomery, Douglas C, Elizabeth A Peck, and G Geoffrey Vining. 2012. <em>Introduction to Linear Regression Analysis</em>. Vol. 821. John Wiley &amp; Sons.</p>
+</div>
+<div id="ref-wood2017generalized">
+<p>Wood, Simon N. 2017. <em>Generalized Additive Models: An Introduction with R</em>. CRC press.</p>
 </div>
 </div>
             </section>
@@ -461,7 +511,7 @@ y
         </div>
       </div>
 <a href="LRA.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="mis-specification-analyis-msa.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="GAM.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

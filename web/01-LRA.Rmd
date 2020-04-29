@@ -51,11 +51,17 @@ dat <-
   mutate(x5 = - x5 + 2)
 ```
 
-```{r child = '../docs/LRA-visualization.Rmd'}
+```{r child = '../docs/LRA-visual.Rmd'}
 ```
 
 ```{r child = '../docs/LRA-MSA.Rmd'}
 ```
 
-```{r child = '../docs/LRA-orthogonalization.Rmd'}
+```{r child = '../docs/LRA-multi.Rmd'}
+```
+
+```{r child = '../docs/LRA-model.Rmd'}
+```
+
+```{r child = '../docs/LRA-factor.Rmd'}
 ```

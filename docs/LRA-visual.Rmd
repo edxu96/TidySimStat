@@ -13,10 +13,6 @@ head(dat, 5) %>% tab_ti(F)
 
 ### Covariance Matrix
 
-*Example* `RECS`
-
-It can be seen that `y` is highly correlated to `x2` and `x6` according to the following table.
-
 ```{r}
 dat %>%
   cor() %>%
@@ -26,19 +22,9 @@ dat %>%
   tab_ti(F)
 ```
 
-It can be seen from the following covariance matrix that `y` is highly correlated to `x2`, `x6` and `x8`. Besides, `x3`-`x4`, `x2`-`x6`, `x4`-`x8` are high correlated, which will be discussed in section 9.
+### Box Plot
 
-```{r}
-dat %>%
-  cor() %>%
-  corrplot::corrplot(type = "upper", tl.col = "black", tl.srt = 45)
-```
-
-****
-
-### Box Plot 
-
-For each level of `x2` a box indicating three quantiles (25%, 50%, 75%) of `y` is given. It shows that there is a tendency for `y` to decrease with `x2` by looking at the median. The sizes of different boxes seem to vary with different values of `x2`. Besides, there are many observations when `x2` is small. But it is assumed for now that the conditional variance is constant, which will be tested section 4. Three data points with extreme values `36`, `241` and `163` is discussed in sections 3 and 5. 
+For each level of `x2` a box indicating three quantiles (25%, 50%, 75%) of `y` is given. It shows that there is a tendency for `y` to decrease with `x2` by looking at the median. The sizes of different boxes seem to vary with different values of `x2`. Besides, there are many observations when `x2` is small. But it is assumed for now that the conditional variance is constant, which will be tested section 4. Three data points with extreme values `36`, `241` and `163` is discussed in sections 3 and 5.
 
 ```{r}
 dat %>%
@@ -58,5 +44,3 @@ dat %>%
   geom_boxplot(aes(x6, y, group = cut_width(x6, 10)), outlier.alpha = 0)+
     geom_point(aes(x6, y), shape = 1)
 ```
-
-

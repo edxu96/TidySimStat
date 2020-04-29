@@ -120,10 +120,6 @@ The first 5 rows of the data set used can be visualized:
 
 ### Covariance Matrix
 
-****
-
-It can be seen that `y` is highly correlated to `x2` and `x6` according to the following table.
-
 <table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
@@ -171,23 +167,15 @@ It can be seen that `y` is highly correlated to `x2` and `x6` according to the f
 </tbody>
 </table>
 
-It can be seen from the following covariance matrix that `y` is highly correlated to `x2`, `x6` and `x8`. Besides, `x3`-`x4`, `x2`-`x6`, `x4`-`x8` are high correlated, which will be discussed in section 9.
+### Box Plot
 
-<img src="01-LRA_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" />
-
-****
-
-### Box Plot 
-
-For each level of `x2` a box indicating three quantiles (25%, 50%, 75%) of `y` is given. It shows that there is a tendency for `y` to decrease with `x2` by looking at the median. The sizes of different boxes seem to vary with different values of `x2`. Besides, there are many observations when `x2` is small. But it is assumed for now that the conditional variance is constant, which will be tested section 4. Three data points with extreme values `36`, `241` and `163` is discussed in sections 3 and 5. 
-
-<img src="01-LRA_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" />
-
-The box plot of `y` by `x6` is given. It can be seen that the tendency is not strictly linear and the condition variance is not stable. So we will regress `y` on `x2` first and use `x6` as the second regressor in section 6.
+For each level of `x2` a box indicating three quantiles (25%, 50%, 75%) of `y` is given. It shows that there is a tendency for `y` to decrease with `x2` by looking at the median. The sizes of different boxes seem to vary with different values of `x2`. Besides, there are many observations when `x2` is small. But it is assumed for now that the conditional variance is constant, which will be tested section 4. Three data points with extreme values `36`, `241` and `163` is discussed in sections 3 and 5.
 
 <img src="01-LRA_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" />
 
+The box plot of `y` by `x6` is given. It can be seen that the tendency is not strictly linear and the condition variance is not stable. So we will regress `y` on `x2` first and use `x6` as the second regressor in section 6.
 
+<img src="01-LRA_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" />
 
 
 
@@ -203,7 +191,7 @@ The following four plots can be used to check the plausibility of normality assu
 - Data points `36`, `241` and `163` are mentioned in all but the lower right plots. They are examined in section 6.
 - The assumption of conditional normality looks reasonable according to the upper right Q-Q plot. A formal Jarque-Bera test is performed later this section to examine this assumption in a quantitative manner.
 
-<img src="01-LRA_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" />
+<img src="01-LRA_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" />
 
 The assumption of conditional normality is justified by JB test.
 
@@ -308,9 +296,53 @@ mods[[1]] %>% test_white(dat, resi2 ~ x2 + I(x2^2), 2) %>% tab_ti(F)
 
 
 
-## Orthogonalization
+## Multiple Linear Regression {#multi}
 
-### Regress `y` on `x2`, Assumptions and Orthogonalization
+### Standardization
+
+
+
+
+### Multicollinearity Diagnosis {#multi-diag}
+
+> In some situations the regressors are nearly perfectly linearly related, and in such cases the inferences based on the regression model can be misleading or erroneous. When there are near-linear dependencies among the regressors, the problem of multicollinearity is said to exist. [9, @montgomery2012introduction]
+
+There are four primary sources of multicollinearity: [9, @montgomery2012introduction]
+
+1. The data collection method employed
+2. Constraints on the model or in the population
+3. Model specification
+4. An overdefined model
+
+> To really establish causation, it is usually necessary to do an experiment in which the putative causative variable is manipulated to see what effect it has on the response. [1.5.7, @wood2017generalized]
+
+#### (1) Covariance Matrix {-}
+
+> Inspection of the covariance matrix is not sufficient for detecting anything more complex than pair- wise multicollinearity. [9.4.1 Examination of the Correlation Matrix, @montgomery2012introduction]
+
+\BeginKnitrBlock{example}<div class="example"><span class="example" id="exm:unnamed-chunk-18"><strong>(\#exm:unnamed-chunk-18) </strong></span>It can be seen from the following covariance matrix that `y` is highly correlated to `x2`, `x6` and `x8`. Besides, `x3`-`x4`, `x2`-`x6`, `x4`-`x8` are high correlated.</div>\EndKnitrBlock{example}
+
+<div class="figure" style="text-align: center">
+<img src="01-LRA_files/figure-html/unnamed-chunk-19-1.png" alt="(ref:multi-1)" width="672" />
+<p class="caption">(\#fig:unnamed-chunk-19)(ref:multi-1)</p>
+</div>
+
+(ref:multi-1) Heat map for the covariance matrix of `recs`.
+
+*Variance Inflation Factors (VIF)*
+
+The collinearity diagnostics in R require the packages “perturb” and “car”. The R code to generate the collinearity diagnostics for the delivery data is:
+
+```r
+deliver.model <- lm(time∼cases+dist, data=deliver)
+print(vif(deliver.model))
+print(colldiag(deliver.model))
+```
+
+### Orthogonalization
+
+*****
+Regress `y` on `x2`, Assumptions and Orthogonalization
 
 `mods[[1]]` is obtained by regressing `y` on `x2`.
 
@@ -384,7 +416,7 @@ By orthogonalizing `x2` with respect to constant 1. the following reparameterize
 
 
 ```r
-mods[[2]] <- 
+mods[[2]] <-
   dat %>%
   mutate(x1 = 1, x21 = x2 - mean(.$x2)) %>%
   dplyr::select(y, x1, x21) %>%
@@ -458,3 +490,19 @@ mods[[2]] <-
 </table>
 
 The estimated regression coefficient for `x2` in `mods[[1]]` equals that for `x21` in `mods[[2]]`. That is, slopes in these two models are the same. The standard error of the intercept is reduced by 51.60 %.
+
+*****
+
+
+
+## Modelling {#model}
+
+> Regression analysis is an iterative procedure, in which data lead to a model and a fit of the model to the data is produced. The quality of the fit is then investigated, leading either to modification of the model or the fit or to adoption of the model. [chapter 1 in @montgomery2012introduction]
+
+### Cause-and-Effect Relationship
+
+> A regression model does not imply a cause-and-effect relationship between the variables. Even though a strong empirical relationship may exist between two or more variables, this cannot be considered evidence that the regressor variables and the response are related in a cause-and-effect manner. To establish causality, the relationship between the regressors and the response must have a basis outside the sample data—for example, the relationship may be suggested by theoretical considerations. Regression analysis can aid in confirming a cause-and-effect relationship, but it cannot be the sole basis of such a claim. [chapter 1 in @montgomery2012introduction]
+
+
+
+## Factor {#factor}

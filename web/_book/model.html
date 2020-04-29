@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Linear Regression Analysis | TidySimStat</title>
+  <title>2.1 Modelling | TidySimStat</title>
   <meta name="description" content="Stochastic Simulation and Statistics in Tidyverse." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Linear Regression Analysis | TidySimStat" />
+  <meta property="og:title" content="2.1 Modelling | TidySimStat" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="edxu96/TidySimStat" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Linear Regression Analysis | TidySimStat" />
+  <meta name="twitter:title" content="2.1 Modelling | TidySimStat" />
   
   <meta name="twitter:description" content="Stochastic Simulation and Statistics in Tidyverse." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="multi.html"/>
+<link rel="prev" href="LRA.html"/>
+<link rel="next" href="GAM.html"/>
 <script src="libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -51,7 +51,6 @@
 
 
 
-<script src="libs/kePrint-0.0.1/kePrint.js"></script>
 
 
 <style type="text/css">
@@ -138,7 +137,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="part"><span><b>I Statistics</b></span></li>
 <li class="chapter" data-level="2" data-path="LRA.html"><a href="LRA.html"><i class="fa fa-check"></i><b>2</b> Linear Regression Analysis</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="multi.html"><a href="multi.html"><i class="fa fa-check"></i><b>2.1</b> Multiple Linear Regression</a></li>
+<li class="chapter" data-level="2.1" data-path="model.html"><a href="model.html"><i class="fa fa-check"></i><b>2.1</b> Modelling</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="model.html"><a href="model.html#cause-and-effect-relationship"><i class="fa fa-check"></i><b>2.1.1</b> Cause-and-Effect Relationship</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="GAM.html"><a href="GAM.html"><i class="fa fa-check"></i><b>3</b> Generalized Additive Model</a></li>
 <li class="chapter" data-level="4" data-path="TSA.html"><a href="TSA.html"><i class="fa fa-check"></i><b>4</b> Time Series Analysis (TSA)</a></li>
@@ -164,46 +166,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="LRA" class="section level1" number="2">
-<h1><span class="header-section-number">Chapter 2</span> Linear Regression Analysis</h1>
-<p>Following packages and functions are used in this project.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="LRA.html#cb1-1"></a><span class="co">## basic packages</span></span>
-<span id="cb1-2"><a href="LRA.html#cb1-2"></a><span class="kw">library</span>(knitr)</span>
-<span id="cb1-3"><a href="LRA.html#cb1-3"></a><span class="kw">library</span>(kableExtra)</span>
-<span id="cb1-4"><a href="LRA.html#cb1-4"></a><span class="kw">library</span>(tidyverse)</span>
-<span id="cb1-5"><a href="LRA.html#cb1-5"></a><span class="kw">library</span>(conflicted)</span>
-<span id="cb1-6"><a href="LRA.html#cb1-6"></a><span class="kw">library</span>(magrittr)</span>
-<span id="cb1-7"><a href="LRA.html#cb1-7"></a><span class="kw">library</span>(broom)</span>
-<span id="cb1-8"><a href="LRA.html#cb1-8"></a><span class="co">## paticular packages for this project</span></span>
-<span id="cb1-9"><a href="LRA.html#cb1-9"></a><span class="kw">library</span>(lmtest)</span>
-<span id="cb1-10"><a href="LRA.html#cb1-10"></a><span class="kw">library</span>(corrr)</span>
-<span id="cb1-11"><a href="LRA.html#cb1-11"></a><span class="kw">library</span>(tseries)</span>
-<span id="cb1-12"><a href="LRA.html#cb1-12"></a><span class="kw">library</span>(corrplot)</span>
-<span id="cb1-13"><a href="LRA.html#cb1-13"></a><span class="kw">source</span>(<span class="st">&quot;../src/funcs.R&quot;</span>)</span>
-<span id="cb1-14"><a href="LRA.html#cb1-14"></a><span class="kw">source</span>(<span class="st">&quot;../src/tests.R&quot;</span>)</span></code></pre></div>
-<p>The data set is defined as follows based on file <code>recs.csv</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="LRA.html#cb2-1"></a><span class="kw">set.seed</span>(<span class="dv">6</span>)</span>
-<span id="cb2-2"><a href="LRA.html#cb2-2"></a>dat &lt;-</span>
-<span id="cb2-3"><a href="LRA.html#cb2-3"></a><span class="st">  </span><span class="kw">read_csv</span>(<span class="st">&quot;../data/recs.csv&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb2-4"><a href="LRA.html#cb2-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">slice</span>(<span class="kw">sample</span>(<span class="kw">nrow</span>(.), <span class="dv">300</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb2-5"><a href="LRA.html#cb2-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">y =</span> <span class="kw">log</span>(KWH <span class="op">/</span><span class="st"> </span>NHSLDMEM)) <span class="op">%&gt;%</span></span>
-<span id="cb2-6"><a href="LRA.html#cb2-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">x8 =</span> TOTROOMS <span class="op">+</span><span class="st"> </span>NCOMBATH <span class="op">+</span><span class="st"> </span>NHAFBATH) <span class="op">%&gt;%</span></span>
-<span id="cb2-7"><a href="LRA.html#cb2-7"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(y, <span class="dt">x2 =</span> NHSLDMEM, <span class="dt">x3 =</span> EDUCATION, <span class="dt">x4 =</span> MONEYPY, <span class="dt">x5 =</span> HHSEX,</span>
-<span id="cb2-8"><a href="LRA.html#cb2-8"></a>    <span class="dt">x6 =</span> HHAGE, <span class="dt">x7 =</span> ATHOME, x8) <span class="op">%&gt;%</span></span>
-<span id="cb2-9"><a href="LRA.html#cb2-9"></a><span class="st">  </span><span class="kw">mutate_at</span>(<span class="kw">seq</span>(<span class="dv">2</span>, <span class="dv">8</span>), as.integer) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># make continuous variables discrete</span></span>
-<span id="cb2-10"><a href="LRA.html#cb2-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">x5 =</span> <span class="op">-</span><span class="st"> </span>x5 <span class="op">+</span><span class="st"> </span><span class="dv">2</span>)</span></code></pre></div>
-<!-- ```{r child = '../docs/LRA-visual.Rmd'} -->
+<div id="model" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Modelling</h2>
+<blockquote>
+<p>Regression analysis is an iterative procedure, in which data lead to a model and a fit of the model to the data is produced. The quality of the fit is then investigated, leading either to modification of the model or the fit or to adoption of the model. <span class="citation">(chapter 1 in Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span></p>
+</blockquote>
+<div id="cause-and-effect-relationship" class="section level3" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> Cause-and-Effect Relationship</h3>
+<blockquote>
+<p>A regression model does not imply a cause-and-effect relationship between the variables. Even though a strong empirical relationship may exist between two or more variables, this cannot be considered evidence that the regressor variables and the response are related in a cause-and-effect manner. To establish causality, the relationship between the regressors and the response must have a basis outside the sample data—for example, the relationship may be suggested by theoretical considerations. Regression analysis can aid in confirming a cause-and-effect relationship, but it cannot be the sole basis of such a claim. <span class="citation">(chapter 1 in Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span></p>
+</blockquote>
+<!-- ```{r child = '../docs/LRA-factor.Rmd'} -->
 <!-- ``` -->
-<!-- ```{r child = '../docs/LRA-MSA.Rmd'} -->
-<!-- ``` -->
+
+</div>
+</div>
+<!-- </div> -->
+<h3> Simulation Generator</h3>
+<div id="refs" class="references">
+<div id="ref-montgomery2012introduction">
+<p>Montgomery, Douglas C, Elizabeth A Peck, and G Geoffrey Vining. 2012. <em>Introduction to Linear Regression Analysis</em>. Vol. 821. John Wiley &amp; Sons.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="multi.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="LRA.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="GAM.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

@@ -1,0 +1,12 @@
+---
+editor_options:
+  chunk_output_type: console
+---
+
+## Modelling {#model}
+
+> Regression analysis is an iterative procedure, in which data lead to a model and a fit of the model to the data is produced. The quality of the fit is then investigated, leading either to modification of the model or the fit or to adoption of the model. [chapter 1 in @montgomery2012introduction]
+
+### Cause-and-Effect Relationship
+
+> A regression model does not imply a cause-and-effect relationship between the variables. Even though a strong empirical relationship may exist between two or more variables, this cannot be considered evidence that the regressor variables and the response are related in a cause-and-effect manner. To establish causality, the relationship between the regressors and the response must have a basis outside the sample data—for example, the relationship may be suggested by theoretical considerations. Regression analysis can aid in confirming a cause-and-effect relationship, but it cannot be the sole basis of such a claim. [chapter 1 in @montgomery2012introduction]
