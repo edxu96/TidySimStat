@@ -1,6 +1,19 @@
-# Linear Regression {#LR}
+---
+editor_options:
+  chunk_output_type: console
+---
 
-```{r}
+# (PART) Statistics {-}
+
+# Linear Regression Analysis {#LRA}
+
+```{r, include=F}
+options(width = 80, pillar.sigfig = 5)
+knitr::opts_chunk$set(
+  comment = "#>",
+  echo = F,
+  fig.align="center"
+)
 rm(list = ls())
 ```
 
@@ -23,15 +36,6 @@ source("../src/funcs.R")
 source("../src/tests.R")
 ```
 
-```{r, include=FALSE}
-options(width = 80, pillar.sigfig = 5)
-knitr::opts_chunk$set(
-  comment = "#>",
-  echo = FALSE,
-  fig.align="center"
-)
-```
-
 The data set is defined as follows based on file `recs.csv`:
 
 ```{r, message = FALSE, echo=T}
@@ -47,9 +51,11 @@ dat <-
   mutate(x5 = - x5 + 2)
 ```
 
-<!-- ```{r child = '../docs/1-1.Rmd'} -->
-<!-- ``` -->
+```{r child = '../docs/LRA-visualization.Rmd'}
+```
 
-<!-- ```{r child = '../docs/1-2.Rmd'} -->
-<!-- ``` -->
+```{r child = '../docs/LRA-MSA.Rmd'}
+```
 
+```{r child = '../docs/LRA-orthogonalization.Rmd'}
+```

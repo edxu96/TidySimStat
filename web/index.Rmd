@@ -8,6 +8,7 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
+colorlinks: yes
 github-repo: edxu96/TidySimStat
 description: "Stochastic Simulation and Statistics in Tidyverse."
 ---

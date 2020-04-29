@@ -32,7 +32,7 @@
   
   
 
-<link rel="next" href="LR.html"/>
+<link rel="next" href="LRA.html"/>
 <script src="libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -51,6 +51,7 @@
 
 
 
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
 
 
 
@@ -71,7 +72,29 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
-<li class="chapter" data-level="2" data-path="LR.html"><a href="LR.html"><i class="fa fa-check"></i><b>2</b> Linear Regression</a></li>
+<li class="part"><span><b>I Statistics</b></span></li>
+<li class="chapter" data-level="2" data-path="LRA.html"><a href="LRA.html"><i class="fa fa-check"></i><b>2</b> Linear Regression Analysis</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="visualization.html"><a href="visualization.html"><i class="fa fa-check"></i><b>2.1</b> Visualization</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="visualization.html"><a href="visualization.html#covariance-matrix"><i class="fa fa-check"></i><b>2.1.1</b> Covariance Matrix</a></li>
+<li class="chapter" data-level="2.1.2" data-path="visualization.html"><a href="visualization.html#box-plot"><i class="fa fa-check"></i><b>2.1.2</b> Box Plot</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="mis-specification-analyis-msa.html"><a href="mis-specification-analyis-msa.html"><i class="fa fa-check"></i><b>2.2</b> Mis-Specification Analyis (MSA)</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="mis-specification-analyis-msa.html"><a href="mis-specification-analyis-msa.html#normality-and-jarque-bera-test-of-mods1"><i class="fa fa-check"></i><b>2.2.1</b> Normality and Jarque-Bera Test of <code>mods[[1]]</code></a></li>
+<li class="chapter" data-level="2.2.2" data-path="mis-specification-analyis-msa.html"><a href="mis-specification-analyis-msa.html#homoskedasticity-and-whites-test-of-mods1"><i class="fa fa-check"></i><b>2.2.2</b> Homoskedasticity and White’s Test of <code>mods[[1]]</code></a></li>
+<li class="chapter" data-level="2.2.3" data-path="mis-specification-analyis-msa.html"><a href="mis-specification-analyis-msa.html#functional-form-and-reset-test-of-mods1"><i class="fa fa-check"></i><b>2.2.3</b> Functional Form and RESET Test of <code>mods[[1]]</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="orthogonalization.html"><a href="orthogonalization.html"><i class="fa fa-check"></i><b>2.3</b> Orthogonalization</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="orthogonalization.html"><a href="orthogonalization.html#regress-y-on-x2-assumptions-and-orthogonalization"><i class="fa fa-check"></i><b>2.3.1</b> Regress <code>y</code> on <code>x2</code>, Assumptions and Orthogonalization</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="GAM.html"><a href="GAM.html"><i class="fa fa-check"></i><b>3</b> Generalized Additive Model</a></li>
+<li class="chapter" data-level="4" data-path="TSA.html"><a href="TSA.html"><i class="fa fa-check"></i><b>4</b> Time Series Analysis (TSA)</a></li>
+<li class="part"><span><b>II Simulation</b></span></li>
+<li class="chapter" data-level="5" data-path="generator.html"><a href="generator.html"><i class="fa fa-check"></i><b>5</b> Simulation Generator</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -101,13 +124,16 @@
 <h1><span class="header-section-number">Chapter 1</span> Prerequisites</h1>
 
 </div>
+
+
+
             </section>
 
           </div>
         </div>
       </div>
 
-<a href="LR.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="LRA.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -149,7 +175,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"download": ["TidySimStat.pdf", "TidySimStat.epub"],
 "toc": {
 "collapse": "subsection"
 }
