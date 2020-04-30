@@ -57,6 +57,8 @@ Critical values are calculated by:
 qchisq(0.95, df, lower.tail = TRUE, log.p = FALSE)
 ```
 
+#### LLR-Test for One Parameter {-#LLR-Test-1}
+
 Likelihood ratio tests for restricting one parameter can be performed by using partial correlations.
 
 ```{example}
@@ -64,30 +66,38 @@ to test the hypothesis that coefficient for `x5` is 0 in `mods_recs[[1]]`, follo
 ```
 
 ```{r}
-mods_recs[[1]] %>% summary()
+mods_recs[[1]] %>% tab_tidy()
 ```
-
-```{r}
-mods_recs[[1]] %>% {quiet(lmSupport::modelEffectSizes(.))} %>% {.$SSE} %>% tibble()
-```
-
 
 ```{r, echo=T}
-lr_x5 <- - 299 * log(1 - 0.0003170)
-(1 - pchisq(lr_x5, 1))
+mods_recs[[1]] %>% tab_tidy(T) %>%
+  {.[5, 6]} %>%
+  as.numeric() %>%
+  {- 299 * log(1 - .)} %>%
+  {1 - pchisq(., 1)}
 ```
+
+The `deviance` is the residual sum of square:
+
+```{r}
+mods_recs[[1]] %>% glance() %>% tab_ti()
+```
+
+*****
+
+#### LLR-Test for More Parameters {-#LLR-Test-N}
 
 ```{r}
 mods_lik <- list()
 mods_lik[[1]] <- lm(y ~ x2 + x3 + x4 + x6 + x7, data = dat_2)
-test_lik(mods[[4]], mods_lik[[1]]) %>% tab_ti(F)
+test_lik(mods[[4]], mods_lik[[1]]) %>% tab_ti()
 ```
 
 Likelihood tests for restricting more than one parameter can be only performed by using values of log likelihood in the original and restricted models. For example, to test the hypothesis that coefficients for `x5` and `x7` are both 0 in `mods[[4]]`, following calculation can be conducted. We cannot reject the hypothesis according the function output.
 
 ```{r}
 mods_lik[[2]] <- lm(y ~ x2 + x3 + x4 + x6, data = dat_2)
-test_lik(mods[[4]], mods_lik[[2]]) %>% tab_ti(F)
+test_lik(mods[[4]], mods_lik[[2]]) %>% tab_ti()
 ```
 
 ```{r}
@@ -101,7 +111,5 @@ test_lik(mods[[4]], mods_lik[[1]])$stat +
   test_lik(mods_lik[[1]], mods_lik[[2]])$stat -
   test_lik(mods[[4]], mods_lik[[2]])$stat <= 1e-5
 ```
-
-
 
 ### Signed Likelihood Ratio Test

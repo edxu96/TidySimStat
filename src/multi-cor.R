@@ -20,11 +20,4 @@ cal_llk <- function(mod){
   return(llk)
   }
 
-#' Calculate Partial Correlations of a LR Model
-cal_pcor <- function(mod){
-  pcor <- mod %>%
-    {quiet(lmSupport::modelEffectSizes(.))} %>%
-    {.$Effects[,3]} %>%
-    {tibble(pcor = .)}
-  return(pcor)
-}
+

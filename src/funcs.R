@@ -1,15 +1,15 @@
 
 
 collect_glance <- function(results, model, idx){
-  row_new <- 
+  row_new <-
     model %>%
     glance() %>%
     mutate(index = idx)
-  
+
   results %<>%
     dplyr::filter(index != idx) %>%
     bind_rows(row_new)
-  
+
   return(results)
 }
 
@@ -18,9 +18,9 @@ new_results <- function(model, idx){
   results <- model %>%
     glance() %>%
     mutate(index = idx) %>%
-    dplyr::select(index, r.squared, adj.r.squared, sigma, statistic, p.value, 
+    dplyr::select(index, r.squared, adj.r.squared, sigma, statistic, p.value,
       df, logLik, AIC, BIC, deviance, df.residual)
-  
+
   return(results)
 }
 
@@ -38,31 +38,42 @@ kable_inline <- function(ti){
     mutate_if(is.numeric, format, digits = 4) %>%
     # mutate_if(is.numeric, round, 4) %>%
     kable() %>%
-    kable_styling(full_width = F, 
+    kable_styling(full_width = F,
       bootstrap_options = c("condensed", "responsive"))
 }
 
 
-tab_tidy <- function(model, whe_latex){
-  if(missing(whe_latex)){whe_latex <- F}
-  
+#' Calculate Partial Correlations of a LR Model
+cal_p.r.squared <- function(mod){
+  p.r.squared <- mod %>%
+    {quiet(lmSupport::modelEffectSizes(.))} %>%
+    {.$Effects[,3]} %>%
+    as.numeric()
+  return(p.r.squared)
+}
+
+
+#'
+#'@param whe_return: whether to return the tibble
+tab_tidy <- function(model, whe_return){
   ti <-
-    model %>% 
+    model %>%
     tidy() %>%
-    mutate(p.r.squared = quiet(lmSupport::modelEffectSizes(model))$
-      Effects[,3])
-    
-  if(whe_latex){
-    kable_latex(ti)
-  } else {
+    mutate(p.r.squared = cal_p.r.squared(model))
+
+  if(missing(whe_return)){
     kable_inline(ti)
+  } else if(whe_return) {
+    return(ti)
+  } else{
+    kable_latex(ti)
   }
 }
 
 
 tab_ti <- function(ti, whe_latex){
   if(missing(whe_latex)){whe_latex = F}
-  
+
   if(whe_latex){
     kable_latex(ti)
   } else {
@@ -73,8 +84,8 @@ tab_ti <- function(ti, whe_latex){
 
 #' To mute the output of operation `x`
 #' @author Hadley Wickham
-quiet <- function(x) { 
-  sink(tempfile()) 
-  on.exit(sink()) 
-  invisible(force(x)) 
-} 
+quiet <- function(x) {
+  sink(tempfile())
+  on.exit(sink())
+  invisible(force(x))
+}

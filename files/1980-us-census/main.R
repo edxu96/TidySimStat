@@ -63,9 +63,11 @@ mods[[1]] %>%
 mod_1 <- lm(wage_log ~ educ + I(educ^2), data = dat)
 mod_1 %>% summary()
 
-lmSupport::modelEffectSizes(mod_1)
+mod_1 %>% tab_tidy()
 
+mod_1 %>% glance() %>% glimpse()
 
+mod_1 %>% anova()
 
 
 mod_2 <- lm(wage_log ~ educ, data = dat)

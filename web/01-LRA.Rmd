@@ -53,6 +53,8 @@ dat_recs <-
   mutate(x5 = - x5 + 2)
 ```
 
+Models used in the context are:
+
 ```{r, echo=T}
 mods_recs <- list()
 mods_recs[[1]] <- lm(y ~ x2 + x3 + x4 + x5 + x6 + x7, data = dat_recs)
