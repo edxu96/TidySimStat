@@ -3,7 +3,7 @@
 #' @author Edward J. Xu
 #' @description If `if_reject` is true, the hypothesis of restricted model is
 #'   rejected. So the restricted model cannot be kept.
-test_lik <- function(origin, restrict, prob){
+test_llr <- function(origin, restrict, prob){
   if(missing(prob)){prob = 0.05}
 
   stat <- 2 * ( logLik(origin)[1] - logLik(restrict)[1] )

@@ -12,7 +12,7 @@ mods[[2]] <-
   {lm(y ~ x1 + x21, data = .)}
 ```
 
-### Normality and Jarque-Bera Test of `mods[[1]]`
+### Normality and Jarque-Bera Test
 
 The following four plots can be used to check the plausibility of normality assumptions:
 

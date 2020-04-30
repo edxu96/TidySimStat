@@ -3,7 +3,7 @@
 ## Edward J. Xu
 ## Mar 27, 2020
 rm(list = ls())
-setwd("~/GitHub/TidySimStat/examples/1980-us-census")
+setwd("~/GitHub/TidySimStat/files/1980-us-census")
 library(tidyverse)
 library(magrittr)
 library(lmtest)
@@ -15,7 +15,7 @@ library(propagate)
 library(het.test)
 
 dat <-
-  read_csv("./data.csv") %>%
+  read_csv("../../data/1980-us-census.csv") %>%
   mutate(wage_log = LwageW) %>%
   dplyr::select(educ, wage_log)
 
@@ -29,7 +29,7 @@ mod %>%
   residuals() %>%
   tseries::jarque.bera.test()
 
-mod %>%  
+mod %>%
   resettest(power = 2:3, type = c("fitted", "regressor",  "princomp"),
                 data = dat)
 
@@ -63,13 +63,18 @@ mods[[1]] %>%
 mod_1 <- lm(wage_log ~ educ + I(educ^2), data = dat)
 mod_1 %>% summary()
 
+lmSupport::modelEffectSizes(mod_1)
+
+
+
+
 mod_2 <- lm(wage_log ~ educ, data = dat)
 
 lrtest(mod_1, mod_2)
 
 test_lik(mod_1, mod_2)
 
-mods[[5]] <- 
+mods[[5]] <-
   dat %>%
   dplyr::filter(uhrswork != 0) %>%
   mutate(uhrswork_log = log(uhrswork)) %>%
@@ -83,7 +88,7 @@ mods[[5]] %>% summary()
 library(matlib)
 data(class)
 class$male <- as.numeric(class$sex=="M")
-class <- transform(class, IQ = round(20 + height + 3*age -.1*weight -3*male + 
+class <- transform(class, IQ = round(20 + height + 3*age -.1*weight -3*male +
   10*rnorm(nrow(class))))
 head(class)
 X <- as.matrix(class[,c(3,4,2,5)])
@@ -91,7 +96,7 @@ head(X)
 
 Z <- cbind(X[,1], 0, 0, 0)
 Z[,2] <- X[,2] - Proj(X[,2], Z[,1])
-Z[,3] <- X[,3] - Proj(X[,3], Z[,1]) - Proj(X[,3], Z[,2]) 
+Z[,3] <- X[,3] - Proj(X[,3], Z[,1]) - Proj(X[,3], Z[,2])
 Z[,4] <- X[,4] - Proj(X[,4], Z[,1]) - Proj(X[,4], Z[,2]) - Proj(X[,4], Z[,3])
 colnames(Z) <- colnames(X)
 Z
@@ -113,7 +118,7 @@ x3 <- runif(10)
 y <- x1 + 2 * x2 + 3 * x3 + rnorm(10)
 
 # classical regression
-model <- lm(y ~ x1 + x2 + x3) 
+model <- lm(y ~ x1 + x2 + x3)
 
 # orthogonalize regressors on a unit vector
 lm(x1 ~ 1)$residuals -> z1

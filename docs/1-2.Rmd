@@ -57,38 +57,6 @@ results_test %>% tab_ti(F)
 
 ### 7-3. Likelihood Ratio Test
 
-Likelihood ratio tests for restricting one parameter can be performed by using partial correlations. For example, to test the hypothesis that coefficient for `x5` is 0 in `mods[[4]]`, following calculation can be conducted. With `p_value` being 0.7581638, we cannot reject the hypothesis.
-
-```{r, echo=T}
-lr_x5 <- - 299 * log(1 - 0.0003170) 
-(1 - pchisq(lr_x5, 1))
-```
-
-```{r}
-mods_lik <- list()
-mods_lik[[1]] <- lm(y ~ x2 + x3 + x4 + x6 + x7, data = dat_2)
-test_lik(mods[[4]], mods_lik[[1]]) %>% tab_ti(F)
-```
-
-Likelihood tests for restricting more than one parameter can be only performed by using values of log likelihood in the original and restricted models. For example, to test the hypothesis that coefficients for `x5` and `x7` are both 0 in `mods[[4]]`, following calculation can be conducted. We cannot reject the hypothesis according the function output.
-
-```{r}
-mods_lik[[2]] <- lm(y ~ x2 + x3 + x4 + x6, data = dat_2)
-test_lik(mods[[4]], mods_lik[[2]]) %>% tab_ti(F)
-```
-
-```{r}
-test_lik(mods_lik[[1]], mods_lik[[2]]) %>% tab_ti(F)
-```
-
-The above three test statistics are related in an additive manner, so models with multiple regressors can be reduced in a step-wise procedure. During every step, partial correlations for regressors can be used as the indication of the next term to be reduced.
-
-```{r}
-test_lik(mods[[4]], mods_lik[[1]])$stat + 
-  test_lik(mods_lik[[1]], mods_lik[[2]])$stat -
-  test_lik(mods[[4]], mods_lik[[2]])$stat <= 1e-5
-```
-
 ### 7-4. Automated Model Selection
 
 Thus, `mods[[5]]` is determined by automated model selection using `mods[[4]]` with `stats::step` function. `mods[[5]]` can pass Jarque-Bera test and two White's tests, but cannot pass RESET test.

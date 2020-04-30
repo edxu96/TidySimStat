@@ -5,7 +5,7 @@ editor_options:
 
 # (PART) Statistics {-}
 
-# Linear Regression Analysis {#LRA}
+# Linear Regression Analysis (LRA) {#LRA}
 
 ```{r, include=F}
 options(width = 80, pillar.sigfig = 5)
@@ -17,9 +17,9 @@ knitr::opts_chunk$set(
 rm(list = ls())
 ```
 
-Following packages and functions are used in this project.
+Following packages and functions are used in this chapter:
 
-```{r, message = FALSE, echo=T}
+```{r packages, message=F, echo=T}
 ## basic packages
 library(knitr)
 library(kableExtra)
@@ -32,15 +32,17 @@ library(lmtest)
 library(corrr)
 library(tseries)
 library(corrplot)
+library(car)
+library(perturb)
 source("../src/funcs.R")
 source("../src/tests.R")
 ```
 
 The data set is defined as follows based on file `recs.csv`:
 
-```{r, message = FALSE, echo=T}
+```{r recs, message=F, echo=T}
 set.seed(6)
-dat <-
+dat_recs <-
   read_csv("../data/recs.csv") %>%
   dplyr::slice(sample(nrow(.), 300)) %>%
   mutate(y = log(KWH / NHSLDMEM)) %>%
@@ -51,17 +53,53 @@ dat <-
   mutate(x5 = - x5 + 2)
 ```
 
+```{r, echo=T}
+mods_recs <- list()
+mods_recs[[1]] <- lm(y ~ x2 + x3 + x4 + x5 + x6 + x7, data = dat_recs)
+```
+
+The dataset `delivery` is from [@montgomery2012introduction]:
+
+```{r delivery, echo=T}
+dat_delivery <- 
+  readxl::read_xls("../data/delivery.xls", col_names = c("i", "time", "case",
+    "dist"), skip = 1)
+```
+
+The dataset `acetylene` is from [@montgomery2012introduction]:
+
+```{r acetylene, echo=T}
+dat_acetylene <-
+  readxl::read_xls("../data/acetylene.xls", col_names = c("i", "p", "t_raw",
+    "h_raw", "c_raw"), skip = 1) %>%
+  mutate(t = (t_raw - 1212.5) / 80.623) %>%
+  mutate(h = (h_raw - 12.44) / 5.662) %>%
+  mutate(c = (c_raw - 0.0403) / 0.03164) %>%
+  select(i, p, t, h, c)
+```
+
+**To-Learn**
+
+- [x] Confidence Interval
+- [x] MSA
+- [ ] Likelihood Ratio Test
+- [ ] ANOVA
+- [ ] Orthogonalization
+
 ```{r child = '../docs/LRA-visual.Rmd'}
 ```
 
-```{r child = '../docs/LRA-MSA.Rmd'}
-```
+<!-- ```{r child = '../docs/LRA-MSA.Rmd'} -->
+<!-- ``` -->
 
 ```{r child = '../docs/LRA-multi.Rmd'}
 ```
 
-```{r child = '../docs/LRA-model.Rmd'}
-```
+<!-- ```{r child = '../docs/LRA-model.Rmd'} -->
+<!-- ``` -->
 
-```{r child = '../docs/LRA-factor.Rmd'}
+<!-- ```{r child = '../docs/LRA-factor.Rmd'} -->
+<!-- ``` -->
+
+```{r child = '../docs/LRA-infer.Rmd'}
 ```

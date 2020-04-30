@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 1 Linear Regression Analysis (LRA) | TidySimStat</title>
+  <title>1.4 Inference | TidySimStat</title>
   <meta name="description" content="Stochastic Simulation and Statistics in Tidyverse." />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 1 Linear Regression Analysis (LRA) | TidySimStat" />
+  <meta property="og:title" content="1.4 Inference | TidySimStat" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="edxu96/TidySimStat" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 1 Linear Regression Analysis (LRA) | TidySimStat" />
+  <meta name="twitter:title" content="1.4 Inference | TidySimStat" />
   
   <meta name="twitter:description" content="Stochastic Simulation and Statistics in Tidyverse." />
   
@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="introduction.html"/>
-<link rel="next" href="to-learn.html"/>
+<link rel="prev" href="multi.html"/>
+<link rel="next" href="GAM.html"/>
 <script src="libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -168,62 +168,39 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="LRA" class="section level1" number="1">
-<h1><span class="header-section-number">Chapter 1</span> Linear Regression Analysis (LRA)</h1>
-<p>Following packages and functions are used in this chapter:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="LRA.html#cb1-1"></a><span class="co">## basic packages</span></span>
-<span id="cb1-2"><a href="LRA.html#cb1-2"></a><span class="kw">library</span>(knitr)</span>
-<span id="cb1-3"><a href="LRA.html#cb1-3"></a><span class="kw">library</span>(kableExtra)</span>
-<span id="cb1-4"><a href="LRA.html#cb1-4"></a><span class="kw">library</span>(tidyverse)</span>
-<span id="cb1-5"><a href="LRA.html#cb1-5"></a><span class="kw">library</span>(conflicted)</span>
-<span id="cb1-6"><a href="LRA.html#cb1-6"></a><span class="kw">library</span>(magrittr)</span>
-<span id="cb1-7"><a href="LRA.html#cb1-7"></a><span class="kw">library</span>(broom)</span>
-<span id="cb1-8"><a href="LRA.html#cb1-8"></a><span class="co">## paticular packages for this project</span></span>
-<span id="cb1-9"><a href="LRA.html#cb1-9"></a><span class="kw">library</span>(lmtest)</span>
-<span id="cb1-10"><a href="LRA.html#cb1-10"></a><span class="kw">library</span>(corrr)</span>
-<span id="cb1-11"><a href="LRA.html#cb1-11"></a><span class="kw">library</span>(tseries)</span>
-<span id="cb1-12"><a href="LRA.html#cb1-12"></a><span class="kw">library</span>(corrplot)</span>
-<span id="cb1-13"><a href="LRA.html#cb1-13"></a><span class="kw">library</span>(car)</span>
-<span id="cb1-14"><a href="LRA.html#cb1-14"></a><span class="kw">library</span>(perturb)</span>
-<span id="cb1-15"><a href="LRA.html#cb1-15"></a><span class="kw">source</span>(<span class="st">&quot;../src/funcs.R&quot;</span>)</span>
-<span id="cb1-16"><a href="LRA.html#cb1-16"></a><span class="kw">source</span>(<span class="st">&quot;../src/tests.R&quot;</span>)</span></code></pre></div>
-<p>The data set is defined as follows based on file <code>recs.csv</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="LRA.html#cb2-1"></a><span class="kw">set.seed</span>(<span class="dv">6</span>)</span>
-<span id="cb2-2"><a href="LRA.html#cb2-2"></a>dat_recs &lt;-</span>
-<span id="cb2-3"><a href="LRA.html#cb2-3"></a><span class="st">  </span><span class="kw">read_csv</span>(<span class="st">&quot;../data/recs.csv&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb2-4"><a href="LRA.html#cb2-4"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">slice</span>(<span class="kw">sample</span>(<span class="kw">nrow</span>(.), <span class="dv">300</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb2-5"><a href="LRA.html#cb2-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">y =</span> <span class="kw">log</span>(KWH <span class="op">/</span><span class="st"> </span>NHSLDMEM)) <span class="op">%&gt;%</span></span>
-<span id="cb2-6"><a href="LRA.html#cb2-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">x8 =</span> TOTROOMS <span class="op">+</span><span class="st"> </span>NCOMBATH <span class="op">+</span><span class="st"> </span>NHAFBATH) <span class="op">%&gt;%</span></span>
-<span id="cb2-7"><a href="LRA.html#cb2-7"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(y, <span class="dt">x2 =</span> NHSLDMEM, <span class="dt">x3 =</span> EDUCATION, <span class="dt">x4 =</span> MONEYPY, <span class="dt">x5 =</span> HHSEX,</span>
-<span id="cb2-8"><a href="LRA.html#cb2-8"></a>    <span class="dt">x6 =</span> HHAGE, <span class="dt">x7 =</span> ATHOME, x8) <span class="op">%&gt;%</span></span>
-<span id="cb2-9"><a href="LRA.html#cb2-9"></a><span class="st">  </span><span class="kw">mutate_at</span>(<span class="kw">seq</span>(<span class="dv">2</span>, <span class="dv">8</span>), as.integer) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># make continuous variables discrete</span></span>
-<span id="cb2-10"><a href="LRA.html#cb2-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">x5 =</span> <span class="op">-</span><span class="st"> </span>x5 <span class="op">+</span><span class="st"> </span><span class="dv">2</span>)</span></code></pre></div>
-<p>The dataset <code>delivery</code> is from <span class="citation">(Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="LRA.html#cb3-1"></a>dat_delivery &lt;-<span class="st"> </span></span>
-<span id="cb3-2"><a href="LRA.html#cb3-2"></a><span class="st">  </span>readxl<span class="op">::</span><span class="kw">read_xls</span>(<span class="st">&quot;../data/delivery.xls&quot;</span>, <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;i&quot;</span>, <span class="st">&quot;time&quot;</span>, <span class="st">&quot;case&quot;</span>,</span>
-<span id="cb3-3"><a href="LRA.html#cb3-3"></a>    <span class="st">&quot;dist&quot;</span>), <span class="dt">skip =</span> <span class="dv">1</span>)</span></code></pre></div>
-<p>The dataset <code>acetylene</code> is from <span class="citation">(Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="LRA.html#cb4-1"></a>dat_acetylene &lt;-</span>
-<span id="cb4-2"><a href="LRA.html#cb4-2"></a><span class="st">  </span>readxl<span class="op">::</span><span class="kw">read_xls</span>(<span class="st">&quot;../data/acetylene.xls&quot;</span>, <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;i&quot;</span>, <span class="st">&quot;p&quot;</span>, <span class="st">&quot;t_raw&quot;</span>,</span>
-<span id="cb4-3"><a href="LRA.html#cb4-3"></a>    <span class="st">&quot;h_raw&quot;</span>, <span class="st">&quot;c_raw&quot;</span>), <span class="dt">skip =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span></span>
-<span id="cb4-4"><a href="LRA.html#cb4-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">t =</span> (t_raw <span class="op">-</span><span class="st"> </span><span class="fl">1212.5</span>) <span class="op">/</span><span class="st"> </span><span class="fl">80.623</span>) <span class="op">%&gt;%</span></span>
-<span id="cb4-5"><a href="LRA.html#cb4-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">h =</span> (h_raw <span class="op">-</span><span class="st"> </span><span class="fl">12.44</span>) <span class="op">/</span><span class="st"> </span><span class="fl">5.662</span>) <span class="op">%&gt;%</span></span>
-<span id="cb4-6"><a href="LRA.html#cb4-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">c =</span> (c_raw <span class="op">-</span><span class="st"> </span><span class="fl">0.0403</span>) <span class="op">/</span><span class="st"> </span><span class="fl">0.03164</span>) <span class="op">%&gt;%</span></span>
-<span id="cb4-7"><a href="LRA.html#cb4-7"></a><span class="st">  </span><span class="kw">select</span>(i, p, t, h, c)</span></code></pre></div>
+<div id="inference" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Inference</h2>
+<div id="confidence-interval" class="section level3" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> Confidence Interval</h3>
+<blockquote>
+<p>By choosing a 95% coverage, we accept that with 5% confidence we reach the false conclusion that the true parameter is not in the confidence interval. <span class="citation">(<span class="citeproc-not-found" data-reference-id="hendry2007econometrics"><strong>???</strong></span> Confidence intervals)</span></p>
+</blockquote>
+<pre><code>#&gt;                    2.5 %       97.5 %
+#&gt; (Intercept)  8.156353087  8.918779651
+#&gt; x2          -0.345668390 -0.232993887
+#&gt; x3          -0.173798148 -0.029166657
+#&gt; x4          -0.015521841  0.063752184
+#&gt; x5          -0.140484745  0.133522728
+#&gt; x6          -0.001040888  0.008468877
+#&gt; x7          -0.028330570  0.039288527
+#&gt; x8           0.041431470  0.095149773</code></pre>
 </div>
-<h3> Simulation Generator</h3>
-<div id="refs" class="references">
-<div id="ref-montgomery2012introduction">
-<p>Montgomery, Douglas C, Elizabeth A Peck, and G Geoffrey Vining. 2012. <em>Introduction to Linear Regression Analysis</em>. Vol. 821. John Wiley &amp; Sons.</p>
+<div id="likelihood-ratio-test" class="section level3" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> Likelihood Ratio Test</h3>
+</div>
+<div id="signed-likelihood-ratio-test" class="section level3" number="1.4.3">
+<h3><span class="header-section-number">1.4.3</span> Signed Likelihood Ratio Test</h3>
+
 </div>
 </div>
+<!-- </div> -->
             </section>
 
           </div>
         </div>
       </div>
-<a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="to-learn.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="multi.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="GAM.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
