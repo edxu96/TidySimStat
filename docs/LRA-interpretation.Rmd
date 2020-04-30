@@ -1,0 +1,8 @@
+---
+editor_options:
+  chunk_output_type: console
+---
+
+## Interpretation of Models Parameters
+
+[@hendry2007econometic :5.1, Econometric Model] gives details.
