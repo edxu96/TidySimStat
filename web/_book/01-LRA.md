@@ -47,6 +47,16 @@ dat_recs <-
   mutate(x5 = - x5 + 2)
 ```
 
+Models used in the context are:
+
+
+```r
+mods_recs <- list()
+mods_recs[[1]] <- lm(y ~ x2 + x3 + x4 + x5 + x6 + x7, data = dat_recs)
+mods_recs[[2]] <- lm(y ~ x2 + x3 + x4 + x6 + x7, data = dat_recs)
+mods_recs[[3]] <- lm(y ~ x2 + x4 + x6 + x7, data = dat_recs)
+```
+
 The dataset `delivery` is from [@montgomery2012introduction]:
 
 
@@ -69,7 +79,7 @@ dat_acetylene <-
   select(i, p, t, h, c)
 ```
 
-## To-Learn
+**To-Learn**
 
 - [x] Confidence Interval
 - [x] MSA
@@ -77,217 +87,14 @@ dat_acetylene <-
 - [ ] ANOVA
 - [ ] Orthogonalization
 
-
-
-## Visualization
-
-The first 5 rows of the dat_recsa set used can be visualized:
-
-<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
- <thead>
-  <tr>
-   <th style="text-align:left;"> y </th>
-   <th style="text-align:left;"> x2 </th>
-   <th style="text-align:left;"> x3 </th>
-   <th style="text-align:left;"> x4 </th>
-   <th style="text-align:left;"> x5 </th>
-   <th style="text-align:left;"> x6 </th>
-   <th style="text-align:left;"> x7 </th>
-   <th style="text-align:left;"> x8 </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> 7.540 </td>
-   <td style="text-align:left;"> 5 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:left;"> 8 </td>
-   <td style="text-align:left;"> 1 </td>
-   <td style="text-align:left;"> 39 </td>
-   <td style="text-align:left;"> 5 </td>
-   <td style="text-align:left;"> 15 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 8.193 </td>
-   <td style="text-align:left;"> 1 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:left;"> 2 </td>
-   <td style="text-align:left;"> 0 </td>
-   <td style="text-align:left;"> 85 </td>
-   <td style="text-align:left;"> 5 </td>
-   <td style="text-align:left;"> 14 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 8.678 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:left;"> 1 </td>
-   <td style="text-align:left;"> 1 </td>
-   <td style="text-align:left;"> 0 </td>
-   <td style="text-align:left;"> 71 </td>
-   <td style="text-align:left;"> 5 </td>
-   <td style="text-align:left;"> 8 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 7.846 </td>
-   <td style="text-align:left;"> 4 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:left;"> 5 </td>
-   <td style="text-align:left;"> 1 </td>
-   <td style="text-align:left;"> 39 </td>
-   <td style="text-align:left;"> 5 </td>
-   <td style="text-align:left;"> 8 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> 9.755 </td>
-   <td style="text-align:left;"> 1 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:left;"> 3 </td>
-   <td style="text-align:left;"> 0 </td>
-   <td style="text-align:left;"> 57 </td>
-   <td style="text-align:left;"> 0 </td>
-   <td style="text-align:left;"> 10 </td>
-  </tr>
-</tbody>
-</table>
-
-### Covariance Matrix
-
-<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
- <thead>
-  <tr>
-   <th style="text-align:left;"> x </th>
-   <th style="text-align:left;"> y </th>
-   <th style="text-align:left;"> r </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> x2 </td>
-   <td style="text-align:left;"> y </td>
-   <td style="text-align:left;"> -0.51098 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> x3 </td>
-   <td style="text-align:left;"> y </td>
-   <td style="text-align:left;"> 0.03410 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> x4 </td>
-   <td style="text-align:left;"> y </td>
-   <td style="text-align:left;"> 0.04098 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> x5 </td>
-   <td style="text-align:left;"> y </td>
-   <td style="text-align:left;"> -0.04260 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> x6 </td>
-   <td style="text-align:left;"> y </td>
-   <td style="text-align:left;"> 0.35346 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> x7 </td>
-   <td style="text-align:left;"> y </td>
-   <td style="text-align:left;"> 0.03966 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> x8 </td>
-   <td style="text-align:left;"> y </td>
-   <td style="text-align:left;"> 0.21329 </td>
-  </tr>
-</tbody>
-</table>
-
-### Box Plot
-
-For each level of `x2` a box indicating three quantiles (25%, 50%, 75%) of `y` is given. It shows that there is a tendency for `y` to decrease with `x2` by looking at the median. The sizes of different boxes seem to vary with different values of `x2`. Besides, there are many observations when `x2` is small. But it is assumed for now that the conditional variance is constant, which will be tested section 4. Three dat_recsa points with extreme values `36`, `241` and `163` is discussed in sections 3 and 5.
-
-<img src="01-LRA_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" />
-
-The box plot of `y` by `x6` is given. It can be seen that the tendency is not strictly linear and the condition variance is not stable. So we will regress `y` on `x2` first and use `x6` as the second regressor in section 6.
-
-<img src="01-LRA_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" />
+<!-- ```{r child = '../docs/LRA-visual.Rmd'} -->
+<!-- ``` -->
 
 <!-- ```{r child = '../docs/LRA-MSA.Rmd'} -->
 <!-- ``` -->
 
-
-
-## Multiple Linear Regression {#multi}
-
-### Standardization
-
-
-
-
-### Multicollinearity Diagnosis {#multi-diag}
-
-> In some situations the regressors are nearly perfectly linearly related, and in such cases the inferences based on the regression model can be misleading or erroneous. When there are near-linear dependencies among the regressors, the problem of multicollinearity is said to exist. [9, @montgomery2012introduction]
-
-There are four primary sources of multicollinearity: [9, @montgomery2012introduction]
-
-1. The data collection method employed
-2. Constraints on the model or in the population
-3. Model specification
-4. An overdefined model
-
-> To really establish causation, it is usually necessary to do an experiment in which the putative causative variable is manipulated to see what effect it has on the response. [@wood2017generalized :1.5.7]
-
-#### (1) Covariance Matrix {-}
-
-> Inspection of the covariance matrix is not sufficient for detecting anything more complex than pair- wise multicollinearity. [@montgomery2012introduction :9.4.1 Examination of the Correlation Matrix]
-
-\BeginKnitrBlock{example}<div class="example"><span class="example" id="exm:unnamed-chunk-9"><strong>(\#exm:unnamed-chunk-9) </strong></span>It can be seen from the following covariance matrix that `y` is highly correlated to `x2`, `x6` and `x8`. Besides, `x3`-`x4`, `x2`-`x6`, `x4`-`x8` are high correlated.</div>\EndKnitrBlock{example}
-
-<div class="figure" style="text-align: center">
-<img src="01-LRA_files/figure-html/unnamed-chunk-10-1.png" alt="(ref:multi-1)" width="672" />
-<p class="caption">(\#fig:unnamed-chunk-10)(ref:multi-1)</p>
-</div>
-
-(ref:multi-1) Heat map for the covariance matrix of `recs`.
-
-#### (2) Variance Inflation Factors (VIF) {-}
-
-The collinearity diagnostics in R require the packages “perturb” and “car”. The R code to generate the collinearity diagnostics for the delivery data is:
-
-
-```
-#>     case     dist 
-#> 3.118474 3.118474
-```
-
-```
-#> Condition
-#> Index	Variance Decomposition Proportions
-#>          intercept case  dist 
-#> 1  1.000 0.041     0.015 0.016
-#> 2  3.240 0.959     0.069 0.076
-#> 3  6.378 0.000     0.915 0.909
-```
-
-
-```
-#>       x2       x3       x4       x5       x6       x7       x8 
-#> 1.360196 1.494892 1.853040 1.049184 1.383186 1.094072 1.559469
-```
-
-```
-#> Condition
-#> Index	Variance Decomposition Proportions
-#>           intercept x2    x3    x4    x5    x6    x7    x8   
-#> 1   1.000 0.001     0.003 0.002 0.003 0.006 0.001 0.005 0.002
-#> 2   3.542 0.000     0.004 0.001 0.035 0.730 0.000 0.001 0.006
-#> 3   4.554 0.000     0.026 0.002 0.100 0.112 0.013 0.472 0.001
-#> 4   5.164 0.000     0.518 0.027 0.037 0.004 0.021 0.018 0.003
-#> 5   6.768 0.022     0.011 0.004 0.256 0.048 0.147 0.486 0.011
-#> 6   9.250 0.015     0.018 0.555 0.067 0.073 0.009 0.012 0.376
-#> 7  10.622 0.011     0.007 0.225 0.498 0.000 0.206 0.005 0.598
-#> 8  17.214 0.951     0.411 0.184 0.004 0.026 0.602 0.001 0.004
-```
-
-### Orthogonalization
-
+<!-- ```{r child = '../docs/LRA-multi.Rmd'} -->
+<!-- ``` -->
 
 <!-- ```{r child = '../docs/LRA-model.Rmd'} -->
 <!-- ``` -->
@@ -297,31 +104,281 @@ The collinearity diagnostics in R require the packages “perturb” and “car�
 
 
 
-## Inference
+## Statistical Inference
+
+### Hypothesis Tests
+
+> The __null hypothesis__, denoted by $\mathrm{H}_{0}$, is a statement about a population parameter. The __alternative hypothesis__ is denoted by $\mathrm{H}_{1}$. The null hypothesis will be rejected if it appears to be inconsistent with the sample data and will not be rejected otherwise. The rejection of the null hypothesis $\mathrm{H}_{0}$ is a strong statement that $\mathrm{H}_{0}$ does not appear to be consistent with the observed data. The result that $\mathrm{H}_{0}$ is not rejected is a weak statement that should be interpreted to mean that $\mathrm{H}_{0}$ is consistent with the data. [@ross2017introductory]
+
+> A __test statistic__ is a statistic whose value is determined from the sample data. Depending on the value of this test statistic, the null hypothesis will be rejected or not. The __critical region__, also called the __rejection region__, is that set of values of the test statistic for which the null hypothesis is rejected. [@ross2017introductory]
+
+> The classical procedure for testing a null hypothesis is to fix a small __level of significance__ $\alpha$ and then require that the probability of rejecting $\mathrm{H}_{0}$ when $\mathrm{H}_{0}$ is true is less than or equal to $\alpha$. [@ross2017introductory]
+
+Critical values are calculated by:
+
+```R
+qchisq(1 - alpha, df, lower.tail = TRUE, log.p = FALSE)
+```
+
+#### (a) Design of Hypothesis Tests {-}
+
+> If you are trying to establish a certain hypothesis, then that hypothesis should be designated as the alternative hypothesis. Similarly, if you are trying to discredit a hypothesis, that hypothesis should be designated the null hypothesis. [@ross2017introductory]
+
+\BeginKnitrBlock{example}<div class="example"><span class="example" id="exm:unnamed-chunk-4"><strong>(\#exm:unnamed-chunk-4) </strong></span>Thus, for instance, if the tobacco company is running the experiment to prove that the mean nicotine level of its cigarettes is less than $1.5,$ then it should choose for the null hypothesis
+
+$$ \mathrm{H}_{0}: \mu \geq 1.5 $$
+
+and for the alternative hypothesis
+
+$$ \mathrm{H}_{1}: \mu<1.5 $$
+
+Then the company could use a rejection of the null hypothesis as "proof" of its claim that the mean nicotine content was less than 1.5 milligrams.</div>\EndKnitrBlock{example}
+
+#### (b) Interpretation of Test Result {-}
+
+> When conducting a statistical test, the thought experiment is that our sample is drawn from some hypothetical population distribution that could have generated the data. Our sample is then compared with hypothetical samples drawn from that hypothetical population distribution. [@hendry2007econometrics :4.3.2 Interpreting the Test Result]
+
+### Likelihood Ratio Test (LLR-Test)
+
+> Likelihood ratio tests are well suited for making inferences about restrictions on a well-specified model, where we are able, and willing, to maximize the likelihood function in the unrestricted model as well as the restricted model. [@hendry2007econometric]
+
+From section 1-3-4, 2-3-2 in [@hendry2007econometric]:
+
+$$ \mathrm{Q} = \frac{\max _{\theta \in \Theta_{R}} \mathrm{L}_{Y_{1}, \ldots, Y_{n}}(\theta)}{\max _{\theta \in \Theta_{U}} \mathrm{L}_{Y_{1}, \ldots, Y_{n}}(\theta)} $$
+
+$$ \mathrm{LR} = -2 \log \mathrm{Q} = 2 \left\{\max _{\theta \in \Theta_{U}} \ell_{Y_{1}, \ldots, Y_{n}}(\theta)-\max _{\theta \in \Theta_{R}} \ell_{Y_{1}, \ldots, Y_{n}}(\theta)\right\} $$
+
+where the closer $\mathrm{LR}$ is to zero, the more likely it is that $\theta$ could satisfy the restriction.
+
+A statistical test can now be constructed as a decision rule. If $\mathrm{Q}$ is (close to) unity, and correspondingly $\mathrm{LR}$ is small, the restricted maximum likelihood estimate would be (nearly) as likely as the unrestricted estimate, so in that case, we would fail to reject the hypothesis. We therefore choose a critical value $c>0,$ and reject the hypothesis if $\mathrm{LR} > c$.
+
+#### (a) Signed LLR-Test {-#LLR-Test-Sign}
+
+```R
+mod %>%
+  summary() %>%
+  {pt(coef(.)[2, 3], mod$df, lower = FALSE)} %>%
+  {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
+```
+
+- https://stats.stackexchange.com/questions/325354/if-and-how-to-use-one-tailed-testing-in-multiple-regression
+- https://stackoverflow.com/questions/8089797/inference-about-slope-coefficient-in-r
+- https://stackoverflow.com/questions/13811472/one-sided-hypothesis-test-with-t-statistic-in-r
+
+
+
+#### (b) LLR-Test for One Parameter {-#LLR-Test-1}
+
+Likelihood ratio tests for restricting one parameter can be performed by using partial correlations.
+
+
+
+
+```
+#> Registered S3 methods overwritten by 'lme4':
+#>   method                          from
+#>   cooks.distance.influence.merMod car 
+#>   influence.merMod                car 
+#>   dfbeta.influence.merMod         car 
+#>   dfbetas.influence.merMod        car
+```
+
+<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> term </th>
+   <th style="text-align:left;"> estimate </th>
+   <th style="text-align:left;"> std.error </th>
+   <th style="text-align:left;"> statistic </th>
+   <th style="text-align:left;"> p.value </th>
+   <th style="text-align:left;"> p.r.squared </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> (Intercept) </td>
+   <td style="text-align:left;"> 8.615613 </td>
+   <td style="text-align:left;"> 0.200829 </td>
+   <td style="text-align:left;"> 42.9002 </td>
+   <td style="text-align:left;"> 2.434e-128 </td>
+   <td style="text-align:left;"> 0.8626622 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> x2 </td>
+   <td style="text-align:left;"> -0.259971 </td>
+   <td style="text-align:left;"> 0.029144 </td>
+   <td style="text-align:left;"> -8.9203 </td>
+   <td style="text-align:left;"> 5.153e-17 </td>
+   <td style="text-align:left;"> 0.2135731 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> x3 </td>
+   <td style="text-align:left;"> -0.081468 </td>
+   <td style="text-align:left;"> 0.037994 </td>
+   <td style="text-align:left;"> -2.1442 </td>
+   <td style="text-align:left;"> 3.284e-02 </td>
+   <td style="text-align:left;"> 0.0154493 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> x4 </td>
+   <td style="text-align:left;"> 0.064473 </td>
+   <td style="text-align:left;"> 0.019196 </td>
+   <td style="text-align:left;"> 3.3586 </td>
+   <td style="text-align:left;"> 8.869e-04 </td>
+   <td style="text-align:left;"> 0.0370726 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> x5 </td>
+   <td style="text-align:left;"> -0.034200 </td>
+   <td style="text-align:left;"> 0.072129 </td>
+   <td style="text-align:left;"> -0.4742 </td>
+   <td style="text-align:left;"> 6.357e-01 </td>
+   <td style="text-align:left;"> 0.0007667 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> x6 </td>
+   <td style="text-align:left;"> 0.007251 </td>
+   <td style="text-align:left;"> 0.002403 </td>
+   <td style="text-align:left;"> 3.0173 </td>
+   <td style="text-align:left;"> 2.774e-03 </td>
+   <td style="text-align:left;"> 0.0301358 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> x7 </td>
+   <td style="text-align:left;"> 0.013147 </td>
+   <td style="text-align:left;"> 0.017798 </td>
+   <td style="text-align:left;"> 0.7387 </td>
+   <td style="text-align:left;"> 4.607e-01 </td>
+   <td style="text-align:left;"> 0.0018588 </td>
+  </tr>
+</tbody>
+</table>
+
+
+```r
+mods_recs[[1]] %>% tab_tidy(T) %>%
+  {.[5, 6]} %>%
+  as.numeric() %>%
+  {- 299 * log(1 - .)} %>%
+  {1 - pchisq(., 1)}
+```
+
+```
+#> [1] 0.6320156
+```
+
+<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> whi </th>
+   <th style="text-align:left;"> stat </th>
+   <th style="text-align:left;"> df1 </th>
+   <th style="text-align:left;"> df2 </th>
+   <th style="text-align:left;"> p_value </th>
+   <th style="text-align:left;"> prob </th>
+   <th style="text-align:left;"> if_reject </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> logLik </td>
+   <td style="text-align:left;"> 0.2301 </td>
+   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;"> 299 </td>
+   <td style="text-align:left;"> 0.6314 </td>
+   <td style="text-align:left;"> 0.05 </td>
+   <td style="text-align:left;"> FALSE </td>
+  </tr>
+</tbody>
+</table>
+
+The `deviance` is the residual sum of square:
+
+<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> r.squared </th>
+   <th style="text-align:left;"> adj.r.squared </th>
+   <th style="text-align:left;"> sigma </th>
+   <th style="text-align:left;"> statistic </th>
+   <th style="text-align:left;"> p.value </th>
+   <th style="text-align:left;"> df </th>
+   <th style="text-align:left;"> logLik </th>
+   <th style="text-align:left;"> AIC </th>
+   <th style="text-align:left;"> BIC </th>
+   <th style="text-align:left;"> deviance </th>
+   <th style="text-align:left;"> df.residual </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> 0.3159 </td>
+   <td style="text-align:left;"> 0.3018 </td>
+   <td style="text-align:left;"> 0.6122 </td>
+   <td style="text-align:left;"> 22.54 </td>
+   <td style="text-align:left;"> 7.957e-22 </td>
+   <td style="text-align:left;"> 7 </td>
+   <td style="text-align:left;"> -274.9 </td>
+   <td style="text-align:left;"> 565.9 </td>
+   <td style="text-align:left;"> 595.5 </td>
+   <td style="text-align:left;"> 109.8 </td>
+   <td style="text-align:left;"> 293 </td>
+  </tr>
+</tbody>
+</table>
+
+*****
+
+#### (c) LLR-Test for More Parameters {-#LLR-Test-N}
+
+Likelihood tests for restricting more than one parameter can be only performed by using values of log likelihood in the original and restricted models. For example, to test the hypothesis that coefficients for `x5` and `x7` are both 0 in `mods_recs[[1]]`, following calculation can be conducted. We cannot reject the hypothesis according the function output.
+
+<table class="table table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> whi </th>
+   <th style="text-align:left;"> stat </th>
+   <th style="text-align:left;"> df1 </th>
+   <th style="text-align:left;"> df2 </th>
+   <th style="text-align:left;"> p_value </th>
+   <th style="text-align:left;"> prob </th>
+   <th style="text-align:left;"> if_reject </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> logLik </td>
+   <td style="text-align:left;"> 5.178 </td>
+   <td style="text-align:left;"> 2 </td>
+   <td style="text-align:left;"> 298 </td>
+   <td style="text-align:left;"> 0.02287 </td>
+   <td style="text-align:left;"> 0.05 </td>
+   <td style="text-align:left;"> TRUE </td>
+  </tr>
+</tbody>
+</table>
+
+The above three test statistics are related in an additive manner, so models with multiple regressors can be reduced in a step-wise procedure. During every step, partial correlations for regressors can be used as the indication of the next term to be reduced.
+
+
+```
+#> [1] TRUE
+```
 
 ### Confidence Interval
 
-> By choosing a 95% coverage, we accept that with 5% confidence we reach the false conclusion that the true parameter is not in the confidence interval. [@hendry2007econometrics :2.3.1 Confidence intervals]
+> By choosing a 95% coverage, we accept that with 5% confidence we reach the false conclusion that the true parameter is not in the confidence interval. [@hendry2007econometrics :2.3.1 Confidence Intervals]
 
 
 
 
 ```
-#>                    2.5 %       97.5 %
-#> (Intercept)  8.156353087  8.918779651
-#> x2          -0.345668390 -0.232993887
-#> x3          -0.173798148 -0.029166657
-#> x4          -0.015521841  0.063752184
-#> x5          -0.140484745  0.133522728
-#> x6          -0.001040888  0.008468877
-#> x7          -0.028330570  0.039288527
-#> x8           0.041431470  0.095149773
+#>                    2.5 %      97.5 %
+#> (Intercept)  8.220362250  9.01086394
+#> x2          -0.317328785 -0.20261313
+#> x3          -0.156243666 -0.00669182
+#> x4           0.026693277  0.10225333
+#> x5          -0.176156322  0.10775608
+#> x6           0.002521419  0.01198065
+#> x7          -0.021881524  0.04817554
 ```
-
-
-### Likelihood Ratio Test
-
-
-
-
-### Signed Likelihood Ratio Test

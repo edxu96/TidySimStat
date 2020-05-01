@@ -13,10 +13,17 @@ editor_options:
 
 > The classical procedure for testing a null hypothesis is to fix a small __level of significance__ $\alpha$ and then require that the probability of rejecting $\mathrm{H}_{0}$ when $\mathrm{H}_{0}$ is true is less than or equal to $\alpha$. [@ross2017introductory]
 
-### Design of Hypothesis Tests
+Critical values are calculated by:
+
+```R
+qchisq(1 - alpha, df, lower.tail = TRUE, log.p = FALSE)
+```
+
+#### (a) Design of Hypothesis Tests {-}
 
 > If you are trying to establish a certain hypothesis, then that hypothesis should be designated as the alternative hypothesis. Similarly, if you are trying to discredit a hypothesis, that hypothesis should be designated the null hypothesis. [@ross2017introductory]
 
+```{example, echo=T}
 Thus, for instance, if the tobacco company is running the experiment to prove that the mean nicotine level of its cigarettes is less than $1.5,$ then it should choose for the null hypothesis
 
 $$ \mathrm{H}_{0}: \mu \geq 1.5 $$
@@ -26,22 +33,11 @@ and for the alternative hypothesis
 $$ \mathrm{H}_{1}: \mu<1.5 $$
 
 Then the company could use a rejection of the null hypothesis as "proof" of its claim that the mean nicotine content was less than 1.5 milligrams.
+```
 
-### Interpretation of Test Result
+#### (b) Interpretation of Test Result {-}
 
 > When conducting a statistical test, the thought experiment is that our sample is drawn from some hypothetical population distribution that could have generated the data. Our sample is then compared with hypothetical samples drawn from that hypothetical population distribution. [@hendry2007econometrics :4.3.2 Interpreting the Test Result]
-
-### Confidence Interval
-
-> By choosing a 95% coverage, we accept that with 5% confidence we reach the false conclusion that the true parameter is not in the confidence interval. [@hendry2007econometrics :2.3.1 Confidence Intervals]
-
-```{example}
-Confidence Interval of `mods_recs[[1]]`.
-```
-
-```{r}
-mods_recs[[1]] %>% confint()
-```
 
 ### Likelihood Ratio Test (LLR-Test)
 
@@ -57,28 +53,22 @@ where the closer $\mathrm{LR}$ is to zero, the more likely it is that $\theta$ c
 
 A statistical test can now be constructed as a decision rule. If $\mathrm{Q}$ is (close to) unity, and correspondingly $\mathrm{LR}$ is small, the restricted maximum likelihood estimate would be (nearly) as likely as the unrestricted estimate, so in that case, we would fail to reject the hypothesis. We therefore choose a critical value $c>0,$ and reject the hypothesis if $\mathrm{LR} > c$.
 
-Critical values are calculated by:
-
-```R
-qchisq(0.95, df, lower.tail = TRUE, log.p = FALSE)
-```
-
-#### Signed LLR-Test {-#LLR-Test-Sign}
-
-```R
-mod %>%
-  summary() %>%
-  {pt(coef(.)[2, 3], mod$df, lower = FALSE)} %>%
-  {. <= qchisq(0.95, 1, lower.tail = TRUE, log.p = FALSE)}
-```
+#### (a) Signed LLR-Test {-#LLR-Test-Sign}
 
 - https://stats.stackexchange.com/questions/325354/if-and-how-to-use-one-tailed-testing-in-multiple-regression
 - https://stackoverflow.com/questions/8089797/inference-about-slope-coefficient-in-r
 - https://stackoverflow.com/questions/13811472/one-sided-hypothesis-test-with-t-statistic-in-r
 
+```{r, echo=T}
+test_llr(mods_part[[1]], mods_part[[2]]) %>% tab_ti()
+```
+
+```{r, echo=T}
+test_llr_sign(mods_part[[1]], mods_part[[2]], T) %>% tab_ti()
+```
 
 
-#### LLR-Test for One Parameter {-#LLR-Test-1}
+#### (b) LLR-Test for One Parameter {-#LLR-Test-1}
 
 Likelihood ratio tests for restricting one parameter can be performed by using partial correlations.
 
@@ -98,6 +88,10 @@ mods_recs[[1]] %>% tab_tidy(T) %>%
   {1 - pchisq(., 1)}
 ```
 
+```{r}
+test_llr(mods_recs[[1]], mods_recs[[2]]) %>% tab_ti()
+```
+
 The `deviance` is the residual sum of square:
 
 ```{r}
@@ -106,31 +100,30 @@ mods_recs[[1]] %>% glance() %>% tab_ti()
 
 *****
 
-#### LLR-Test for More Parameters {-#LLR-Test-N}
+#### (c) LLR-Test for More Parameters {-#LLR-Test-N}
+
+Likelihood tests for restricting more than one parameter can be only performed by using values of log likelihood in the original and restricted models. For example, to test the hypothesis that coefficients for `x5` and `x7` are both 0 in `mods_recs[[1]]`, following calculation can be conducted. We cannot reject the hypothesis according the function output.
 
 ```{r}
-mods_lik <- list()
-mods_lik[[1]] <- lm(y ~ x2 + x3 + x4 + x6 + x7, data = dat_2)
-test_lik(mods[[4]], mods_lik[[1]]) %>% tab_ti()
-```
-
-Likelihood tests for restricting more than one parameter can be only performed by using values of log likelihood in the original and restricted models. For example, to test the hypothesis that coefficients for `x5` and `x7` are both 0 in `mods[[4]]`, following calculation can be conducted. We cannot reject the hypothesis according the function output.
-
-```{r}
-mods_lik[[2]] <- lm(y ~ x2 + x3 + x4 + x6, data = dat_2)
-test_lik(mods[[4]], mods_lik[[2]]) %>% tab_ti()
-```
-
-```{r}
-test_lik(mods_lik[[1]], mods_lik[[2]]) %>% tab_ti(F)
+test_llr(mods_recs[[1]], mods_recs[[3]]) %>% tab_ti()
 ```
 
 The above three test statistics are related in an additive manner, so models with multiple regressors can be reduced in a step-wise procedure. During every step, partial correlations for regressors can be used as the indication of the next term to be reduced.
 
 ```{r}
-test_lik(mods[[4]], mods_lik[[1]])$stat +
-  test_lik(mods_lik[[1]], mods_lik[[2]])$stat -
-  test_lik(mods[[4]], mods_lik[[2]])$stat <= 1e-5
+test_llr(mods_recs[[2]], mods_recs[[3]])$stat +
+  test_llr(mods_recs[[1]], mods_recs[[2]])$stat -
+  test_llr(mods_recs[[1]], mods_recs[[3]])$stat <= 1e-5
 ```
 
-### Signed Likelihood Ratio Test
+### Confidence Interval
+
+> By choosing a 95% coverage, we accept that with 5% confidence we reach the false conclusion that the true parameter is not in the confidence interval. [@hendry2007econometrics :2.3.1 Confidence Intervals]
+
+```{example}
+Confidence Interval of `mods_recs[[1]]`.
+```
+
+```{r}
+mods_recs[[1]] %>% confint()
+```

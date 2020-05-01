@@ -14,10 +14,7 @@ library(readxl)
 library(propagate)
 library(het.test)
 
-dat <-
-  read_csv("../../data/1980-us-census.csv") %>%
-  mutate(wage_log = LwageW) %>%
-  dplyr::select(educ, wage_log)
+
 
 dat %>%
   ggplot(aes(educ, wage_log, group = cut_width(educ, 1))) +

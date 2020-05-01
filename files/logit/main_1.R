@@ -22,17 +22,17 @@ cal_freq_con <- function(x, dat, y){
   x_n <- dat %>%
     filter(age == x) %>%
     nrow()
-  
+
   xy_n <- dat %>%
     filter(age == x) %>%
     filter(know_el == 1) %>%
     nrow()
-  
+
   return(xy_n / x_n)
 }
 
 ## Note that the age group starts from 0
-dist_know_el <- 
+dist_know_el <-
   tibble(age = seq(5)) %>%
   mutate(freq = map_dbl(.$age, cal_freq_con, dat = dat)) %>%
   mutate(freq_0 = 1 - freq) %>%
@@ -43,7 +43,7 @@ dist_know_el <-
 
 dist_know_el %>%
   ggplot() +
-    geom_point(aes(age, odd)) 
+    geom_point(aes(age, odd))
 
 dist_know_el %>%
   ggplot() +
@@ -54,7 +54,7 @@ dist_know_el %>%
 dat %<>%
   mutate(age_new = age - 1)
 
-mod_1 <- 
+mod_1 <-
   dat %>%
   as.data.frame() %>%
   {glm(know_el ~ age_new, data = ., family = "binomial")}
@@ -86,7 +86,7 @@ mod_2 <-
 
 summary(mod_2)
 
-result_lmtest <- 
+result_lmtest <-
   lmtest::lrtest(mod_1, mod_2)  # mod_1 is nested in mod_2
 
 ## Log likelihood ratio test by hand
@@ -108,7 +108,7 @@ mod_3 <-
 summary(mod_3)
 
 dist_know_el %>%
-  plot_pred(mod_3, predict(mod_3, 
+  plot_pred(mod_3, predict(mod_3,
     newdata = tibble(age_new = seq(5) - 1, age_new_a = c(1, 0, 0, 0 ,0))))
 
 (result_lmtest_2 <- lmtest::lrtest(mod_3, mod_2))  # mod_3 is nested in mod_2

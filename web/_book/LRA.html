@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="introduction.html"/>
-<link rel="next" href="to-learn.html"/>
+<link rel="next" href="statistical-inference.html"/>
 <script src="libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -139,10 +139,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="part"><span><b>I Statistics</b></span></li>
 <li class="chapter" data-level="1" data-path="LRA.html"><a href="LRA.html"><i class="fa fa-check"></i><b>1</b> Linear Regression Analysis (LRA)</a>
 <ul>
-<li class="chapter" data-level="1.1" data-path="to-learn.html"><a href="to-learn.html"><i class="fa fa-check"></i><b>1.1</b> To-Learn</a></li>
-<li class="chapter" data-level="1.2" data-path="visualization.html"><a href="visualization.html"><i class="fa fa-check"></i><b>1.2</b> Visualization</a></li>
-<li class="chapter" data-level="1.3" data-path="multi.html"><a href="multi.html"><i class="fa fa-check"></i><b>1.3</b> Multiple Linear Regression</a></li>
-<li class="chapter" data-level="1.4" data-path="inference.html"><a href="inference.html"><i class="fa fa-check"></i><b>1.4</b> Inference</a></li>
+<li class="chapter" data-level="1.1" data-path="statistical-inference.html"><a href="statistical-inference.html"><i class="fa fa-check"></i><b>1.1</b> Statistical Inference</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="GAM.html"><a href="GAM.html"><i class="fa fa-check"></i><b>2</b> Generalized Additive Model</a></li>
 <li class="chapter" data-level="3" data-path="TSA.html"><a href="TSA.html"><i class="fa fa-check"></i><b>3</b> Time Series Analysis (TSA)</a></li>
@@ -198,18 +195,46 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-8"><a href="LRA.html#cb2-8"></a>    <span class="dt">x6 =</span> HHAGE, <span class="dt">x7 =</span> ATHOME, x8) <span class="op">%&gt;%</span></span>
 <span id="cb2-9"><a href="LRA.html#cb2-9"></a><span class="st">  </span><span class="kw">mutate_at</span>(<span class="kw">seq</span>(<span class="dv">2</span>, <span class="dv">8</span>), as.integer) <span class="op">%&gt;%</span><span class="st">  </span><span class="co"># make continuous variables discrete</span></span>
 <span id="cb2-10"><a href="LRA.html#cb2-10"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">x5 =</span> <span class="op">-</span><span class="st"> </span>x5 <span class="op">+</span><span class="st"> </span><span class="dv">2</span>)</span></code></pre></div>
+<p>Models used in the context are:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="LRA.html#cb3-1"></a>mods_recs &lt;-<span class="st"> </span><span class="kw">list</span>()</span>
+<span id="cb3-2"><a href="LRA.html#cb3-2"></a>mods_recs[[<span class="dv">1</span>]] &lt;-<span class="st"> </span><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x2 <span class="op">+</span><span class="st"> </span>x3 <span class="op">+</span><span class="st"> </span>x4 <span class="op">+</span><span class="st"> </span>x5 <span class="op">+</span><span class="st"> </span>x6 <span class="op">+</span><span class="st"> </span>x7, <span class="dt">data =</span> dat_recs)</span>
+<span id="cb3-3"><a href="LRA.html#cb3-3"></a>mods_recs[[<span class="dv">2</span>]] &lt;-<span class="st"> </span><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x2 <span class="op">+</span><span class="st"> </span>x3 <span class="op">+</span><span class="st"> </span>x4 <span class="op">+</span><span class="st"> </span>x6 <span class="op">+</span><span class="st"> </span>x7, <span class="dt">data =</span> dat_recs)</span>
+<span id="cb3-4"><a href="LRA.html#cb3-4"></a>mods_recs[[<span class="dv">3</span>]] &lt;-<span class="st"> </span><span class="kw">lm</span>(y <span class="op">~</span><span class="st"> </span>x2 <span class="op">+</span><span class="st"> </span>x4 <span class="op">+</span><span class="st"> </span>x6 <span class="op">+</span><span class="st"> </span>x7, <span class="dt">data =</span> dat_recs)</span></code></pre></div>
 <p>The dataset <code>delivery</code> is from <span class="citation">(Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="LRA.html#cb3-1"></a>dat_delivery &lt;-<span class="st"> </span></span>
-<span id="cb3-2"><a href="LRA.html#cb3-2"></a><span class="st">  </span>readxl<span class="op">::</span><span class="kw">read_xls</span>(<span class="st">&quot;../data/delivery.xls&quot;</span>, <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;i&quot;</span>, <span class="st">&quot;time&quot;</span>, <span class="st">&quot;case&quot;</span>,</span>
-<span id="cb3-3"><a href="LRA.html#cb3-3"></a>    <span class="st">&quot;dist&quot;</span>), <span class="dt">skip =</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="LRA.html#cb4-1"></a>dat_delivery &lt;-<span class="st"> </span></span>
+<span id="cb4-2"><a href="LRA.html#cb4-2"></a><span class="st">  </span>readxl<span class="op">::</span><span class="kw">read_xls</span>(<span class="st">&quot;../data/delivery.xls&quot;</span>, <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;i&quot;</span>, <span class="st">&quot;time&quot;</span>, <span class="st">&quot;case&quot;</span>,</span>
+<span id="cb4-3"><a href="LRA.html#cb4-3"></a>    <span class="st">&quot;dist&quot;</span>), <span class="dt">skip =</span> <span class="dv">1</span>)</span></code></pre></div>
 <p>The dataset <code>acetylene</code> is from <span class="citation">(Montgomery, Peck, and Vining <a href="#ref-montgomery2012introduction" role="doc-biblioref">2012</a>)</span>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="LRA.html#cb4-1"></a>dat_acetylene &lt;-</span>
-<span id="cb4-2"><a href="LRA.html#cb4-2"></a><span class="st">  </span>readxl<span class="op">::</span><span class="kw">read_xls</span>(<span class="st">&quot;../data/acetylene.xls&quot;</span>, <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;i&quot;</span>, <span class="st">&quot;p&quot;</span>, <span class="st">&quot;t_raw&quot;</span>,</span>
-<span id="cb4-3"><a href="LRA.html#cb4-3"></a>    <span class="st">&quot;h_raw&quot;</span>, <span class="st">&quot;c_raw&quot;</span>), <span class="dt">skip =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span></span>
-<span id="cb4-4"><a href="LRA.html#cb4-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">t =</span> (t_raw <span class="op">-</span><span class="st"> </span><span class="fl">1212.5</span>) <span class="op">/</span><span class="st"> </span><span class="fl">80.623</span>) <span class="op">%&gt;%</span></span>
-<span id="cb4-5"><a href="LRA.html#cb4-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">h =</span> (h_raw <span class="op">-</span><span class="st"> </span><span class="fl">12.44</span>) <span class="op">/</span><span class="st"> </span><span class="fl">5.662</span>) <span class="op">%&gt;%</span></span>
-<span id="cb4-6"><a href="LRA.html#cb4-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">c =</span> (c_raw <span class="op">-</span><span class="st"> </span><span class="fl">0.0403</span>) <span class="op">/</span><span class="st"> </span><span class="fl">0.03164</span>) <span class="op">%&gt;%</span></span>
-<span id="cb4-7"><a href="LRA.html#cb4-7"></a><span class="st">  </span><span class="kw">select</span>(i, p, t, h, c)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="LRA.html#cb5-1"></a>dat_acetylene &lt;-</span>
+<span id="cb5-2"><a href="LRA.html#cb5-2"></a><span class="st">  </span>readxl<span class="op">::</span><span class="kw">read_xls</span>(<span class="st">&quot;../data/acetylene.xls&quot;</span>, <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;i&quot;</span>, <span class="st">&quot;p&quot;</span>, <span class="st">&quot;t_raw&quot;</span>,</span>
+<span id="cb5-3"><a href="LRA.html#cb5-3"></a>    <span class="st">&quot;h_raw&quot;</span>, <span class="st">&quot;c_raw&quot;</span>), <span class="dt">skip =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-4"><a href="LRA.html#cb5-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">t =</span> (t_raw <span class="op">-</span><span class="st"> </span><span class="fl">1212.5</span>) <span class="op">/</span><span class="st"> </span><span class="fl">80.623</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-5"><a href="LRA.html#cb5-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">h =</span> (h_raw <span class="op">-</span><span class="st"> </span><span class="fl">12.44</span>) <span class="op">/</span><span class="st"> </span><span class="fl">5.662</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-6"><a href="LRA.html#cb5-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">c =</span> (c_raw <span class="op">-</span><span class="st"> </span><span class="fl">0.0403</span>) <span class="op">/</span><span class="st"> </span><span class="fl">0.03164</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-7"><a href="LRA.html#cb5-7"></a><span class="st">  </span><span class="kw">select</span>(i, p, t, h, c)</span></code></pre></div>
+<p><strong>To-Learn</strong></p>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" checked="" />
+Confidence Interval</li>
+<li><input type="checkbox" disabled="" checked="" />
+MSA</li>
+<li><input type="checkbox" disabled="" />
+Likelihood Ratio Test</li>
+<li><input type="checkbox" disabled="" />
+ANOVA</li>
+<li><input type="checkbox" disabled="" />
+Orthogonalization</li>
+</ul>
+<!-- ```{r child = '../docs/LRA-visual.Rmd'} -->
+<!-- ``` -->
+<!-- ```{r child = '../docs/LRA-MSA.Rmd'} -->
+<!-- ``` -->
+<!-- ```{r child = '../docs/LRA-multi.Rmd'} -->
+<!-- ``` -->
+<!-- ```{r child = '../docs/LRA-model.Rmd'} -->
+<!-- ``` -->
+<!-- ```{r child = '../docs/LRA-factor.Rmd'} -->
+<!-- ``` -->
 </div>
 <h3> Simulation Generator</h3>
 <div id="refs" class="references">
@@ -223,7 +248,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         </div>
       </div>
 <a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="to-learn.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="statistical-inference.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -273,6 +298,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
