@@ -78,7 +78,7 @@ mods_fulton[[2]] <-
 ```{r child = '../docs/TSA-NBD.Rmd'}
 ```
 
-```{r child = '../docs/TSA-AR.Rmd'}
+```{r child = '../docs/TSA-time.Rmd'}
 ```
 
 ```{r child = '../docs/TSA-independence.Rmd'}
@@ -86,3 +86,4 @@ mods_fulton[[2]] <-
 
 ```{r child = '../docs/TSA-constancy.Rmd'}
 ```
+

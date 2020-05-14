@@ -58,6 +58,10 @@ mods_part[[2]] <- dat_part %>%
 
 ### Dataset `1980-us-census` {-}
 
+```{example, census, name='census', echo=T}
+We will investigate a 0.01% subsample of the 1980 US census. From this subsample, we select all women of age 18 to 65 who are in the labor force, and who gave positive values in response to questions about weeks worked, usual hours worked per week, and wage income for the year 1979. This reduces the sample to 3877 observations. For the moment, we will focus on just one variable: wage income. For data protection reasons, wage income has been top–coded at US$ 75000 annually, meaning that any income higher than 75000 is truncated at that amount. As this truncation concerns only two women in the data, we will ignore it. We will look at the weekly wage, defined as the top-coded annual wage income divided by the number of weeks worked in 1979.
+```
+
 ```{r 1980-us-census, message=F, warning=F, echo=T}
 dat_census <-
   read_csv("../data/1980-us-census.csv") %>%
@@ -72,6 +76,12 @@ mods_census[[2]] <- lm(wage_log ~ educ + I(educ^2), data = dat_census)
 ```
 
 ### Dataset `RECS` {-}
+
+- [Residential Energy Consumption Survey (RECS)](https://www.eia.gov/consumption/residential/)
+
+```{example, RECS, name='RECS', echo=T}
+EIA administers the Residential Energy Consumption Survey (RECS) to a nationally representative sample of housing units. Traditionally, specially trained interviewers collect energy characteristics on the housing unit, usage patterns, and household demographics. For the 2015 survey cycle, EIA used Web and mail forms, in addition to in-person interviews, to collect detailed information on household energy characteristics. This information is combined with data from energy suppliers to these homes to estimate energy costs and usage for heating, cooling, appliances and other end uses — information critical to meeting future energy demand and improving efficiency and building design.
+```
 
 The data set is defined as follows based on file `recs.csv`:
 
@@ -95,6 +105,22 @@ mods_recs <- list()
 mods_recs[[1]] <- lm(y ~ x2 + x3 + x4 + x5 + x6 + x7, data = dat_recs)
 mods_recs[[2]] <- lm(y ~ x2 + x3 + x4 + x6 + x7, data = dat_recs)
 mods_recs[[3]] <- lm(y ~ x2 + x4 + x6 + x7, data = dat_recs)
+
+mods_recs[[4]] <- lm(y ~ x2 + I(x2^2) + x8, data = dat_recs)
+mods_recs[[5]] <-
+  dat_recs %>%
+  mutate(z1 = lm(x2 ~ 1)$residuals) %>%
+  mutate(z2 = lm(x8 ~ x2 + 1)$residuals) %>%
+  mutate(x2.2 = x2^2) %>%
+  mutate(z3 = lm(x2.2 ~ x2 + x8 + 1)$residuals) %>%
+  {lm(y ~ z1 + z2 + z3, data = .)}
+
+mods_recs[[6]] <- lm(y ~ x2, data = dat_recs)
+mods_recs[[7]] <-
+  dat_recs %>%
+  mutate(x1 = 1, x21 = x2 - mean(.$x2)) %>%
+  dplyr::select(y, x1, x21) %>%
+  {lm(y ~ x1 + x21, data = .)}
 ```
 
 ### Dataset `delivery` {-}
@@ -123,15 +149,15 @@ dat_acetylene <-
 
 ### To-Learn {-}
 
-- [x] Confidence Interval
+- [x] confidence interval
 - [x] MSA
 - [x] Likelihood Ratio Test
 - [x] strong exogeneity 
 - [x] ANOVA
-- [ ] Orthogonalization
+- [x] Orthogonalization
 
-<!-- ```{r child = '../docs/LRA-visual.Rmd'} -->
-<!-- ``` -->
+```{r child = '../docs/LRA-visual.Rmd'}
+```
 
 ```{r child = '../docs/LRA-PSM.Rmd'}
 ```
@@ -139,12 +165,15 @@ dat_acetylene <-
 ```{r child = '../docs/LRA-multi.Rmd'}
 ```
 
-<!-- ```{r child = '../docs/LRA-MSA.Rmd'} -->
-<!-- ``` -->
-
 ```{r child = '../docs/LRA-factor.Rmd'}
 ```
 
 ```{r child = '../docs/LRA-infer.Rmd'}
+```
+
+```{r child = '../docs/LRA-MSA.Rmd'}
+```
+
+```{r child = '../docs/LRA-mediation.Rmd'}
 ```
 

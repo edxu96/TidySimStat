@@ -5,21 +5,10 @@ editor_options:
 
 ## Visualization
 
-The first 5 rows of the dat_recsa set used can be visualized:
+The first 5 rows of `dat_recs` can be visualized:
 
 ```{r}
-head(dat_recs, 5) %>% tab_ti(F)
-```
-
-### Covariance Matrix
-
-```{r}
-dat_recs %>%
-  cor() %>%
-  as_cordf() %>%
-  stretch() %>%
-  dplyr::filter(y == "y" & x != "y") %>%
-  tab_ti(F)
+head(dat_recs, 5) %>% tab_ti()
 ```
 
 ### Box Plot

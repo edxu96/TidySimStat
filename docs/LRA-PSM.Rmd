@@ -15,10 +15,18 @@ editor_options:
 
 - [Zero conditional mean assumption (how can in not hold?), CrossValidated](https://stats.stackexchange.com/questions/210083/zero-conditional-mean-assumption-how-can-in-not-hold)
 
+> If exogeneity fails, maximising the conditional likelihood and the marginal likelihood will typically not lead to an overall maximum of the joint likelihood. This, in turn, may lead to inefficient, and sometimes to biased, estimators. [@hendry2007econometric]
+
+> The key question that arises from this decision is whether our inferences are affected by the lack of a description of the marginal density. There are two instances where we need such distributional assumptions. [@hendry2007econometric]   
+> - First, to write down the likelihood, and hence to derive estimators and test statistics.  
+> - Second, to find the distributions of the estimators and other statistics in order to conduct inference.
+
+> For the example \@ref(exm:census), although there is a chronological ordering, as individuals first get an education and then proceed into the labor market, the choice of educational level could depend on expected future wages. [@hendry2007econometric]
+
 ### Cause-and-Effect Relationship
 
 > A regression model does not imply a cause-and-effect relationship between the variables. Even though a strong empirical relationship may exist between two or more variables, this cannot be considered evidence that the regressor variables and the response are related in a cause-and-effect manner. To establish causality, the relationship between the regressors and the response must have a basis outside the sample data—for example, the relationship may be suggested by theoretical considerations. Regression analysis can aid in confirming a cause-and-effect relationship, but it cannot be the sole basis of such a claim. --from chapter 1 in [@montgomery2012introduction]
 
 ### Model Interpretation
 
-[@hendry2007econometic :5.1, Econometric Model] gives details.
+Section 5.1 econometric model in [@hendry2007econometric] provides details.

@@ -102,7 +102,7 @@ test_white <- function(mod, dat, f, df1, prob){
   if(missing(prob)){prob = 0.05}
 
   dat %<>%
-    mutate(resi2 = mod$residuals^2)
+    dplyr::mutate(resi2 = mod$residuals^2)
 
   stat <-
     lm(f, data = dat) %>%
@@ -137,7 +137,7 @@ test_reset <- function(mod, dat, prob){
 
   mod_test <-
     dat %>%
-    mutate(y_hat = fitted(mod)) %>%
+    dplyr::mutate(y_hat = fitted(mod)) %>%
     {lm(f, data = .)}
 
   stat <-

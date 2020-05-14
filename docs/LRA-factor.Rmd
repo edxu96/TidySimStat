@@ -4,3 +4,5 @@ editor_options:
 ---
 
 ## Factor {#factor}
+
+- section 1.6 practical modelling with factors in [@wood2017generalized].
