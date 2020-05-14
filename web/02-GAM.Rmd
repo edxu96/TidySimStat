@@ -1,4 +1,8 @@
+---
+editor_options:
+  chunk_output_type: console
+---
 
-# Generalized Additive Model {#GAM}
+# Generalized Additive Model (GAM) {#GAM}
 
-test
+

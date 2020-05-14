@@ -35,7 +35,7 @@ kable_latex <- function(ti){
 
 kable_inline <- function(ti){
   ti %>%
-    mutate_if(is.numeric, format, digits = 4) %>%
+    dplyr::mutate_if(is.numeric, format, digits = 4) %>%
     # mutate_if(is.numeric, round, 4) %>%
     kable() %>%
     kable_styling(full_width = F,
@@ -58,8 +58,8 @@ cal_p.r.squared <- function(mod){
 tab_tidy <- function(model, whe_return){
   ti <-
     model %>%
-    tidy() %>%
-    mutate(p.r.squared = cal_p.r.squared(model))
+    broom::tidy() %>%
+    dplyr::mutate(p.r.squared = cal_p.r.squared(model))
 
   if(missing(whe_return)){
     kable_inline(ti)

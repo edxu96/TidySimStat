@@ -94,44 +94,6 @@ test_jb <- function(mod, dat, prob){
 }
 
 
-#' Perform Jarque-Bera test for `tsibble` objects
-#' @author Edward J. Xu
-#' @description If `if_reject` is true, the hypothesis is rejected. Then
-#'   the assumption is not justified.
-test_jb_tsi <- function(mod, prob){
-  if(missing(prob)){prob = 0.05}
-
-  n <- mod %>% fitted() %>% nrow()
-
-  stat_skew <- mod %>%
-    residuals() %>%
-    {.$.resid} %>%
-    propagate::skewness() %>%
-    {.^2 * n / 6}
-
-  stat_kurt <- mod %>%
-    residuals() %>%
-    {.$.resid} %>%
-    propagate::kurtosis() %>%
-    {.^2 * n / 24}
-
-  stat <- stat_skew + stat_kurt
-
-  df1 <- 2
-  p_value <-
-    stat %>%
-    {1 - pchisq(., df1)}
-
-  results <- tibble(
-    whi = "Jarque-Bera", stat = stat, df1 = df1, df2 = n - df1,
-    p_value = p_value,prob = prob, # if_accept = {p_value <= prob},
-    if_reject = {p_value <= prob}
-  )
-
-  return(results)
-}
-
-
 #' Perform White's test
 #' @author Edward J. Xu
 #' @description If `if_reject` is true, the hypothesis is rejected. Then

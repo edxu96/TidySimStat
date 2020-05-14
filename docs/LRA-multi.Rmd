@@ -5,7 +5,7 @@ editor_options:
 
 ## Multiple Linear Regression {#multi}
 
-### Standardization
+### Standardisation
 
 
 
@@ -27,9 +27,7 @@ There are four primary sources of multicollinearity: [9, @montgomery2012introduc
 
 > Inspection of the covariance matrix is not sufficient for detecting anything more complex than pair- wise multicollinearity. [@montgomery2012introduction :9.4.1 Examination of the Correlation Matrix]
 
-```{example, echo=T}
-It can be seen from the following covariance matrix that `y` is highly correlated to `x2`, `x6` and `x8`. Besides, `x3`-`x4`, `x2`-`x6`, `x4`-`x8` are high correlated.
-```
+For example, it can be seen from the following covariance matrix that `y` is highly correlated to `x2`, `x6` and `x8`. Besides, `x3`-`x4`, `x2`-`x6`, `x4`-`x8` are high correlated.
 
 ```{r, fig.cap='(ref:multi-1)'}
 dat_recs %>%
@@ -56,3 +54,5 @@ mods_recs[[1]] %>% perturb::colldiag()
 ```
 
 ### Orthogonalization
+
+- [Orthogonalized regression reference?](https://stats.stackexchange.com/a/458558/231405)

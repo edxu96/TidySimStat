@@ -1,6 +1,8 @@
 data
 connect
 *.nb.html
+_book
+_bookdown_files
 
 # Created by https://www.gitignore.io/api/r,julia,macos,python,sublimetext
 # Edit at https://www.gitignore.io/?templates=r,julia,macos,python,sublimetext

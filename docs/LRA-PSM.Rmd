@@ -1,0 +1,24 @@
+---
+editor_options:
+  chunk_output_type: console
+---
+
+## Postulated Statistical Model (PSM) {#PSM}
+
+> Regression analysis is an iterative procedure, in which data lead to a model and a fit of the model to the data is produced. The quality of the fit is then investigated, leading either to modification of the model or the fit or to adoption of the model. -- from chapter 1 in [@montgomery2012introduction]
+
+> Economists have to proceed as in any empirical science: postulate a class of possible distributions and associated statistical models; derive appropriate estimators and their properties, assuming that the statistical model is correct; then see how well these models describe the relevant economic data. When mis-matches appear, revise the statistical model, and restart. Thus, empirical research is a process, not a one-off event. [@hendry2007econometric]
+
+> Although we do not know how the data were really generated, by postulating various classes of statistical models that could in principle generate appropriate data, by estimating their parameters assuming the models are correct, and then by evaluating the outcomes to check for mismatches, we can learn from our mistakes and develop improved models for the next round. [@hendry2007econometric]
+
+### Strong Exogeneity
+
+- [Zero conditional mean assumption (how can in not hold?), CrossValidated](https://stats.stackexchange.com/questions/210083/zero-conditional-mean-assumption-how-can-in-not-hold)
+
+### Cause-and-Effect Relationship
+
+> A regression model does not imply a cause-and-effect relationship between the variables. Even though a strong empirical relationship may exist between two or more variables, this cannot be considered evidence that the regressor variables and the response are related in a cause-and-effect manner. To establish causality, the relationship between the regressors and the response must have a basis outside the sample data—for example, the relationship may be suggested by theoretical considerations. Regression analysis can aid in confirming a cause-and-effect relationship, but it cannot be the sole basis of such a claim. --from chapter 1 in [@montgomery2012introduction]
+
+### Model Interpretation
+
+[@hendry2007econometic :5.1, Econometric Model] gives details.

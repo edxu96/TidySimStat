@@ -38,25 +38,15 @@ source("../src/funcs.R")
 source("../src/tests.R")
 ```
 
-**To-Learn**
+### Dataset `1980-us-census-part` {-}
 
-- [x] Confidence Interval
-- [x] MSA
-- [ ] Likelihood Ratio Test
-- [ ] ANOVA
-- [ ] Orthogonalization
-
-## Summary of Data and Models
-
-### Dataset `1980-us-census-part`
-
-```{r}
+```{r, message=F, echo=T}
 dat_part <-
   read_csv("../data/1980-us-census-part.csv") %>%
   dplyr::select(part = Part, educ = schooling)
 ```
 
-```{r}
+```{r, echo=T}
 mods_part <- list()
 mods_part[[1]] <- dat_part %>%
   as.data.frame() %>%
@@ -66,21 +56,22 @@ mods_part[[2]] <- dat_part %>%
   {glm(part ~ 1, data = ., family = "binomial")}
 ```
 
-### Dataset `1980-us-census`
+### Dataset `1980-us-census` {-}
 
-```{r}
+```{r 1980-us-census, message=F, warning=F, echo=T}
 dat_census <-
   read_csv("../data/1980-us-census.csv") %>%
   mutate(wage_log = LwageW) %>%
   dplyr::select(educ, wage_log)
 ```
 
-```{r}
+```{r, echo=T}
 mods_census <- list()
 mods_census[[1]] <- lm(wage_log ~ educ, data = dat_census)
+mods_census[[2]] <- lm(wage_log ~ educ + I(educ^2), data = dat_census)
 ```
 
-###
+### Dataset `RECS` {-}
 
 The data set is defined as follows based on file `recs.csv`:
 
@@ -106,6 +97,8 @@ mods_recs[[2]] <- lm(y ~ x2 + x3 + x4 + x6 + x7, data = dat_recs)
 mods_recs[[3]] <- lm(y ~ x2 + x4 + x6 + x7, data = dat_recs)
 ```
 
+### Dataset `delivery` {-}
+
 The dataset `delivery` is from [@montgomery2012introduction]:
 
 ```{r delivery, echo=T}
@@ -113,6 +106,8 @@ dat_delivery <-
   readxl::read_xls("../data/delivery.xls", col_names = c("i", "time", "case",
     "dist"), skip = 1)
 ```
+
+### Dataset `acetylene` {-}
 
 The dataset `acetylene` is from [@montgomery2012introduction]:
 
@@ -126,20 +121,30 @@ dat_acetylene <-
   select(i, p, t, h, c)
 ```
 
+### To-Learn {-}
+
+- [x] Confidence Interval
+- [x] MSA
+- [x] Likelihood Ratio Test
+- [x] strong exogeneity 
+- [x] ANOVA
+- [ ] Orthogonalization
+
 <!-- ```{r child = '../docs/LRA-visual.Rmd'} -->
 <!-- ``` -->
+
+```{r child = '../docs/LRA-PSM.Rmd'}
+```
+
+```{r child = '../docs/LRA-multi.Rmd'}
+```
 
 <!-- ```{r child = '../docs/LRA-MSA.Rmd'} -->
 <!-- ``` -->
 
-<!-- ```{r child = '../docs/LRA-multi.Rmd'} -->
-<!-- ``` -->
-
-<!-- ```{r child = '../docs/LRA-model.Rmd'} -->
-<!-- ``` -->
-
-<!-- ```{r child = '../docs/LRA-factor.Rmd'} -->
-<!-- ``` -->
+```{r child = '../docs/LRA-factor.Rmd'}
+```
 
 ```{r child = '../docs/LRA-infer.Rmd'}
 ```
+

@@ -1,11 +1,13 @@
 
 ## Mis-Specification Analyis (MSA)
 
+> To trust inferences drawn from econometric analyses, one must check that the underlying assumptions are satisfied. [@hendry2007econometric]
+
 ```{r}
 mods <- list()
 mods[[1]] <- lm(y ~ x2, data = dat)
 
-mods[[2]] <- 
+mods[[2]] <-
   dat %>%
   mutate(x1 = 1, x21 = x2 - mean(.$x2)) %>%
   dplyr::select(y, x1, x21) %>%
@@ -48,4 +50,3 @@ mods[[1]] %>% test_white(dat, resi2 ~ x2 + I(x2^2), 2) %>% tab_ti(F)
 ```{r}
 mods[[1]] %>% test_reset(dat) %>% tab_ti(F)
 ```
-
