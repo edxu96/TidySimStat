@@ -34,6 +34,7 @@ library(tseries)
 library(corrplot)
 library(car)
 library(perturb)
+library(modelr)
 source("../src/funcs.R")
 source("../src/tests.R")
 ```
@@ -163,6 +164,9 @@ dat_acetylene <-
 ```
 
 ```{r child = '../docs/LRA-multi.Rmd'}
+```
+
+```{r child = '../docs/LRA-interval.Rmd'}
 ```
 
 ```{r child = '../docs/LRA-factor.Rmd'}

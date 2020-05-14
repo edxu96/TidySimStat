@@ -108,7 +108,7 @@ The log-likelihood ratio test statistic for any parameter being 0 can be calcula
 $$ \mathrm{LR}=-n \log \left(1-r^{2} \right). $$
 
 ```{r, echo=T}
-mods_census[[2]] %>% 
+mods_census[[2]] %>%
   tab_tidy(T) %>%
   {.[3, 6]} %>%
   as.numeric() %>%
@@ -129,7 +129,7 @@ mods_census[[2]] %>% stats::anova() %>% tidy() %>% tab_ti()
 
 ##### Example `RECS` {-}
 
-For example, to test the hypothesis that coefficient for `x5` is 0 in `mods_recs[[1]]`, following calculation can be conducted. 
+For example, to test the hypothesis that coefficient for `x5` is 0 in `mods_recs[[1]]`, following calculation can be conducted.
 
 ```{r, warning=F, message=F}
 mods_recs[[1]] %>% tab_tidy()
@@ -155,14 +155,4 @@ The above three test statistics are related in an additive manner, so models wit
 test_llr(mods_recs[[2]], mods_recs[[3]])$stat +
   test_llr(mods_recs[[1]], mods_recs[[2]])$stat -
   test_llr(mods_recs[[1]], mods_recs[[3]])$stat <= 1e-5
-```
-
-### Confidence Interval
-
-> By choosing a 95% coverage, we accept that with 5% confidence we reach the false conclusion that the true parameter is not in the confidence interval. [@hendry2007econometric :2.3.1 Confidence Intervals]
-
-For example, the confidence interval of `mods_recs[[1]]` can be calculated using `stats::confint()`.
-
-```{r, echo=T}
-mods_recs[[1]] %>% stats::confint()
 ```
