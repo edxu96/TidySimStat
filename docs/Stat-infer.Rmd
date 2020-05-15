@@ -61,6 +61,9 @@ Then the company could use a rejection of the null hypothesis as "proof" of its 
 
 ### Log-Likelihood Ratio Test (test-LLR) {#test-LLR}
 
+- null hypothesis: the restricted model is preferred. ???
+- alternative hypothesis
+
 > Likelihood ratio tests are well suited for making inferences about restrictions on a well-specified model, where we are able, and willing, to maximize the likelihood function in the unrestricted model as well as the restricted model. [@hendry2007econometric]
 
 $$ \mathrm{Q} = \frac{\max _{\theta \in \Theta_{R}} \mathrm{L}_{Y_{1}, \ldots, Y_{n}}(\theta)}{\max _{\theta \in \Theta_{U}} \mathrm{L}_{Y_{1}, \ldots, Y_{n}}(\theta)} $$

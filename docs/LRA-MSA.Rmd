@@ -7,11 +7,11 @@ editor_options:
 
 > To trust inferences drawn from econometric analyses, one must check that the underlying assumptions are satisfied. [@hendry2007econometric]
 
-- https://stats.stackexchange.com/questions/tagged/diagnostic Diagnostic measures (such as residuals or some summary statistics calculated from residuals) are used to evaluate some aspect of quality of model fit to data.
+- [tag: diagnostic, CrossValidated](https://stats.stackexchange.com/questions/tagged/diagnostic) Diagnostic measures (such as residuals or some summary statistics calculated from residuals) are used to evaluate some aspect of quality of model fit to data.
 
 ### Normality
 
-#### Analyse Residuals Graphically {-}
+#### (a) Analyse Residuals Graphically {-}
 
 - [Interpreting plot.lm(), CrossValidated](https://stats.stackexchange.com/a/65864/231405)
 - section 1.5.1 model fitting and model checking in [@wood2017generalized].
@@ -30,7 +30,7 @@ par(par_orginal)
 - Data points `36`, `241` and `163` are mentioned in all but the lower right plots. They are examined in section 6.
 - The assumption of conditional normality looks reasonable according to the upper right Q-Q plot. A formal Jarque-Bera test is performed later this section to examine this assumption in a quantitative manner.
 
-#### Jarque-Bera Test (test-JB) {-}
+#### (b) Jarque-Bera Test (test-JB) {-}
 
 The assumption of conditional normality is justified by JB test.
 
@@ -38,7 +38,7 @@ The assumption of conditional normality is justified by JB test.
 mods_recs[[1]] %>% test_jb(dat_recs) %>% tab_ti()
 ```
 
-#### Address the Normality Problem {-}
+#### (c) Address the Normality Problem {-}
 
 - Look at the data.
 - Change the distributional assumption.
@@ -62,7 +62,7 @@ mods_recs[[1]] %>% test_white(dat_recs, resi2 ~ x2 + I(x2^2), 2) %>% tab_ti()
 
 `mods_recs[[1]]` can pass RESET test.
 
-```{r, echo=T}
+```{r, echo=T, warning=F, message=F}
 mods_recs[[1]] %>% test_reset(dat_recs) %>% tab_ti()
 ```
 
