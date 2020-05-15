@@ -21,12 +21,12 @@ This is the website hosting all the theories and and practices regarding stochas
 - Some detailed equations are included.
 - With hand-written functions in the `src` folder of [GitHub/edxu96/TidySimStat](https://github.com/edxu96/TidySimStat).
 
-### Logic behind the Book
+### Logic behind the Book {-}
 
 - All datasets and packages are defined at the beignning of the chapter.
 - Usually, multiple datasets are included.
 
-### Issues Solved
+### Issues Solved {-}
 
 - [Option to limit the depth of numbered headings](https://github.com/rstudio/bookdown/issues/495). There is no way to set the depth of section numbering, so all small sections have to be followed by `{-}`.
 - [Turning off section numbering in Bookdown output](https://community.rstudio.com/t/turning-off-section-numbering-in-bookdown-output/16272).

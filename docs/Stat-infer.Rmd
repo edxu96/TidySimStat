@@ -7,7 +7,9 @@ editor_options:
 
 ### Hypothesis Tests
 
-> The __null hypothesis__, denoted by $\mathrm{H}_{0}$, is a statement about a population parameter. The __alternative hypothesis__ is denoted by $\mathrm{H}_{1}$. The null hypothesis will be rejected if it appears to be inconsistent with the sample data and will not be rejected otherwise. The rejection of the null hypothesis $\mathrm{H}_{0}$ is a strong statement that $\mathrm{H}_{0}$ does not appear to be consistent with the observed data. The result that $\mathrm{H}_{0}$ is not rejected is a weak statement that should be interpreted to mean that $\mathrm{H}_{0}$ is consistent with the data. [@ross2017introductory]
+> The __null hypothesis__, denoted by $\mathrm{H}_{0}$, is a statement about a population parameter. The __alternative hypothesis__ is denoted by $\mathrm{H}_{1}$. The null hypothesis will be rejected if it appears to be inconsistent with the sample data and will not be rejected otherwise. [@ross2017introductory]
+
+#### (a) Test Statistic and Critical Region {-}
 
 > A __test statistic__ is a statistic whose value is determined from the sample data. Depending on the value of this test statistic, the null hypothesis will be rejected or not. The __critical region__, also called the __rejection region__, is that set of values of the test statistic for which the null hypothesis is rejected. [@ross2017introductory]
 
@@ -29,11 +31,11 @@ Alternatively, `p_value` can be computed first:
 
 and compared to `alpha`. The hypothesis should be rejected if `p_value >= alpha` is true.
 
-#### (a) Design of Hypothesis Tests {-}
+#### (b) Design of Hypothesis Tests {-}
 
 > If you are trying to establish a certain hypothesis, then that hypothesis should be designated as the alternative hypothesis. Similarly, if you are trying to discredit a hypothesis, that hypothesis should be designated the null hypothesis. [@ross2017introductory]
 
-```{example, echo=T}
+```{example, nicotine, name='Nicotine Test', echo=T}
 Thus, for instance, if the tobacco company is running the experiment to prove that the mean nicotine level of its cigarettes is less than $1.5,$ then it should choose for the null hypothesis
 
 $$ \mathrm{H}_{0}: \mu \geq 1.5 $$
@@ -45,9 +47,11 @@ $$ \mathrm{H}_{1}: \mu<1.5 $$
 Then the company could use a rejection of the null hypothesis as "proof" of its claim that the mean nicotine content was less than 1.5 milligrams.
 ```
 
-#### (b) Interpretation of Test Result {-}
+#### (c) Interpretation of Test Result {-}
 
-> When conducting a statistical test, the thought experiment is that our sample is drawn from some hypothetical population distribution that could have generated the data. Our sample is then compared with hypothetical samples drawn from that hypothetical population distribution. [@hendry2007econometric :4.3.2 Interpreting the Test Result]
+> The rejection of the null hypothesis $\mathrm{H}_{0}$ is a strong statement that $\mathrm{H}_{0}$ does not appear to be consistent with the observed data. The result that $\mathrm{H}_{0}$ is not rejected is a weak statement that should be interpreted to mean that $\mathrm{H}_{0}$ is consistent with the data. [@ross2017introductory]
+
+> When conducting a statistical test, the thought experiment is that our sample is drawn from some hypothetical population distribution that could have generated the data. Our sample is then compared with hypothetical samples drawn from that hypothetical population distribution. -- section 4.3.2, interpreting the test result in [@hendry2007econometric]
 
 ### Student's t-Test (test-t) {#test-t}
 
@@ -90,13 +94,13 @@ test_llr_sign(mods_part[[1]], mods_part[[2]], T) %>% tab_ti()
 
 #### (b) Analysis of Variance (ANOVA) {-#ANOVA}
 
-##### Example: `1980-us-census` {-}
-
-The sample correlation is represented by `r.squared`, which is a measure of goodness-of-fit of the unrestricted model relative to the restricted model. [@hendry2007econometric]
+When there is only one regressor, the sample correlation is represented by `r.squared`, which is a measure of goodness-of-fit of the unrestricted model relative to the restricted model. [@hendry2007econometric] Take the example \@ref(exm:census) `census` for example:
 
 ```{r, echo=T}
 mods_census[[1]] %>% glance() %>% tab_ti()
 ```
+
+The `deviance` is the residual sum of square.
 
 When there are multiple regressors, partial sample correlations can be obtained by the 6th column using `tab_tidy()`.
 
@@ -115,7 +119,7 @@ mods_census[[2]] %>%
   {- 3877 * log(1 - .)}
 ```
 
-or using `test_llr()`:
+or using `test_llr()` to compare two models: (the restricted model is the one with less regressors)
 
 ```{r, echo=T}
 test_llr(mods_census[[2]], mods_census[[1]]) %>% tab_ti()
@@ -123,22 +127,14 @@ test_llr(mods_census[[2]], mods_census[[1]]) %>% tab_ti()
 
 or using `stats::anova()`:
 
-```{r, echo=T}
+```{r}
 mods_census[[2]] %>% stats::anova() %>% tidy() %>% tab_ti()
 ```
 
-##### Example `RECS` {-}
-
-For example, to test the hypothesis that coefficient for `x5` is 0 in `mods_recs[[1]]`, following calculation can be conducted.
+As for the example \@ref(exm:RECS) `RECS`, to test the hypothesis that coefficient for `x5` is 0 in `mods_recs[[1]]`, `tab_tidy()` is used:
 
 ```{r, warning=F, message=F}
 mods_recs[[1]] %>% tab_tidy()
-```
-
-The `deviance` is the residual sum of square:
-
-```{r}
-mods_recs[[1]] %>% glance() %>% tab_ti()
 ```
 
 #### (c) LLR-Test for More Parameters {-#LLR-Test-N}
