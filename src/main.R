@@ -15,7 +15,7 @@ runs.test(earthden)
 test <- runif(200)
 runs.test(test)
 
-1 - pchisq(3, 1)
+1 - pchisq(0.05, 1)
 
 2 * (1 - pnorm(-1.7477, 0, 1))
 
@@ -28,3 +28,11 @@ runs.test(test)
 ##
 data(sweetpotato)
 runs.test(sweetpotato$yield)
+
+
+x <- rnorm(50)
+# Do x and y come from the same distribution?
+ks.test(x, "pnorm")
+pnorm(0.05)
+
+
