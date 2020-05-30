@@ -13,8 +13,8 @@ date: Mar 4, 2020
 
 ## 1. Sample Mean and Sample Variance
 
-* Sample mean: <img src="/docs/docs-sim/tex/22c98e3ee65ad366f19134dfa92f47ae.svg?invert_in_darkmode&sanitize=true" align=middle width=96.99460979999999pt height=29.205422400000014pt/>
-* Sample variance: <img src="/docs/docs-sim/tex/1f35eca54495b446b41b7590b27bf5c0.svg?invert_in_darkmode&sanitize=true" align=middle width=132.49110434999997pt height=45.53415899999999pt/>
+* Sample mean: <img src="/src-matlab/docs/tex/22c98e3ee65ad366f19134dfa92f47ae.svg?invert_in_darkmode&sanitize=true" align=middle width=96.99460979999999pt height=29.205422400000014pt/>
+* Sample variance: <img src="/src-matlab/docs/tex/1f35eca54495b446b41b7590b27bf5c0.svg?invert_in_darkmode&sanitize=true" align=middle width=132.49110434999997pt height=45.53415899999999pt/>
 
 \(\bar{X},\) the sample mean of the \(n\) data values \(X_{1}, \ldots, X_{n},\) is a random variable with mean \(\theta\) and variance \(S^{2} / n .\) Because a random variable is unlikely to be too many standard deviations--equal to the square root of its variance--from its mean, it follows that \(\bar{X}\) is a good estimator of \(\theta\) when \(\sigma / \sqrt{n}\) is small.
 
