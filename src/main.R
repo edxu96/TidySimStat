@@ -15,7 +15,7 @@ runs.test(earthden)
 test <- runif(200)
 runs.test(test)
 
-1 - pchisq(0.05, 1)
+1 - pchisq(5, 10)
 
 2 * (1 - pnorm(-1.7477, 0, 1))
 
