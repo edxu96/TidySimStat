@@ -1,8 +1,15 @@
 
-from auxiliary import *
+import math
+import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
+import scipy.stats as st
+import random as rd
+
+from TidySimStat.auxiliary import *
 
 
-def sim_drv_reject(pmf, c):
+def sim_drv_reject(pmf:list):
     """Rejection method to simulate realisations of a discrete random variables
     with `random.random()` and uniform distribution as basis functions.
 
@@ -18,13 +25,17 @@ def sim_drv_reject(pmf, c):
       distribution. For the sake of simplicity, the uniform distribution over
       all possible indices is used as basis random variable.
     """
+    check_posi_pmf(pmf)
     n = len(pmf)
+    ## Define the probablity mass function of basis DRV.
     pmf_q = [1 / n for i in range(n)]
+
+    c = max( [pmf[i] / pmf_q[i] for i in range(n)] )
 
     while True:
         y = rd.randint(1, n)
         u = rd.random()
-        if u < pmf(y-1) / c / pmf_q(y-1):
+        if u < pmf[y-1] / c / pmf_q[y-1]:
             x = y + 0
             break
 

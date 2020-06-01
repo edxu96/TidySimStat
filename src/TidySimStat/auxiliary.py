@@ -1,4 +1,15 @@
 
+
+def pmf2cdf(pmf):
+    """Obtain cumulative distribution function of a discrete random
+    variable according to its probablity mass function."""
+    k = len(pmf)
+    cdf = [pmf[0] for i in range(k)]
+    for i in range(1, k):
+        cdf[i] = pmf[i] + cdf[i-1]
+    return cdf
+
+
 def check_posi_pmf(li:list, if_mute=True):
     """Check if input probability mass function represented by a list is
     a `n`-point positive probability mass function."""

@@ -8,8 +8,10 @@ from matplotlib import pyplot as plt
 import scipy.stats as st
 import random as rd
 
-from inference import *
-from DRV import *
+from TidySimStat.inference import *
+from TidySimStat.DRV import *
+from TidySimStat.auxiliary import *
+from TidySimStat.exam import *
 
 
 if __name__ == '__main__':
