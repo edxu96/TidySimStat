@@ -15,9 +15,9 @@ def check_posi_pmf(li:list, if_mute=True):
     a `n`-point positive probability mass function."""
     if sum([i <= -0.0001 for i in li]) > 0:
         print(li)
-        raise Exception("Some probability is not positive.")
+        raise ValueError("Some probability is not positive.")
     elif abs(sum(li) - 1) >= 0.001:
-        raise Exception(f"Sum of PMF {sum(li):.4f} is not 100%.")
+        raise ValueError(f"Sum of PMF {sum(li):.4f} is not 100%.")
     elif not if_mute:
         print(f"The input is a {len(li)}-point positive PMF.")
 

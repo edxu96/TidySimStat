@@ -1,12 +1,19 @@
 
 
-def test_dist(pvalue:float, alpha:float=0.05):
-    """Perform distribution test of two populations."""
+def infer_dist(pvalue:float, alpha:float=0.05):
+    """Perform statistical test regarding distributions of two populations.
+
+    Returns
+    =======
+    Whether the tested distribution is the same as the given one.
+    """
     print("Null hypothesis: two populations have the same distribution. \n"
         f"The input p value is {pvalue:.4f}. \n"
         f"Is the p value smaller than {alpha}? {pvalue < alpha}. \n"
         f"If reject the null hypothesis? {pvalue < alpha}. \n"
         f"If from the same distribution? {pvalue >= alpha}.")
+
+    return pvalue >= alpha
 
 
 def cal_pvalue_ks(d, n=10, m=1000):
