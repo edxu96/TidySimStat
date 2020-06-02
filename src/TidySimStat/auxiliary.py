@@ -10,6 +10,21 @@ def pmf2cdf(pmf):
     return cdf
 
 
+def cdf2pmf(cdf, ends):
+    """Get probability mass function according to the cumulative distribution
+    function of a continuous random variable and given list of left ends.
+
+    Attentions
+    ==========
+    Length of the PMF equals the length of `ends`.
+    """
+    li_cdf = [f(i) for i in ends]
+    pmf = [li_cdf[0]] + [li_cdf[i] - li_cdf[i-1] for i in
+        range(1, len(li_cdf))]
+
+    return pmf
+
+
 def check_posi_pmf(li:list, if_mute=True):
     """Check if input probability mass function represented by a list is
     a `n`-point positive probability mass function."""

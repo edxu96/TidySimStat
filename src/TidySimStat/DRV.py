@@ -5,8 +5,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 import scipy.stats as st
 import random as rd
+from operator import add
 
-from TidySimStat.auxiliary import *
+from auxiliary import *
 
 
 def sim_drv_reject(pmf:list):
@@ -17,32 +18,38 @@ def sim_drv_reject(pmf:list):
     =================
     pmf: probablity mass function of the desired discrete random variable.
 
+    Returns
+    =======
+    x: simulated outcomes of the desired discrete random variable. The minimum
+       possible value is 0, and the maximum is `n-1`. There are `n` possible
+       values.
+
     Attentions
     ==========
-    - The possible values of the desired DRV is 1, 2, 3, ..., j.
-    - Whenever `p_j` is larger than 0, `q_j` should be larger than 0, or there
-      is no way to simulate the realisation being j for the desired
+    - Whenever `pmf[j]` is larger than 0, `pmf_q[j]` should be larger than 0,
+      or there is no way to simulate the realisation being j for the desired
       distribution. For the sake of simplicity, the uniform distribution over
       all possible indices is used as basis random variable.
+    - The constant is chosen as the maximum value of products of two PMFs.
     """
     check_posi_pmf(pmf)
     n = len(pmf)
-    ## Define the probablity mass function of basis DRV.
-    pmf_q = [1 / n for i in range(n)]
 
+    ## Define the probablity mass function of basis DRV and the constant.
+    pmf_q = [1 / n for i in range(n)]
     c = max( [pmf[i] / pmf_q[i] for i in range(n)] )
 
     while True:
-        y = rd.randint(1, n)
+        y = rd.randint(0, n-1)
         u = rd.random()
-        if u < pmf[y-1] / c / pmf_q[y-1]:
+        if u < pmf[y] / c / pmf_q[y]:
             x = y + 0
             break
 
     return x
 
 
-def find_ij(p):
+def find_ij(pmf):
     """Find the index i, j in the apas method for generating
     discrete random variables.
 
@@ -51,14 +58,14 @@ def find_ij(p):
     There are many numerical issues. I have tried to solve most of them.
     Details can be found in comments.
     """
-    n = len([l for l in p if greater(l, 0)])
+    n = len([l for l in pmf if greater(l, 0)])
 
     ## Find all indices with their values smaller than 1/(n-1) and
-    ## return the first one. Note that p is considered as positive
+    ## return the first one. Note that pmf is considered as positive
     ## PMF, so point with 0 probablity is not considered.
-    i = [l for l, x in enumerate(p) if less(x, 1 / (n-1)) and greater(x, 0)][0]
+    i = [l for l, x in enumerate(pmf) if less(x, 1 / (n-1)) and greater(x, 0)][0]
 
-    indices = [l for l, x in enumerate(p) if geq(p[i] + x, 1 / (n-1))]
+    indices = [l for l, x in enumerate(pmf) if geq(pmf[i] + x, 1 / (n-1))]
     # Note that the value to compare with must be set as ... - 0.0001
     k = 0
     ## To make sure that j != i
@@ -67,14 +74,14 @@ def find_ij(p):
     j = indices[k]
 
     ## It is easy to check the results
-    if j == i or geq(p[i], 1 / (n-1)) or less(p[i] + p[j], 1 / (n-1)):
+    if j == i or geq(pmf[i], 1 / (n-1)) or less(pmf[i] + pmf[j], 1 / (n-1)):
         # Note that the value to compare with must be set as ... - 0.0001
         raise Exception("There is something wrong with the function.")
 
-    ## It is very likely that `p[i]` is larger than `p[j]` in last iterations.
+    ## It is very likely that `pmf[i]` is larger than `pmf[j]` in last iterations.
     ## Specifically, when it becomes a two-point PMF, either index can be
-    ## chosen as `i`. To prevent `p[i]` is larger, we can simply swap the two.
-    if p[i] > p[j]:
+    ## chosen as `i`. To prevent `pmf[i]` is larger, we can simply swap the two.
+    if pmf[i] > pmf[j]:
         k = i + 0
         i = j + 0
         j = k + 0
@@ -86,16 +93,17 @@ def find_ij(p):
     return i, j
 
 
-def set_alias(p):
-    """Set up alias for a positive probability mass function.
+def set_alias(pmf):
+    """Set up alias for a positive probability mass function, so that its
+    corresponding random variable can be simulated using alias method.
 
     Keyword Arguments
     =================
-    p: list indicating `n`-point positive PMF
+    pmf: list indicating `n`-point positive PMF
 
     Local Variables
     ===============
-    ps: dict of PMF "p"
+    ps: dict of PMF "pmf"
     qs: dict of PMF "q"
     qis: dict of `i` values in each iteration
     qjs: dict of `j` values in each iteration
@@ -117,9 +125,10 @@ def set_alias(p):
       Because, even if it happens, it will not pass the final result
       check.
     """
-    check_posi_pmf(p)
-    n = len(p)
-    ps = {n: [l for l in p]}
+    check_posi_pmf(pmf)
+
+    n = len(pmf)
+    ps = {n: [l for l in pmf]}
     qs = {}
     qis = {}
     qjs = {}
@@ -129,7 +138,8 @@ def set_alias(p):
         i, j = find_ij(ps[n-k+1])
         qis[k] = i + 0
         qjs[k] = j + 0
-        i -= 1  # To make sure that `i` can be used following mathematical expressions
+        i -= 1  # To make sure that `i` can be used following
+                # mathematical expressions
         j -= 1
 
         qs[k] = [0 for l in range(n)]
@@ -166,7 +176,8 @@ def set_alias(p):
     if n_current == 1:
         qis[k] = [l for l, x in enumerate(ps[n-k+1]) if greater(x, 0)][0] + 1
         qjs[k] = qis[k] + 0
-    else:  # If `i` is not equal to `j`, the procedure is almost the same as before.
+    else:  # If `i` is not equal to `j`, the procedure is almost
+           # the same as before.
         i, j = find_ij(ps[n-k+1])
         qis[k] = i + 0
         qjs[k] = j + 0
@@ -177,14 +188,15 @@ def set_alias(p):
 
     ## Check the final result
     p_new = [i / (n-1) for i in q_pd.sum().tolist()]
-    delta = map(add, p, [-l for l in p_new])
+    delta = map(add, pmf, [-l for l in p_new])
     t = sum([abs(l) for l in delta])
     if not equal(t, 0):
         print(f"t = {t}.")
         raise Exception("The final result is wrong.")
 
     ## Add columns containing `i` and `j` information in each iteration.
-    ## Note that `pandas.assign` doesn't change the original data frame directly.
+    ## Note that `pandas.assign` doesn't change the original data frame
+    ## directly.
     q_pd = q_pd.assign(i=[l for l in qis.values()], j=[l for l in qjs.values()])
 
     return q_pd
@@ -202,4 +214,42 @@ def run_alias(alias):
     else:
         x = j_sim
 
+    return x
+
+
+def set_alias_direct(pmf):
+    """A more direct way to set up alias for a positive probability mass
+    function, so that its corresponding random variable can be simulated using
+    alias method.
+    """
+    check_posi_pmf(pmf)
+
+    k = len(pmf)
+    l = [x for x in range(1, k+1)]
+    f = [k * x for x in pmf]
+    g = [i+1 for i, x in enumerate(f) if x >= 1]
+    s = [i+1 for i, x in enumerate(f) if x <= 1]
+
+    while len(s) > 0:  # and len(g) > 0
+        ## To make sure that indices are integers
+        i = int(g[0])
+        j = int(s[0])
+
+        l[j-1] = i
+        f[i-1] = f[i-1] - (1 - f[j-1])
+        if f[i-1] < 1 - 0.000001:
+            del g[0]
+            s = s + [i]
+        del s[0]
+
+    return f, l
+
+
+def run_alias_direct(f, l):
+    k = len(f)
+    i = rd.randint(1, k)
+    if rd.random() <= f[i-1]:
+        x = i
+    else:
+        x = l[i-1]
     return x
