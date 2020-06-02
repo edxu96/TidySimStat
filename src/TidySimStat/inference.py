@@ -2,7 +2,7 @@
 import scipy.stats as st
 import random as rd
 
-from auxiliary import cdf2pmf
+from TidySimStat.auxiliary import cdf2pmf
 
 
 def cal_pvalue_norm(stat, mute:bool=True):
@@ -89,9 +89,9 @@ def cal_stat_ks(samples, cdf, mute:bool=True):
     """
     samples.sort()
     n = len(samples)
-    li_new = [(j+1) / n - cdf(samples[j]) for j in range(n)] + \
+    li = [(j+1) / n - cdf(samples[j]) for j in range(n)] + \
         [cdf(samples[j]) - j / n  for j in range(n)]
-    stat = max(li_new)
+    stat = max(li)
     if not mute:
         print(f"One-sample Kolmogorov–Smirnov test: {stat:.4f}.")
 

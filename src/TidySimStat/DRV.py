@@ -7,7 +7,7 @@ import scipy.stats as st
 import random as rd
 from operator import add
 
-from auxiliary import *
+from TidySimStat.auxiliary import *
 
 
 def sim_drv_reject(pmf:list):
