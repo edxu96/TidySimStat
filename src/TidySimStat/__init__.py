@@ -10,6 +10,7 @@ import random as rd
 
 from TidySimStat.inference import *
 from TidySimStat.drv import *
+from TidySimStat.crv import *
 from TidySimStat.auxiliary import *
 from TidySimStat.exam import *
 

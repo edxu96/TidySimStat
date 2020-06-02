@@ -4,6 +4,6 @@ import unittest
 from TidySimStat.inference import *
 
 
-class TestInference(unittest.TestCase):
+# class TestInference(unittest.TestCase):
 
     

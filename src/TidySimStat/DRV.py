@@ -124,6 +124,10 @@ def set_alias(pmf):
       cases, yet. In theory, such case is not supposed to happen.
       Because, even if it happens, it will not pass the final result
       check.
+
+    Notes
+    =====
+    - https://www.keithschwarz.com/darts-dice-coins/
     """
     check_posi_pmf(pmf)
 
