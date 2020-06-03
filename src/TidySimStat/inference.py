@@ -1,6 +1,7 @@
 
 import scipy.stats as st
 import random as rd
+import math
 
 from TidySimStat.auxiliary import cdf2pmf
 
@@ -8,10 +9,10 @@ from TidySimStat.auxiliary import cdf2pmf
 def cal_pvalue_norm(stat, mute:bool=True):
     """Calculate the p value of two-sided Z-test using standard normal
     distribution."""
-    if z > 0:
-        pvalue = 2 * (1 - st.norm.cdf(z, 0, 1))
+    if stat > 0:
+        pvalue = 2 * (1 - st.norm.cdf(stat, 0, 1))
     else:
-        pvalue = 2 * st.norm.cdf(z, 0, 1)
+        pvalue = 2 * st.norm.cdf(stat, 0, 1)
     if not mute:
         print(f"The input stat: {stat:.4f}. \n"
             f"The p value from normal distribution: {pvalue:.4f}.")
@@ -28,7 +29,12 @@ def cal_pvalue_chi2(stat, df, mute:bool=True):
 
 
 def infer_independence(pvalue, alpha:float=0.05, mute:bool=True):
-    """Perform independence test."""
+    """Perform independence test.
+
+    Returns
+    =======
+    Whether the given samples are generated independently.
+    """
     if not mute:
         print("Null hypothesis: given samples are generated independently. \n"
             f'The input p value is {pvalue:.4f}. \n'
@@ -36,6 +42,7 @@ def infer_independence(pvalue, alpha:float=0.05, mute:bool=True):
             f'If to reject the null hypothesis? {pvalue <= alpha}. \n'
             f'If given samples are independent? {pvalue >= alpha}. \n')
 
+    return pvalue >= alpha
 
 def infer_dist(pvalue:float, alpha:float=0.05, mute:bool=True):
     """Perform statistical test regarding distributions of two populations.
@@ -43,6 +50,10 @@ def infer_dist(pvalue:float, alpha:float=0.05, mute:bool=True):
     Returns
     =======
     Whether the tested distribution is the same as the given one.
+
+    Notes
+    =====
+    We reject the null hopythesis when the statistic is sufficiently large.
     """
     if not mute:
         print("Null hypothesis: two populations have the same distribution. \n"
@@ -167,3 +178,54 @@ def cal_stat_gof(freqs:list, pmf:list, mute:bool=True):
         print(f"Chi-squared goodness of fit test: {stat:.4f}.")
 
     return stat
+
+
+def get_binary_ww(li):
+    """Transform the list to binary list for Wald–Wolfowitz runs test.
+
+    Attention
+    =========
+    The median is used.
+    """
+    m = np.median(li)
+    li_binary = [1 if i > m else 0 for i in li]
+    return li_binary
+
+
+def cal_stat_runs_ww(li, mute:bool=True):
+    """Calculate the statistic of Wald–Wolfowitz runs test.
+
+    Attention
+    =========
+    The statistic follows normal distribution.
+    """
+    n1 = sum(li)
+    n2 = len(li) - n1
+
+    ## Number of runs
+    num_runs = cal_num_runs(li)
+
+    mu = (2 * n1 * n2) / (n1 + n2) + 1
+    ## Standard error of the estimator
+    se = math.sqrt( 2 * n1 * n2 * (2 * n1 * n2 - n1 - n2) / (n1 + n2)**2 / (n1 + n1 - 1) )
+    stat = (num_runs - mu) / se
+    if not mute:
+        print(f'Wald–Wolfowitz runs test: {stat:.4f}. \n'
+            f'Number of runs: {num_runs}.')
+
+    return stat
+
+
+def cal_num_runs(li:list):
+    """It is assumed that the input list is binary.
+    """
+    if sum( [(i == 1 or i == 0) for i in li] ) != len(li):
+        raise ValueError("The input is not a binary list.")
+
+    x1 = li[0]
+    num_runs = 1
+    for x in li:
+        if x != x1:
+            x1 = x
+            num_runs += 1
+    return num_runs

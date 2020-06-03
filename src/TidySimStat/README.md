@@ -13,3 +13,8 @@
 ## Contributions
 
 - Edward J. Xu
+
+## Notes
+
+- https://docs.google.com/spreadsheets/d/1jYCVtnZ1Xo-tP9a73HLytkAkrrJCQ5rvSWzix6hdR_M/edit?usp=sharing
+- miro.com
