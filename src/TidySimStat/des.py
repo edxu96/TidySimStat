@@ -36,7 +36,7 @@ class Head:
 
         return undocked
 
-    def collect_index(self):
+    def collect(self):
         cur = self._next
         indices = {}
         i = 0
@@ -54,13 +54,13 @@ class Head:
         while cur._next:
             cur = cur._next
         return cur
-        
+
 
 class Arrival(Node):
 
     def __init__(self, time:float):
         super().__init__(time)
-        self.whe_block = None
+        self.whe_block = 0
         self._next_arrived = None
 
 
@@ -95,7 +95,7 @@ class Servers(Head):
         self.f_serve = f_serve
         self.f_arrive = f_arrive
         self.clock = 0
-        self._next_arrived = None
+        self.arriveds = {0: None}
 
         self.warmup()
 
@@ -108,6 +108,10 @@ class Servers(Head):
         """
         t = self.f_arrive()
         self._next = Arrival(t)
+
+        ## An arbitrage `Arrival` must be added, or there is no way to build
+        ## a linked list for
+        # self._next_arrived = Arrival(0)
 
     def schedule_arrival(self):
         """Schedule a new arrival, insert it to the event list, and return
@@ -151,11 +155,12 @@ class Servers(Head):
 
         if type(self._next) is Leave:
             self.leave()
+            self.undock()
         else:
             self.arrive()
-            self._last_schedule = self._next
-
-        self.undock()
+            docked = self.undock()
+            self.arriveds[len(self.arriveds)+1] = docked
+            # self.last_arrived._next_arrived = docked
 
         return self.clock
 
@@ -174,9 +179,21 @@ class Servers(Head):
                 i += 1
         return i
 
-    @property
-    def last_arrived(self):
-        cur = self._next_arrived
-        while cur._next_arrived:
-            cur = cur._next_arrived
-        return cur
+    # @property
+    # def last_arrived(self):
+    #     cur = self._next_arrived
+    #     while cur._next_arrived:
+    #         cur = cur._next_arrived
+    #     return cur
+
+    # def collect_arriveds(self):
+    #     cur = self._next_arrived
+    #     indices = {}
+    #     i = 0
+    #     while cur:
+    #         indices[i] = cur._index
+    #         cur = cur._next_arrived
+    #         i += 1
+    #     n = len(indices)
+    #     li_indices = [indices[i] for i in range(n)]
+    #     return li_indices

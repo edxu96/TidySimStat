@@ -11,7 +11,7 @@ class TestDisEventSim(unittest.TestCase):
         self.ser = Servers(lambda: sim_exp(5), lambda: sim_exp(5), 10)
 
     def test_warmup(self):
-        indices = self.ser.collect_index()
+        indices = self.ser.collect()
         self.assertEqual(len(indices), 1)
         self.assertEqual(self.ser.num, 10)
 
@@ -19,7 +19,7 @@ class TestDisEventSim(unittest.TestCase):
         """Test if to schedule the second arrival and return its index."""
         new = self.ser.schedule_arrival()
 
-        indices = self.ser.collect_index()
+        indices = self.ser.collect()
         self.assertEqual(len(indices), 2)
 
         self.assertEqual(self.ser._next._next._index, new._index)
@@ -30,7 +30,7 @@ class TestDisEventSim(unittest.TestCase):
         self.ser.schedule_arrival()
         undocked = self.ser.undock()
 
-        indices = self.ser.collect_index()
+        indices = self.ser.collect()
         self.assertEqual(len(indices), 1)
 
         self.assertEqual(undocked._index, t_first)
@@ -50,8 +50,10 @@ class TestDisEventSim(unittest.TestCase):
         self.assertEqual(self.ser.states[0], 1)
         self.assertEqual(self.ser.first_idle, 1)
 
-        indices = self.ser.collect_index()
+        indices = self.ser.collect()
         self.assertEqual(len(indices), 3)
+
+        self.assertEqual(len(self.ser.arriveds), 1)
 
     def test_advance(self):
         self.ser.advance()
@@ -60,9 +62,10 @@ class TestDisEventSim(unittest.TestCase):
         self.assertEqual(self.ser.states[0], 1)
         self.assertEqual(self.ser.first_idle, 1)
 
-        indices = self.ser.collect_index()
+        indices = self.ser.collect()
         self.assertEqual(len(indices), 2)
         self.assertNotEqual(type(self.ser._next), type(self.ser._next._next))
+
 
     # def test_leave(self):
     #     self.ser.arrive()
