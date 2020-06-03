@@ -23,18 +23,19 @@ def exam_sim(pmf, algo, num_sim:int=100):
 
 class TestDisRandomVariable(unittest.TestCase):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         ## Set up different probability mass functions for tests.
         ## Values will be created everytime when test functions are called.
         ## That is, they cannot be changed permanently within test functions.
-        self.pmf_1 = [0.1, 0.1, 0.2, 0.4, 0.1, 0.1]
-        self.pmf_2 = [7/16, 1/4, 1/8, 3/16]
+        cls.pmf_1 = [0.1, 0.1, 0.2, 0.4, 0.1, 0.1]
+        cls.pmf_2 = [7/16, 1/4, 1/8, 3/16]
 
         ## Test if `sim_drv_reject` raises `ValueError` when PMF is not
         ## well defined.
-        self.pmf_3 = [0.2, 0.2, 0.2, 0.2]  # not equal to 1
-        self.pmf_4 = [- 0.2, 0.2, 0.2, 0.2, 0.4]  # negative probability
-        self.pmf_5 = [7/16, 1/4, 0, 1/8, 3/16]  # zero probability
+        cls.pmf_3 = [0.2, 0.2, 0.2, 0.2]  # not equal to 1
+        cls.pmf_4 = [- 0.2, 0.2, 0.2, 0.2, 0.4]  # negative probability
+        cls.pmf_5 = [7/16, 1/4, 0, 1/8, 3/16]  # zero probability
 
     def test_sim_drv_reject(self):
         self.assertTrue(exam_sim(self.pmf_1, sim_drv_reject))

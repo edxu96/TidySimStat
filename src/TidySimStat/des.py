@@ -1,3 +1,4 @@
+
 class Node:
 
     def __init__(self, index):
@@ -13,40 +14,73 @@ class Head:
 
     def insert(self, node_new):
         "Insert the given node according to indices."
-        cur = self._next
-        while True:
-            if cur._next is None:
-                cur._next = node_new
-                break
-            elif cur._next._index < node_new._index:
-                cur = cur._next
-            else:
-                node_new._next = cur._next
-                cur._next = node_new
-                break
+        if self.last._index <= node_new._index:
+            ## If the index of the last node is smaller than the index of the
+            ## given node, there is no need to check all nodes.
+            self.last._next = node_new
+        else:
+            cur = self._next
+            while True:
+                if cur._next._index < node_new._index:
+                    cur = cur._next
+                else:
+                    node_new._next = cur._next
+                    cur._next = node_new
+                    break
 
-    def print_all(self):
+    def undock(self):
+        """Undock the first node and return it. The second node become the
+        first one."""
+        undocked = self._next
+        self._next = self._next._next
+
+        return undocked
+
+    def collect_index(self):
         cur = self._next
-        i = 1
+        indices = {}
+        i = 0
         while cur:
-            print(f"{i}-th event invoke time: {cur._index}")
+            indices[i] = cur._index
             cur = cur._next
             i += 1
+        n = len(indices)
+        li_indices = [indices[i] for i in range(n)]
+        return li_indices
+
+    @property
+    def last(self):
+        cur = self._next
+        while cur._next:
+            cur = cur._next
+        return cur
+        
+
+class Arrival(Node):
+
+    def __init__(self, time:float):
+        super().__init__(time)
+        self.whe_block = None
+        self._next_arrived = None
 
 
-class Event(Node):
+class Leave(Node):
 
-    def __init__(self, time, whi_server=None):
+    def __init__(self, time:float, whi_server:int):
         super().__init__(time)
         self.whi_server = whi_server
-
-    def trigger(self):
-        "The event is triggered."
+        self._arrival = None
 
 
 class Servers(Head):
 
-    def __init__(self, num, f_serve, f_arrive):
+    def __init__(self, f_serve, f_arrive, num:int=5):
+        """Queueing system modelled by linked lists.
+
+        Notes
+        =====
+        There is no waiting room in this setting.
+        """
         if not callable(f_serve):
             raise ValueError("Function to simulate service time is "
                 "not callable.")
@@ -57,59 +91,72 @@ class Servers(Head):
         super().__init__()
         self.states = [0 for i in range(num)]
         self.num_arrival = 0
-        self.blocks = {}
+        self.num_block = 0
         self.f_serve = f_serve
         self.f_arrive = f_arrive
         self.clock = 0
-        self._last_schedule = 0
+        self._next_arrived = None
+
+        self.warmup()
 
     def warmup(self):
-        self.states[0] = 1
+        """Warm up the scheduled arrivals.
 
-        self._last_schedule += self.f_arrive()
-        self._next = Event(self._last_schedule)
+        Notes
+        =====
+        There is no need to schedule multiple arrivals in warming up stage.
+        """
+        t = self.f_arrive()
+        self._next = Arrival(t)
 
-        for i in range(10):
-            self.schedule()
+    def schedule_arrival(self):
+        """Schedule a new arrival, insert it to the event list, and return
+        the index.
+        """
+        new = Arrival(time=self._next._index + self.f_arrive())
+        self.insert(new)
+        return new
 
-    def schedule(self):
-        """The new arrival always follows the last scheduled arrival."""
-        self._last_schedule += self.f_arrive()
-        self.insert(Event(self._last_schedule))
+    def schedule_leave(self, whi_server):
+        new = Leave(self._next._index + self.f_serve(), whi_server)
+        self.insert(new)
+        return new
 
     def arrive(self):
         "Event routine triggered when a new customer arrives."
         self.num_arrival += 1
-        first = self.first_idle + 0
-        if first > self.num:  # There is no idle server.
-            ## The customer is blocked.
-            ## There is no need to set a `leave` event.
-            self.blocks[len(self.blocks) + 1] = self.num_arrival
+        whi_server = self.first_idle + 0
+        if whi_server > self.num:  # There is no idle server.
+            ## If the customer is blocked, there is no need to set a
+            ## `leave` event.
+            self.num_block += 1
+            self._next.whe_block = 1
         else:
             ## To assign the customer to the first idle server and simulate
             ## his/her leaving time.
-            self.states[first] = 1
-            print(self.states)  # !!!!!!!!!!!!!!!!!!!!!!!!!!!
-            t_leave = self.clock + self.f_serve()
-            self.insert(Event(t_leave, first))
+            self.states[whi_server] = 1
+            # print(self.states)
+            self.schedule_leave(whi_server)
 
         ## Next schedule
-        self.schedule()
+        self.schedule_arrival()
 
-    def leave(self, whi_server):
+    def leave(self):
         "Event routine triggered when an existing customer leaves."
-        self.states[whi_server] = 0
+        self.states[self._next.whi_server] = 0  # To set the server idle.
 
     def advance(self):
         "Invoke next event and advance the clock time."
         self.clock = self._next._index + 0
-        # print(self.clock)
-        if self._next.whi_server:
-            self.leave(self._next.whi_server)
+
+        if type(self._next) is Leave:
+            self.leave()
         else:
             self.arrive()
+            self._last_schedule = self._next
 
-        self._next = self._next._next
+        self.undock()
+
         return self.clock
 
     @property
@@ -126,3 +173,10 @@ class Servers(Head):
             else:
                 i += 1
         return i
+
+    @property
+    def last_arrived(self):
+        cur = self._next_arrived
+        while cur._next_arrived:
+            cur = cur._next_arrived
+        return cur
