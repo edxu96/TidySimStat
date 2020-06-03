@@ -85,8 +85,13 @@ def cal_pvalue_ks(stat, n, m=10000, mute:bool=True):
 
     Keyword Arguments
     =================
-    n: size of the original sample
-    m: number of simulation runs (default 10000)
+    n: size of the original sample.
+    m: number of simulation runs (default 10000).
+
+    Attentions
+    ==========
+    - The number of random numbers `n` in each simulation run must be equal to
+      the size of the original sample.
     """
     num_good = 0  # A counter to remember the number of good runs
     for i in range(m):
