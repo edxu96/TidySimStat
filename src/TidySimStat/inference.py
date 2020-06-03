@@ -79,14 +79,14 @@ def infer_corr(pvalue:float, alpha:float=0.05, mute:bool=True):
     return pvalue >= alpha
 
 
-def cal_pvalue_ks(stat, n=10, m=1000):
+def cal_pvalue_ks(stat, n, m=10000, mute:bool=True):
     """Obtain the p-value corresponding a statistic from Kolmogorov–Smirnov
     test by simulations.
 
     Keyword Arguments
     =================
-    n: sample size in each simulation run (default 10)
-    m: number of simulation runs (default 500)
+    n: size of the original sample
+    m: number of simulation runs (default 10000)
     """
     num_good = 0  # A counter to remember the number of good runs
     for i in range(m):
@@ -99,7 +99,9 @@ def cal_pvalue_ks(stat, n=10, m=1000):
             num_good += 1
 
     pvalue = num_good / m
-    # print(f"One-sample Kolmogorov–Smirnov test p-value: {pvalue:.4f}.")
+    if not mute:
+        print(f"One-sample Kolmogorov–Smirnov test p-value: {pvalue:.4f}.")
+
     return pvalue
 
 
@@ -336,8 +338,9 @@ def cal_stat_runs_ud(li, mute:bool=True):
     return stat
 
 
-def cal_stat_corr(li, h:int=1):
-    """Calculate statistic of correlation test.
+def cal_stat_corr_uniform(li, h:int=1):
+    """Calculate statistic of correlation test for samples from two
+    independent uniformly distributed random variables.
 
     Keyword Arguments
     =================
