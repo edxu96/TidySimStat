@@ -2,6 +2,7 @@
 import scipy.stats as st
 import random as rd
 import math
+import numpy as np
 
 from TidySimStat.auxiliary import cdf2pmf
 
@@ -44,6 +45,7 @@ def infer_independence(pvalue, alpha:float=0.05, mute:bool=True):
 
     return pvalue >= alpha
 
+
 def infer_dist(pvalue:float, alpha:float=0.05, mute:bool=True):
     """Perform statistical test regarding distributions of two populations.
 
@@ -61,6 +63,18 @@ def infer_dist(pvalue:float, alpha:float=0.05, mute:bool=True):
             f"Is the p value smaller than {alpha}? {pvalue < alpha}. \n"
             f"If reject the null hypothesis? {pvalue < alpha}. \n"
             f"If from the same distribution? {pvalue >= alpha}. \n")
+
+    return pvalue >= alpha
+
+
+def infer_corr(pvalue:float, alpha:float=0.05, mute:bool=True):
+    """Perform correlation test."""
+    if not mute:
+        print("Null hypothesis: the samples are not correlated. \n"
+            f"The input p value is {pvalue:.4f}. \n"
+            f"Is the p value smaller than {alpha}? {pvalue < alpha}. \n"
+            f"If reject the null hypothesis? {pvalue <= alpha}. \n"
+            f"If the samples are correlated? {pvalue <= alpha}.")
 
     return pvalue >= alpha
 
@@ -197,7 +211,9 @@ def cal_stat_runs_ww(li, mute:bool=True):
 
     Attention
     =========
-    The statistic follows normal distribution.
+    The statistic follows normal distribution. That is, The number of
+    runs (above/below the median) is asymptotically approach normal
+    distribution with the sample mean `mu` and sample variance `se`.
     """
     n1 = sum(li)
     n2 = len(li) - n1
@@ -207,7 +223,8 @@ def cal_stat_runs_ww(li, mute:bool=True):
 
     mu = (2 * n1 * n2) / (n1 + n2) + 1
     ## Standard error of the estimator
-    se = math.sqrt( 2 * n1 * n2 * (2 * n1 * n2 - n1 - n2) / (n1 + n2)**2 / (n1 + n1 - 1) )
+    se = math.sqrt( 2 * n1 * n2 * (2 * n1 * n2 - n1 - n2) /
+        (n1 + n2)**2 / (n1 + n1 - 1) )
     stat = (num_runs - mu) / se
     if not mute:
         print(f'Wald–Wolfowitz runs test: {stat:.4f}. \n'
@@ -229,3 +246,112 @@ def cal_num_runs(li:list):
             x1 = x
             num_runs += 1
     return num_runs
+
+
+def get_li_ups(li):
+    """Analyze number of ups for Knuth Runs test.
+
+    Return
+    ======
+    ups: list of number of ups, whose length is number of runs
+    """
+    ups = {}
+    x = li[0]
+    len_run = 1
+    num_runs = 1
+    for i in li[1: len(li)]:
+        if i > x:
+            len_run += 1
+        else:  # not up, so store the old run, and begin a new run
+            ups[num_runs] = len_run
+            num_runs += 1
+            len_run = 1
+        x = i
+
+    ## add the last run
+    ups[num_runs] = len_run
+    num_runs += 1
+    len_run = 1
+
+    ups = list(ups.values())
+    return ups
+
+
+def cal_stat_runs_kunth(ups, mute:bool=True):
+    """Calculate statistic of Knuth runs test.
+
+    Attention
+    =========
+    - The statistic follows chi-square distribution with 6 degrees of freedom.
+    """
+    r = np.zeros(6).reshape((6, 1))
+    for j in range(5):
+        r[j][0] = sum([i == j+1 for i in ups])
+    r[5][0] = len(ups) - np.sum(r)
+
+    a = np.array([
+        [4529.4,9044.9,13568,18091,22615,27892],
+        [9044.9,18097,27139,36187,45234,55789],
+        [13568,27139,40721,54281,67852,83685],
+        [18091,36187,54281,72414,90470,111580],
+        [22615,45234,67852,90470,113262,139476],
+        [27892,55789,83685,111580,139476,172860]])
+    b = np.array([[(1)/(6)], [(5)/(24)], [(11)/(120)], [(19)/(720)],
+        [(29)/(5040)],[(1)/(840)]])
+    n = sum(ups)
+
+    stat = ( (r - n * b).transpose() @ a @ (r - n * b) )[0][0] / (n - 6)
+    if not mute:
+        print(f"Knuth runs test: {stat:.4f}.")
+
+    return stat
+
+
+def get_binary_ud(li):
+    li_diff = [li[i+1] - li[i] for i in range(0, len(li) - 1)]
+    li_binary = [1 if i >= 0 else 0 for i in li_diff]
+    return li_binary
+
+
+def cal_stat_runs_ud(li, mute:bool=True):
+    """Perform Up-and-Down Runs Test
+
+    Attentions
+    ==========
+    The hypothesis of randomness is rejected when the total number of runs is small.
+    """
+    if sum( [(i == 1 or i == 0) for i in li] ) != len(li):
+        raise ValueError("The input is not a binary list.")
+
+    num_runs = cal_num_runs(li)
+    n = len(li)
+
+    mu = (2 * n - 1) / 3
+    se = math.sqrt( (16 * n - 29) / 90 )
+    stat = (num_runs - mu) / se
+    if not mute:
+        print(f'Up-and-Down Runs Test: stat = {stat:.4f}.')
+        print(f'Number of runs: {num_runs}.')
+
+    return stat
+
+
+def cal_stat_corr(li, h:int=1):
+    """Calculate statistic of correlation test.
+
+    Keyword Arguments
+    =================
+    h: lag used in the correlation test.
+
+    Attention
+    =========
+    The statistic follows normal distribution.
+    """
+    n = len(li)
+    s = [li[i] * li[i+h] for i in range(n - h)]
+    r = sum(s) / (n - h)
+    mu = 0.25
+    se = math.sqrt( 7 / 144 / n )
+
+    stat = (r - mu) / se
+    return stat
