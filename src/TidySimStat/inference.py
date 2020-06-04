@@ -5,6 +5,7 @@ import math
 import numpy as np
 
 from TidySimStat.auxiliary import cdf2pmf
+from TidySimStat.drv import set_alias_direct, run_alias_direct
 
 
 def cal_pvalue_norm(stat, mute:bool=True):
@@ -80,8 +81,8 @@ def infer_corr(pvalue:float, alpha:float=0.05, mute:bool=True):
 
 
 def cal_pvalue_ks(stat, n, m=10000, mute:bool=True):
-    """Obtain the p-value corresponding a statistic from Kolmogorov–Smirnov
-    test by simulations.
+    """Obtain the p value corresponding a statistic from One-Sample
+    Kolmogorov–Smirnov test by simulations.
 
     Keyword Arguments
     =================
@@ -92,6 +93,8 @@ def cal_pvalue_ks(stat, n, m=10000, mute:bool=True):
     ==========
     - The number of random numbers `n` in each simulation run must be equal to
       the size of the original sample.
+    - According to theoretical analysis, the p value is irrelavant to the
+      target distribution.
     """
     num_good = 0  # A counter to remember the number of good runs
     for i in range(m):
@@ -145,6 +148,10 @@ def count_gof(samples:list, end_left:float=0, end_right:float=1, k:int=10):
     =======
     counts: list of counts in different intervals
     ends: list of left end of intervals
+
+    Attentions
+    ==========
+    x[i] = [1, 2, 3, ..., k+1] for i = 0, 1, 2, ..., k
     """
     if end_left >= end_right:
         raise Exception("end_left >= end_right!")
@@ -179,26 +186,50 @@ def count_gof(samples:list, end_left:float=0, end_right:float=1, k:int=10):
     return counts, ends
 
 
-def cal_stat_gof(freqs:list, pmf:list, mute:bool=True):
+def cal_stat_gof(counts:list, pmf:list, mute:bool=True):
     """Calculate the statistic in Goodness of Fit test for the distribution
     of a discrete random variable or a continuous random variable.
 
     Keyword Arguments
     =================
-    freqs: list of frequencies in different intervals
+    counts: list of counts in different intervals
     pmf: list representing probablity mass function of the target distribution
 
     Attentions
     ==========
     The function can be used for both discrete and continuous random variables.
     """
-    n = sum(freqs)
+    n = sum(counts)
     k = len(pmf)
-    stat = sum( [(freqs[i] - n * pmf[i])**2 / n / pmf[i] for i in range(k)] )
+    stat = sum([(counts[i] - n * pmf[i])**2 / n / pmf[i] for i in range(k)])
     if not mute:
         print(f"Chi-squared goodness of fit test: {stat:.4f}.")
 
     return stat
+
+
+def cal_pvalue_gof(stat:float, pmf:list, n:int, num_sim:int=1000):
+    """Calculate the exact p value of Chi-Squared Goodness of Fit test using
+    simulations.
+
+    Attentions
+    ==========
+    x[i] = [1, 2, 3, ..., k+1] for i = 0, 1, 2, ..., k
+    """
+    f, l = set_alias_direct(pmf)
+    k = len(pmf)
+
+    def cal_t():
+        samples = [run_alias_direct(f, l) for i in range(n)]
+        counts = [samples.count(i+1) for i in range(k)]
+        t = sum([(counts[i] - n * pmf[i])**2 / n / pmf[i]
+            for i in range(k)])
+        return t
+
+    ts = [cal_t() for j in range(num_sim)]
+
+    pvalue = sum([t >= stat for t in ts]) / num_sim
+    return pvalue
 
 
 def get_binary_ww(li):
@@ -206,7 +237,7 @@ def get_binary_ww(li):
 
     Attention
     =========
-    The median is used.
+    - The median is used.
     """
     m = np.median(li)
     li_binary = [1 if i > m else 0 for i in li]
@@ -218,9 +249,11 @@ def cal_stat_runs_ww(li, mute:bool=True):
 
     Attention
     =========
-    The statistic follows normal distribution. That is, The number of
-    runs (above/below the median) is asymptotically approach normal
-    distribution with the sample mean `mu` and sample variance `se`.
+    - The statistic follows normal distribution. That is, The number of
+      runs (above/below the median) is asymptotically approach normal
+      distribution with the sample mean `mu` and sample variance `se`.
+    - Runs tests are especially designed for randomness.
+    - We call any consecutive sequence of either 0s or 1s a run.
     """
     n1 = sum(li)
     n2 = len(li) - n1

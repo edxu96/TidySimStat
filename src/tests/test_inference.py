@@ -30,6 +30,7 @@ class TestInference(unittest.TestCase):
             0.76, 0.82, 0.24, 0.17]
         cls.li_8 = [1, 2, 3, 4, 5, 6, 7, 8]
         cls.li_9 = [rd.normalvariate(0, 1) for i in range(1000)]
+        cls.li_10 = [0.05, 0.1596, 0.2312, 0.2237, 0.1622, 0.1733]
 
     def test_cal_num_runs(self):
         self.assertEqual(cal_num_runs(self.li_2), 10)
@@ -86,7 +87,7 @@ class TestInference(unittest.TestCase):
         self.assertFalse(exam(self.li_8, 1))
         self.assertFalse(exam(self.li_8, 2))
         self.assertFalse(exam(self.li_8, 3))
-        
+
         self.assertTrue(exam(self.li_6, 2))
         self.assertTrue(exam(self.li_6, 3))
 

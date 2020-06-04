@@ -221,10 +221,14 @@ def run_alias(alias):
     return x
 
 
-def set_alias_direct(pmf):
+def set_alias_direct(pmf:list):
     """A more direct way to set up alias for a positive probability mass
     function, so that its corresponding random variable can be simulated using
     alias method.
+
+    Attentions
+    ==========
+    x[k] = [1, 2, 3, ..., K+1] for k = 0, 1, 2, ..., K
     """
     check_posi_pmf(pmf)
 

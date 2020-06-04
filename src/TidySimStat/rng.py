@@ -31,6 +31,14 @@ def rng(num:int=1, cal_y=None, m:int=123, x0:int=1):
 
 
 def rng_lcg(num:int=1, a:int=5, c:int=1, m:int=123, x0:int=1):
+    """Linear Congruential Generator (LCG)
+
+    Keyword Arguments
+    =================
+    a: multiplier
+    c: shift
+    m: modulus
+    """
     cal_y = lambda x: a * x + c
     rns = rng(num, cal_y, m, x0)
     pd_rn = pd.DataFrame.from_dict(rns, orient='index')

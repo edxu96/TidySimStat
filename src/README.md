@@ -1,12 +1,9 @@
 # Stochastic Simulation in Python
 
-## Issues
+I have written a new package in Python for course [stochastic simulation](http://www2.imm.dtu.dk/courses/02443/) at Technical University of Denmark.
 
-- Some errors in slide 1
-- Two slides in week 1 are the same.
-- The formula for Chi-Square random variable misses the square sign.
+`unittest` package is used primarily to test all the functions for simulations and statistical inferences.
 
 ## Notes
 
-- https://docs.google.com/spreadsheets/d/1jYCVtnZ1Xo-tP9a73HLytkAkrrJCQ5rvSWzix6hdR_M/edit?usp=sharing
-- miro.com
+- [The question queue](https://docs.google.com/spreadsheets/d/1jYCVtnZ1Xo-tP9a73HLytkAkrrJCQ5rvSWzix6hdR_M/edit?usp=sharing)

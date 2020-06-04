@@ -1,5 +1,11 @@
 # TidySimStat in Python: Stochastic Simulation and Statistics
 
+## Settings
+
+- for discrete random variables
+  * index `k` and number of possible values `K`: k = 1, 2, 3, ..., K
+  * index for lists in Python `i`: i = 0, 1, 2, ...
+
 ## Unit Testing
 
 
