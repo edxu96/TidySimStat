@@ -38,15 +38,15 @@ class Head:
 
     def collect(self):
         cur = self._next
-        indices = {}
+        dict_indices = {}
         i = 0
         while cur:
-            indices[i] = cur._index
+            dict_indices[i] = cur._index
             cur = cur._next
             i += 1
-        n = len(indices)
-        li_indices = [indices[i] for i in range(n)]
-        return li_indices
+        n = len(dict_indices)
+        indices = [dict_indices[i] for i in range(n)]
+        return indices
 
     @property
     def last(self):
@@ -74,8 +74,14 @@ class Leave(Node):
 
 class Servers(Head):
 
-    def __init__(self, f_serve, f_arrive, num:int=5):
+    def __init__(self, f_serve, f_inter, num:int=5):
         """Queueing system modelled by linked lists.
+
+        Keyword Arguments
+        =================
+        f_serve: function to simulate service times.
+        f_inter: function to simulate interarrival times, which are times
+                 between consecutive arrivals.
 
         Notes
         =====
@@ -84,7 +90,7 @@ class Servers(Head):
         if not callable(f_serve):
             raise ValueError("Function to simulate service time is "
                 "not callable.")
-        if not callable(f_arrive):
+        if not callable(f_inter):
             raise ValueError("Function to simulate arrival sojourn time is "
                 "not callable.")
 
@@ -93,7 +99,7 @@ class Servers(Head):
         self.num_arrival = 0
         self.num_block = 0
         self.f_serve = f_serve
-        self.f_arrive = f_arrive
+        self.f_inter = f_inter
         self.clock = 0
         self.arriveds = {0: None}
 
@@ -106,7 +112,7 @@ class Servers(Head):
         =====
         There is no need to schedule multiple arrivals in warming up stage.
         """
-        t = self.f_arrive()
+        t = self.f_inter()
         self._next = Arrival(t)
 
         ## An arbitrage `Arrival` must be added, or there is no way to build
@@ -117,7 +123,7 @@ class Servers(Head):
         """Schedule a new arrival, insert it to the event list, and return
         the index.
         """
-        new = Arrival(time=self._next._index + self.f_arrive())
+        new = Arrival(time=self._next._index + self.f_inter())
         self.insert(new)
         return new
 
@@ -130,7 +136,7 @@ class Servers(Head):
         "Event routine triggered when a new customer arrives."
         self.num_arrival += 1
         whi_server = self.first_idle + 0
-        if whi_server > self.num:  # There is no idle server.
+        if whi_server == self.num:  # There is no idle server.
             ## If the customer is blocked, there is no need to set a
             ## `leave` event.
             self.num_block += 1
@@ -153,10 +159,10 @@ class Servers(Head):
         "Invoke next event and advance the clock time."
         self.clock = self._next._index + 0
 
-        if type(self._next) is Leave:
+        if isinstance(self._next, Leave):
             self.leave()
             self.undock()
-        else:
+        elif isinstance(self._next, Arrival):
             self.arrive()
             docked = self.undock()
             self.arriveds[len(self.arriveds)+1] = docked
@@ -170,14 +176,32 @@ class Servers(Head):
 
     @property
     def first_idle(self):
+        """Return the index of the first idle server.
+
+        Attentions
+        ==========
+        The indices are 0, 1, 2, ..., self.num-1
+        """
         result = 0
         i = 0
-        while i <= self.num:
+        while i <= self.num - 1:
             if self.states[i] == 0:
                 break
             else:
                 i += 1
         return i
+
+    def collect_event_list(self):
+        cur = self._next
+        dict_whe_leave = {}
+        i = 0
+        while cur:
+            dict_whe_leave[i] = isinstance(cur, Leave)
+            cur = cur._next
+            i += 1
+        n = len(dict_whe_leave)
+        whe_leaves = [dict_whe_leave[i] for i in range(n)]
+        return whe_leaves
 
     # @property
     # def last_arrived(self):

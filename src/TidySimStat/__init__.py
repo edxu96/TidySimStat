@@ -7,12 +7,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 import scipy.stats as st
 import random as rd
+from typing import Union
 
 from TidySimStat.inference import *
 from TidySimStat.drv import *
 from TidySimStat.crv import *
 from TidySimStat.auxiliary import *
 from TidySimStat.exam import *
+from TidySimStat.des import *
+from TidySimStat.estimation import *
 
 
 if __name__ == '__main__':
