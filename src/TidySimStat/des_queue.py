@@ -70,9 +70,10 @@ class Arrival(Node):
 
 class Leave(Node):
 
-    def __init__(self, time:float, whi_server:int):
+    def __init__(self, time:float, i_server:int, i_customer:int):
         super().__init__(time)
-        self.whi_server = whi_server
+        self.i_server = i_server
+        self.i_customer = i_customer
         self._arrival = None
 
 
@@ -110,7 +111,9 @@ class Servers(Head):
         self.cap_queue = cap_queue
         self.queue = deque()
 
+        ## logs
         self.events = {}
+        self.times = {}
 
         self.warmup()
 
@@ -128,28 +131,48 @@ class Servers(Head):
         ## a linked list for
         # self._next_arrived = Arrival(0)
 
-    def schedule_arrival(self):
+    def schedule_arrival(self, i_customer:int):
         """Schedule a new arrival, insert it to the event list, and return
         the index.
         """
-        new = Arrival(time=self._next._index + self.f_inter())
+        t = self.f_inter()
+        new = Arrival(time=self._next._index + t)
         self.insert(new)
+        self.log_time("inter", t, i_customer)
         return new
 
-    def schedule_leave(self, whi_server):
-        new = Leave(self._next._index + self.f_serve(), whi_server)
+    def schedule_leave(self, i_server, i_customer):
+        t = self.f_serve()
+        new = Leave(self._next._index + t, i_server,
+            i_customer)
         self.insert(new)
+        self.log_time("serve", t, i_customer)
         return new
 
-    def log(self, str_log:str, whi:int=0):
+    def log_time(self, str_type:str, t:float, i_customer:int):
+        self.times[len(self.times) + 1] = {
+            "clock": self.clock,
+            "type": str_type,
+            "t": t,
+            "i_customer": i_customer
+            }
+
+    def log_event(self, str_type:str, i_customer:int=0):
+        """To log details of the event.
+
+        Keyword Arguments
+        =================
+        str_type: string to describe the event
+        i_customer: which customer joins or leaves the waiting room.
+        """
         self.events[len(self.events) + 1] = {
-            "time": self.clock,
-            "type": str_log,
+            "clock": self.clock,
+            "type": str_type,
             "len_queue": len(self.queue),
             "num_arriveds": self.num_arriveds,
             "num_busys": sum(self.busys),
             "num_block": self.num_block,
-            "whi_customer": whi
+            "i_customer": i_customer
             }
 
     def arrive(self):
@@ -163,38 +186,37 @@ class Servers(Head):
         - blocked
         """
         self.num_arriveds += 1
-        whi_server = self.first_idle + 0
-        if whi_server == self.num_servers:  # There is no idle server.
+        i_server = self.first_idle + 0
+        if i_server == self.num_servers:  # There is no idle server.
             if len(self.queue) == self.cap_queue:
                 ## If the customer is blocked, there is no need to set a
                 ## `leave` event.
                 self.num_block += 1
                 self._next.whe_block = 1
-                self.log("arrive-block")
+                self.log_event("arrive-block", self.num_arriveds)
             else:
                 self.queue.append(self.num_arriveds)
-                self.log("arrive-queue")
+                self.log_event("arrive-queue", self.num_arriveds)
         else:
             ## To assign the customer to the first idle server and simulate
             ## his/her leaving time.
-            self.busys[whi_server] = 1
+            self.busys[i_server] = 1
             # print(self.busys)
-            self.schedule_leave(whi_server)
-            self.log("arrive-serve")
+            self.schedule_leave(i_server, i_customer=self.num_arriveds)
+            self.log_event("arrive-serve", self.num_arriveds)
 
         ## Next schedule
-        self.schedule_arrival()
+        self.schedule_arrival(self.num_arriveds + 1)
 
     def leave(self):
         "Event routine triggered when an existing customer leaves."
-        self.busys[self._next.whi_server] = 0  # To set the server idle.
+        self.busys[self._next.i_server] = 0  # To set the server idle.
+        self.log_event("leave", self._next.i_customer)
         if len(self.queue) > 0:  # There are customers in the queue.
-            self.busys[self._next.whi_server] = 1
-            self.schedule_leave(self._next.whi_server)
-            whi = self.queue.popleft()
-            self.log("leave-queue", whi)
-        else:
-            self.log("leave")
+            self.busys[self._next.i_server] = 1
+            i_customer = self.queue.popleft()
+            self.schedule_leave(self._next.i_server, i_customer)
+            self.log_event("pop", i_customer)
 
     def advance(self):
         "Invoke next event and advance the clock time."
@@ -245,24 +267,9 @@ class Servers(Head):
         return whe_leaves
 
     @property
-    def pd_log(self):
-        return pd.DataFrame.from_dict(ser.events, orient='index')
+    def pd_events(self):
+        return pd.DataFrame.from_dict(self.events, orient='index')
 
-    # @property
-    # def last_arrived(self):
-    #     cur = self._next_arrived
-    #     while cur._next_arrived:
-    #         cur = cur._next_arrived
-    #     return cur
-
-    # def collect_arriveds(self):
-    #     cur = self._next_arrived
-    #     indices = {}
-    #     i = 0
-    #     while cur:
-    #         indices[i] = cur._index
-    #         cur = cur._next_arrived
-    #         i += 1
-    #     n = len(indices)
-    #     li_indices = [indices[i] for i in range(n)]
-    #     return li_indices
+    @property
+    def pd_times(self):
+        return pd.DataFrame.from_dict(self.times, orient='index')

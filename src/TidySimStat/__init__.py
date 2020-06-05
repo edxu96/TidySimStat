@@ -14,7 +14,7 @@ from TidySimStat.drv import *
 from TidySimStat.crv import *
 from TidySimStat.auxiliary import *
 from TidySimStat.exam import *
-from TidySimStat.des import *
+from TidySimStat.des_queue import *
 from TidySimStat.estimation import *
 
 
