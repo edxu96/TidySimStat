@@ -257,12 +257,11 @@ def cal_stat_runs_ww(li, mute:bool=True):
     """
     n1 = sum(li)
     n2 = len(li) - n1
-
     ## Number of runs
     num_runs = cal_num_runs(li)
-
+    ## Expected of the number of runs
     mu = (2 * n1 * n2) / (n1 + n2) + 1
-    ## Standard error of the estimator
+    ## Expected of standard error the number of runs
     se = math.sqrt( 2 * n1 * n2 * (2 * n1 * n2 - n1 - n2) /
         (n1 + n2)**2 / (n1 + n1 - 1) )
     stat = (num_runs - mu) / se
@@ -286,6 +285,31 @@ def cal_num_runs(li:list):
             x1 = x
             num_runs += 1
     return num_runs
+
+
+# def cal_num_runs_2(li:list):
+#     """It is assumed that the input list is binary.
+#     """
+#     if sum( [(i == 1 or i == 0) for i in li] ) != len(li):
+#         raise ValueError("The input is not a binary list.")
+#
+#     x1 = li[0]
+#     num_runs = 1
+#     if x1 == 1:
+#         num_runs_1 = 1
+#     else:
+#         num_runs_1 = 0
+#
+#     for x in li:
+#         if x != x1:
+#             x1 = x
+#             num_runs += 1
+#             if x1 == 1:
+#                 num_runs_1 += 1
+#
+#     num_runs_0 = num_runs - num_runs_1
+#
+#     return [num_runs_0, num_runs_1]
 
 
 def get_li_ups(li):

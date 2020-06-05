@@ -44,15 +44,14 @@ class TestInference(unittest.TestCase):
         pvalue = cal_pvalue_norm(z)
         self.assertTrue(infer_independence(pvalue))
 
-        li_binary = get_binary_ww(self.li_5)
-        z = cal_stat_runs_ww(li_binary)
-        pvalue = cal_pvalue_norm(z)
-        self.assertFalse(infer_independence(pvalue))
+        def exam(sample:list):
+            li_binary = get_binary_ww(sample)
+            z = cal_stat_runs_ww(li_binary)
+            pvalue = cal_pvalue_norm(z)
+            return infer_independence(pvalue)
 
-        li_binary = get_binary_ww(self.li_6)
-        z = cal_stat_runs_ww(li_binary)
-        pvalue = cal_pvalue_norm(z)
-        self.assertTrue(infer_independence(pvalue))
+        self.assertFalse(exam(self.li_5))
+        self.assertTrue(exam(self.li_6))
 
     def test_get_li_ups(self):
         self.assertEqual(get_li_ups(self.li_7), [2, 2, 3, 4, 1, 1])
