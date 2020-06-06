@@ -17,6 +17,7 @@ class TestVarReduction(unittest.TestCase):
     def setUpClass(cls):
         cls.f_derivative = math.exp
         cls.n = 10000
+        rd.seed(123)
         cls.sample = eval_int(cls.f_derivative, cls.n)
 
     def test_eval_int(self):
@@ -24,18 +25,22 @@ class TestVarReduction(unittest.TestCase):
         self.assertEqual(mean, 1.72)
         self.assertEqual(var, 0.24)
 
-    def test_analyse_stratified(self):
-        xbars_y, vars_y = analyse_stratified(self.sample)
+    def test_reduce_stratified(self):
+        results = reduce_stratified(self.sample)
+        mean, var = analyse_stratified(results, self.n)
 
-        mean = cal_mean_sample(xbars_y)
         mean = round(mean, 2)
         self.assertEqual(mean, 1.72)
-
-        var = sum(vars_y) / 10 / self.n
         self.assertTrue(var < 0.24)
 
-    def test_analyse_antithetic_int(self):
-        sample_new = analyse_antithetic_int(self.f_derivative, self.sample)
+    def test_reduce_antithetic_int(self):
+        sample_new = reduce_antithetic_int(self.f_derivative, self.sample)
         mean, var = cal_mean_var_sample(sample_new["y"])
         self.assertEqual(mean, 1.72)
-        self.assertTrue(var < 0.24)
+        self.assertTrue(var <= 0.0039)
+
+    def test_reduce_control(self):
+        sample_new = reduce_control(self.sample)
+        mean, var = cal_mean_var_sample(sample_new["y"])
+        self.assertEqual(mean, 1.72)
+        self.assertTrue(var <= 0.0039)

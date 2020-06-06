@@ -4,18 +4,41 @@ import math
 import pandas as pd
 import numpy as np
 
-
 from TidySimStat.estimation import *
 
+DF = pd.core.frame.DataFrame
 
-def eval_int(f_derivative, n:int=1000) -> pd.core.frame.DataFrame:
+
+def eval_int(f_derivative, n:int=1000) -> DF:
+    """Evaluate the definite integral using simulation.
+
+    Keyword Arguments
+    =================
+    f_derivative: derivative function to integrate
+    n: number of simulation runs
+
+    Attentions
+    ==========
+    - Right now, the interval for the definite integral is [0, 1].
+    """
+    if callable(f_derivative) is not True:
+        raise ValueError("The input derivative function is not callable.")
+
     us = [rd.random() for i in range(n)]
     xs = [f_derivative(u) for u in us]
 
     return pd.DataFrame({"u": us, "x": xs})
 
 
-def analyse_stratified(sample:pd.core.frame.DataFrame):
+def reduce_stratified(sample:DF) -> DF:
+    """Reduce the variance of raw smulation estimator by stratified sampling.
+
+    Attentions
+    ==========
+    - The variance of the stratified sampling estimator is not the variance of
+      obtained conditional means.
+    - So far, the only stratified sampling is uniform distribution over [0, 1].
+    """
     sample["y"] = [math.floor(i) + 1 for i in sample["u"] * 10]
     xbars_y = [0 for i in range(10)]
     vars_y = [0 for i in range(10)]
@@ -23,45 +46,51 @@ def analyse_stratified(sample:pd.core.frame.DataFrame):
         sample_y = sample.loc[sample["y"] == i+1]
         xbars_y[i] = np.mean(sample_y["x"])
         vars_y[i] = np.var(sample_y["x"])
-    return xbars_y, vars_y
+
+    return pd.DataFrame({"y": [i for i in range(10)], "xbar": xbars_y,
+        "var": vars_y})
 
 
-def analyse_antithetic_int(f_derivative, sample:pd.core.frame.DataFrame):
-    sample["u2"] = [1 - u for u in sample["u"]]
-    sample["x2"] = [f_derivative(u) for u in sample["u2"]]
+def analyse_stratified(results:DF, n:int):
+    """Analyse mean and variance of stratified sampling.
+
+    Keyword Arguments
+    =================
+    results: results from variance reduction by stratified sampling.
+    n: number of simulation runs.
+    """
+    mean = cal_mean_sample(results['xbar'])
+    var = sum(results['var']) / 10 / n
+    return mean, var
+
+
+def reduce_antithetic_int(f_derivative, sample:DF) -> DF:
+    """Reduce the variance of raw smulation estimator using antithetic variate.
+
+    Keyword Arguments
+    =================
+    f_derivative: derivative function to integrate.
+    sample: pandas dataframe containing raw simulation results.
+    """
+    if callable(f_derivative) is not True:
+        raise ValueError("The input derivative function is not callable.")
+
+    sample["u2"] = 1 - sample["u"]
+    sample["x2"] = sample["u2"].apply(f_derivative)
     n = sample.shape[0]
-    sample["y"] = [(sample["x"][i] + sample["x2"][i]) / 2 for i in range(n)]
+    sample["y"] = (sample["x"] + sample["x2"]) / 2
     return sample
 
 
-# def evaluate_integral_antithetic(n:int) -> list:
-#     us = [rd.random() for i in range(n)]
-#     ys = [(math.exp(u) + math.exp(1 - u)) / 2 for u in us]
-#     return est_three_points(ys)
-#
-#
-# def evaluate_integral_antithetic(n):
-#     us = [rd.random() for i in range(n)]
-#     xs = [math.exp(u) for u in us]
-#
-#     dat = np.array([xs, us])
-#     cov_xu = np.cov(dat)[0][0]
-#     # mean_xs = cal_mean_sample(xs)
-#     var_u = cal_var_sample(us)
-#     c = - cov_xu / var_u
-#
-#     zs = [xs[i] + c * (us[i] - 0.5) for i in range(n)]
-#     return est_three_points(zs)
-#
-#
-# def eval_int_strata_sample(n, m:int=10):
-#     # us = [rd.random() for i in range(n)]
-#     # xs = [math.exp(u) for u in us]
-#
-#     def stratify(m):
-#         us = [rd.random() for i in range(m)]
-#         w = sum([math.exp((i + us[i]) / m) for i in range(m)]) / m
-#         return w
-#
-#     ws = [stratify(m) for i in range(n)]
-#     return ws
+def reduce_control(sample:DF) -> DF:
+    """Reduce the variance of raw smulation estimator by control variates.
+
+    Keyword Arguments
+    =================
+    sample: pandas dataframe containing raw simulation results.
+    """
+    cov_xu = sample[['x', 'u']].cov()['x'][1]
+    var_u = cal_var_sample(sample['u'])
+    c = - cov_xu / var_u
+    sample['y'] = sample['x'] + c * (sample['u'] - 0.5)
+    return sample
