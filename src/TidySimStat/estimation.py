@@ -90,3 +90,10 @@ def est_interval(sample:list, alpha:float=0.05,
         print(f"Interval estimator: [{interval[0]}, {interval[1]}] .")
 
     return interval
+
+
+def est_three_points(sample:list, alpha:float=0.05,
+        var_pop:int=None, mute:bool=True) -> list:
+    mean = cal_mean_sample(sample, var_pop, mute)
+    interval = est_interval(sample, alpha, var_pop, mute)
+    return [interval[0], mean, interval[1]]

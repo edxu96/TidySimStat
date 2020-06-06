@@ -155,9 +155,11 @@ def count_gof(samples:list, end_left:float=0, end_right:float=1, k:int=10):
     """
     if end_left >= end_right:
         raise Exception("end_left >= end_right!")
+
     span = (end_right - end_left) / k  # Length of intervals
     ends = [end_left + (i+1) * span for i in range(k)]
     ends[-1] = end_right
+    
     counts = [0 for i in range(k)]
     samples.sort()
 
