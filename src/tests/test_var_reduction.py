@@ -12,21 +12,13 @@ def cal_mean_var_sample(sample:list, n):
     return round(mean, 2), round(var, 2), conf
 
 
-def cal_diff_stratified(n:int):
-    ## Calculate the theoretical variance of the condition expectation
-    vcm = (sum([math.exp(i / 5) for i in range(1, 11)]) / 10 -
-        (sum(math.exp(i / 10) for i in range(1, 11)) / 10)**2) * 100 * \
-        (1 - math.exp(- 0.1))**2
-    return vcm
-
-
 class TestVarReduction(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.f_derivative = math.exp
-        cls.n = 10000
-        rd.seed(1234)
+        cls.n = 1000000
+        # rd.seed(1234)
         cls.sample = eval_int(cls.f_derivative, cls.n)
 
     def test_eval_int(self):
@@ -39,6 +31,8 @@ class TestVarReduction(unittest.TestCase):
     def test_reduce_stratified(self):
         results = reduce_stratified(self.sample)
 
+        ## Test if each conditional confidence interval includes
+        ## theoretical values
         for i in range(10):
             mean = results.iloc[i]['xbar']
             var = results.iloc[i]['var']
@@ -49,15 +43,29 @@ class TestVarReduction(unittest.TestCase):
             theta = 10 * (1 - math.exp(- 0.1)) * math.exp(0.1 * (i+1))
             self.assertTrue(theta > conf[0] and theta < conf[1])
 
+        ## Compare sample mean and sample variance with theoretical ones
         mean, var = analyse_stratified(results, self.n)
-        conf = est_interval_mean_var(mean, var, 10)
-
         mean = round(mean, 2)
         self.assertEqual(mean, 1.72)
         self.assertTrue(var <= 0.0027)
 
-        # var_improve = cal_diff_stratified(self.n) / self.n
+        ## Check if the conditional confidence includes the theoretical value
+        conf = est_interval_mean_var(mean, var, 10)
         self.assertTrue(math.e - 1 > conf[0] and math.e - 1 < conf[1])
+
+        def cal_diff_stratified(n:int):
+            """Calculate the theoretical variance of the condition expectation
+            """
+            vcm = (sum([math.exp(i / 5) for i in range(1, 11)]) / 10 -
+                (sum(math.exp(i / 10) for i in range(1, 11)) / 10)**2) * 100 * \
+                (1 - math.exp(- 0.1))**2
+            return vcm
+
+        ## Check the sample variance improvement
+        vcm = cal_diff_stratified(self.n)
+        var_raw = cal_var_sample(self.sample["x"].tolist())
+        small = var_raw - var - vcm
+        self.assertTrue(small > - 0.001 and small < 0.001)
 
     def test_reduce_antithetic_int(self):
         sample_new = reduce_antithetic_int(self.f_derivative, self.sample)
