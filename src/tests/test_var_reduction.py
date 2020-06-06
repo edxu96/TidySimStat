@@ -29,6 +29,16 @@ class TestVarReduction(unittest.TestCase):
         self.assertTrue(math.e - 1 > conf[0] and math.e - 1 < conf[1])
 
     def test_reduce_stratified(self):
+        """Test `reduce_stratified`
+
+        Attentions
+        ==========
+        - Sample variance is an unbiased estimator of population variance.
+        - Population variance over number of samples is the theoretical value
+          of the variance of sample mean.
+        - Sample variance over number of samples is the empirical value of the
+          variance of sample mean.
+        """
         results = reduce_stratified(self.sample)
 
         ## Test if each conditional confidence interval includes
@@ -49,16 +59,17 @@ class TestVarReduction(unittest.TestCase):
         self.assertEqual(mean, 1.72)
         self.assertTrue(var <= 0.0027)
 
-        ## Check if the conditional confidence includes the theoretical value
-        conf = est_interval_mean_var(mean, var, 10)
+        ## Check if the conditional confidence includes the theoretical value.
+        ## Not sure if `n` should be total number of samples.
+        conf = est_interval_mean_var(mean, var, df=self.n)
         self.assertTrue(math.e - 1 > conf[0] and math.e - 1 < conf[1])
 
         def cal_diff_stratified(n:int):
             """Calculate the theoretical variance of the condition expectation
             """
             vcm = (sum([math.exp(i / 5) for i in range(1, 11)]) / 10 -
-                (sum(math.exp(i / 10) for i in range(1, 11)) / 10)**2) * 100 * \
-                (1 - math.exp(- 0.1))**2
+                (sum(math.exp(i / 10) for i in range(1, 11)) / 10)**2) * \
+                100 * (1 - math.exp(- 0.1))**2
             return vcm
 
         ## Check the sample variance improvement
