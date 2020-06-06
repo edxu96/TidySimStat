@@ -82,13 +82,18 @@ def est_interval(sample:list, alpha:float=0.05,
             mean + z_alpha2 * math.sqrt(var_pop / n)]
     else:
         var = cal_var_sample(sample)
-        t_alpha2 = st.t.ppf(1 - alpha / 2, df=n-1)
-        interval = [mean - t_alpha2 * math.sqrt(var / n),
-            mean + t_alpha2 * math.sqrt(var / n)]
+        interval = est_interval_mean_var(mean, var, n, alpha)
 
     if not mute:
         print(f"Interval estimator: [{interval[0]}, {interval[1]}] .")
 
+    return interval
+
+
+def est_interval_mean_var(mean:float, var:float, n:int, alpha:float=0.05):
+    t_alpha2 = st.t.ppf(1 - alpha / 2, df=n-1)
+    interval = [mean - t_alpha2 * math.sqrt(var / n),
+        mean + t_alpha2 * math.sqrt(var / n)]
     return interval
 
 

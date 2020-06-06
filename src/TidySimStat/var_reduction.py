@@ -42,13 +42,15 @@ def reduce_stratified(sample:DF) -> DF:
     sample["y"] = [math.floor(i) + 1 for i in sample["u"] * 10]
     xbars_y = [0 for i in range(10)]
     vars_y = [0 for i in range(10)]
+    len_y = [0 for i in range(10)]
     for i in range(10):
         sample_y = sample.loc[sample["y"] == i+1]
-        xbars_y[i] = np.mean(sample_y["x"])
-        vars_y[i] = np.var(sample_y["x"])
+        xbars_y[i] = cal_mean_sample(sample_y["x"])
+        vars_y[i] = cal_var_sample(sample_y["x"])
+        len_y[i] = sample_y.shape[0]
 
     return pd.DataFrame({"y": [i for i in range(10)], "xbar": xbars_y,
-        "var": vars_y})
+        "var": vars_y, "n": len_y})
 
 
 def analyse_stratified(results:DF, n:int):
@@ -59,8 +61,8 @@ def analyse_stratified(results:DF, n:int):
     results: results from variance reduction by stratified sampling.
     n: number of simulation runs.
     """
-    mean = cal_mean_sample(results['xbar'])
-    var = sum(results['var']) / 10 / n
+    mean = cal_mean_sample(results['xbar'])  # sample mean
+    var = sum(results['var']) / 10  # sample variance
     return mean, var
 
 
