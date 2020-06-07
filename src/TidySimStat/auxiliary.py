@@ -1,4 +1,19 @@
 
+import math
+from itertools import count, islice
+
+
+def check_prime(n:int) -> bool:
+    """Check if input integer is a prime number.
+
+    Notes
+    =====
+    - https://stackoverflow.com/a/27946768/10181743
+    """
+    bool_prime = n > 1 and all(n%i for i in islice(count(2),
+        int(math.sqrt(n)-1)))
+    return bool_prime
+
 
 def pmf2cdf(pmf):
     """Obtain cumulative distribution function of a discrete random

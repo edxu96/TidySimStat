@@ -85,15 +85,18 @@ end
 
 function [vecCandidate] = sampleGibbs(vecPre, m, vecAa)
     vecCandidate = zeros(2, 1);
+
     % 1,  Draw i-coordinate to change
     i = randi(2);
     j = getOtherOne(i);
     vecCandidate(j) = vecPre(j);  % value j-coordinate remains the same
+
     % 2,  Define new random variable
     denominator = 0;
     for k = 0:1:(m - vecPre(j))
         denominator = denominator + calCountQueue(k, vecAa(j));
     end
+
     % 3,  Draw new value for j-coordinate from the new random variable
     draw = rand();
     k = 0;
@@ -102,11 +105,13 @@ function [vecCandidate] = sampleGibbs(vecPre, m, vecAa)
         k = k + 1;
         probCumu = probCumu + calCountQueue(k, vecAa(j)) / denominator;
     end
+    
     if (k + vecCandidate(j)) > m
         error('i + j > m');
     elseif (k + vecCandidate(j)) < 0
         error('i + j < 0');
     end
+
     % 4,  Change
     vecCandidate(i) = k;
 end
