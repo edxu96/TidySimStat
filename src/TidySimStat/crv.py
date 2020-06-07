@@ -61,12 +61,13 @@ def sim_norm(num_samples:int=10):
 
     Note
     ====
-    The CDF is defined as `st.norm.cdf`.
-    The PDF is thus `st.norm.pdf`.
+    - The CDF is defined as `st.norm.cdf`.
+    - The PDF is thus `st.norm.pdf`.
+    - sum(us) ~ N(num_samples / 2, num_samples / 12)
     """
     us = [rd.random() for i in range(num_samples)]
 
-    x = sum(us) - num_samples / 2
+    x = (sum(us) - num_samples / 2) / math.sqrt(num_samples / 12)
     return x
 
 

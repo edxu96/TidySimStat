@@ -80,7 +80,7 @@ def infer_corr(pvalue:float, alpha:float=0.05, mute:bool=True):
     return pvalue >= alpha
 
 
-def cal_pvalue_ks(stat, n, m=10000, mute:bool=True):
+def cal_pvalue_ks(stat:float, n:int, m:int=1000, mute:bool=True) -> float:
     """Obtain the p value corresponding a statistic from One-Sample
     Kolmogorov–Smirnov test by simulations.
 
@@ -159,7 +159,7 @@ def count_gof(samples:list, end_left:float=0, end_right:float=1, k:int=10):
     span = (end_right - end_left) / k  # Length of intervals
     ends = [end_left + (i+1) * span for i in range(k)]
     ends[-1] = end_right
-    
+
     counts = [0 for i in range(k)]
     samples.sort()
 

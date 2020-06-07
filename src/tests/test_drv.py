@@ -61,8 +61,9 @@ class TestDisRandomVariable(unittest.TestCase):
             set_alias(self.pmf_4)
             set_alias(self.pmf_5)
 
-    def test_sim_drv_alias_direct(self):
-        def exam(pmf, num_sim:int=100):
+    def test_alias_direct(self):
+        
+        def exam(pmf:list, num_sim:int=100):
             """Test if samples from direct alias method can pass KS test."""
             f, l = set_alias_direct(pmf)
             samples = [run_alias_direct(f, l) for i in range(num_sim)]

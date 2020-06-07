@@ -3,7 +3,6 @@ import random as rd
 import pandas as pd
 import math
 from typing import Union
-# from TidySimStat.des_queue import cal_erlang_b
 
 from TidySimStat.auxiliary import check_prime
 from TidySimStat.drv import sim_drv_reject
@@ -149,7 +148,7 @@ def walk_rd_with0() -> int:
     return delta
 
 
-def accept_ha(x_pre:int, y:int, f_b) -> dict:
+def accept_hm(x_pre:int, y:int, f_b) -> dict:
     """If accept the candidate states in Hastings-Metropolis algorithm
 
     Keyword Arguments
@@ -183,11 +182,11 @@ def accept_ha(x_pre:int, y:int, f_b) -> dict:
     return {'x': x, 'y': y, 'whe_accept': whe_accept}
 
 
-def candidate_col_wise():
-    pass
+# def candidate_col_wise():
+#     pass
 
 
-def sample_gibbs(x_pre, num_servers, as):
+def sample_gibbs(x_pre, num_servers, a):
     """Gibbs sampler for a 2-dimensional Markov Chain Monte Carlo.
 
     Keyword Arguments
@@ -212,8 +211,8 @@ def sample_gibbs(x_pre, num_servers, as):
 
     xi = x[i]
     xj = x[j]
-    ai = as[i]
-    aj = as[j]
+    ai = a[i]
+    aj = a[j]
 
     ## Defind the new random variable
     numerators = [cal_count_queue(l, ai) for l in range(num_servers - xj + 1)]
