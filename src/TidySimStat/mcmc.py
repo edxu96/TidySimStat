@@ -101,24 +101,39 @@ def loop(x:int, x_max:int) -> int:
     return x
 
 
-def loop_rdw_2d(x:tuple, x1_max:int, x2_max:int) -> tuple:
-    """Two dimensional dandom walk with loop."""
+def loop_rdw_2d(x:tuple, x_max:tuple) -> tuple:
+    """2-dimensional random walk with loop.
+
+    Keyword Arguments
+    =================
+    x: current position
+    x_max: maximum possible position
+
+    Returns
+    =======
+    y: new position
+    """
     x1, x2 = x
-
-    x1_new = x1 + walk_rd_with0()
-    x1_new = loop(x1_new, x1_max)
-
-    x2_new = x2 + walk_rd_with0()
-    x2_new = loop(x2_new, x2_max)
-
+    y1 = loop_rdw(x1, x_max[0])
+    y2 = loop_rdw(x2, x_max[1])
     return (x1_new, x2_new)
 
 
 def loop_rdw(x:int, x_max:int) -> int:
-    """Random walk with loop."""
-    x1 = x + walk_rd_with0()
-    x1 = loop(x, x_max)
-    return x1
+    """Random walk with loop.
+
+    Keyword Arguments
+    =================
+    x: current position
+    x_max: maximum possible position
+
+    Returns
+    =======
+    y: new position
+    """
+    y = x + walk_rd_with0()
+    y = loop(y, x_max)
+    return y
 
 
 def walk_rd() -> int:
@@ -127,11 +142,22 @@ def walk_rd() -> int:
 
 
 def walk_rd_with0() -> int:
+    """Random walk with three possible steps.
+
+    """
     delta = rd.randint(-1, 1)
     return delta
 
 
-def accept_simple(x_pre:int, y:int, f_b):
+def accept_ha(x_pre:int, y:int, f_b) -> dict:
+    """If accept the candidate states in Hastings-Metropolis algorithm
+
+    Keyword Arguments
+    =================
+    x_pre: current state
+    y: candidate state
+    f_b: function to calculate the positive number
+    """
     if callable(f_b) is not True:
         raise ValueError(f"Input `f_b` is not callable.")
 
@@ -162,7 +188,7 @@ def candidate_col_wise():
 
 
 def sample_gibbs(x_pre, num_servers, as):
-    """Gibbs sampler for a 2-dimensional MCMC
+    """Gibbs sampler for a 2-dimensional Markov Chain Monte Carlo.
 
     Keyword Arguments
     =================
@@ -174,6 +200,8 @@ def sample_gibbs(x_pre, num_servers, as):
     ==========
     - When utilizing the Gibbs sampler, the candidate state is always
       accepted as the next state of the chain.
+    - The conditional distributions should be given all determined
+      analytically.
     """
     y = (0, 0)
 
@@ -192,6 +220,8 @@ def sample_gibbs(x_pre, num_servers, as):
     pmf = [l / sum(numerators) for l in numerators]
     y[i] = sim_drv_reject(pmf)
 
-    ##
+    ## Examine the final result
     if sum(y) < 0 or sum(y) > num_servers:
         raise Exception(f"y = {y} .")
+
+    return y

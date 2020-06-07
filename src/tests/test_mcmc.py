@@ -7,6 +7,9 @@ from TidySimStat.des_queue import cal_count_queue
 
 
 def cal_block_rate_2d(n_servers:int, a1:float, a2:float, n_sample:int=10000):
+    """Calculate 2-D block rate given by Erlang-B formula using MCMC.
+
+    """
     if n_servers != 10:
         raise ValueError(f"The number of servers must be set as 10 for now.")
 
@@ -30,23 +33,27 @@ def cal_block_rate_2d(n_servers:int, a1:float, a2:float, n_sample:int=10000):
         result = a1**i * a2**j / math.factorial(i) / math.factorial(j)
         return result
 
-    f_accept = lambda x, y: accept_simple(x, y, f_b)
+    f_accept = lambda x, y: accept_hm(x, y, f_b)
 
     xz1 = (rd.randint(1, shape1+1), rd.randint(1, shape1+2))
     results = sim_mcmc(xz1, f_y, f_accept, n_sample)
 
-    x_results = [results[i]['x'] for i in range(1000 + 1, 10000 + 1)]
+    x_results = [results[i]['x'] for i in
+        range(0.05 * n_sample + 1, n_sample + 1)]
     counts = {}
     freqs = {}
     for t in li:
         c = x_results.count(t)
         counts[t] = c
-        freqs[t] = c / 9000
+        freqs[t] = c / (0.95 * n_sample)
 
     return freqs
 
 
 def cal_block_rate(n_servers:int, a, n_sample:int=10000):
+    """Calculate block rate given by Erlang-B formula using MCMC.
+
+    """
     ss = get_ss([i for i in range(0, n_servers+1)])
 
     f_y = lambda x_pre: loop_walk_rd(x_pre, 1, max(ss.keys()))
@@ -59,7 +66,7 @@ def cal_block_rate(n_servers:int, a, n_sample:int=10000):
         elif y < 0:
             raise ValueError(f"y = {y} < 0 .")
         else:
-            d = accept_simple(x_pre, y, f_b)
+            d = accept_hm(x_pre, y, f_b)
 
         return d
 
@@ -84,7 +91,9 @@ class TestMCMC(unittest.TestCase):
 
     def test_get_ss_2d(self):
         sample_space = [(1, 2), (2, 2), (4, 5), (4, 6)]
+        pass
 
     def test_sim_mcmc_2d(self):
         n_sample = 10000
         n_servers = 10
+        pass
