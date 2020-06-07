@@ -12,8 +12,10 @@ function [matCount, matProbAnalysis, cass] = doExercise_6b(m, nRow, nSample, aCa
         funcGetCandidate = @loopRandWalk2dim;
         funcAcceptCandidate = @acceptCandidate;
     elseif whiMethod == 2  % Gibbs sampler
-        funcGetCandidate = @(~, vecPre) sampleGibbs(vecPre, m, vecAa);  % `cass` will not be used.
-        funcAcceptCandidate = @(xPre, y, vecAa) {y, 1};  % `xPre` and `vecAa` will not be used.
+        funcGetCandidate = @(~, vecPre) sampleGibbs(vecPre, m, vecAa);
+        % `cass` will not be used.
+        funcAcceptCandidate = @(xPre, y, vecAa) {y, 1};
+        % `xPre` and `vecAa` will not be used.
     elseif whiMethod == 3  % Column-wise random walk directly
         funcGetCandidate = @getCandidateCoWise;
         funcAcceptCandidate = @acceptCandidate;
@@ -21,11 +23,12 @@ function [matCount, matProbAnalysis, cass] = doExercise_6b(m, nRow, nSample, aCa
     cass = getSampleSpace2dim(m, nRow);
     sState2 = simMarkovChain(cass, funcGetCandidate, funcAcceptCandidate, nSample, vecAa);
     save([pwd '/outputs/6/sState2_4.mat'], 'sState2');
-    % Calculate and Plot the Analytical Values 
+    % Calculate and Plot the Analytical Values
     matProbAnalysis = zeros(m + 1);
     for i = 0:m
         for j = 0:(m - i)
-            matProbAnalysis(i + 1, j + 1) = calCountQueue2dim(i, j, aCap_1, aCap_2);
+            matProbAnalysis(i + 1, j + 1) = calCountQueue2dim(...
+                i, j, aCap_1, aCap_2);
         end
     end
     matProbAnalysis = matProbAnalysis / sum(sum(matProbAnalysis));

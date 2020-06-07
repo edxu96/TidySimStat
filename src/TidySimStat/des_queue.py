@@ -1,6 +1,7 @@
 
 import pandas as pd
 from collections import deque
+import math
 
 
 class Node:
@@ -273,3 +274,25 @@ class Servers(Head):
     @property
     def pd_times(self):
         return pd.DataFrame.from_dict(self.times, orient='index')
+
+
+def cal_count_queue(j, a):
+    if j < 0:
+        raise ValueError(f"Factorial negative value: j = {j} .")
+
+    b = a**j / math.factorial(j)
+    return b
+
+
+def cal_erlang_b(n, a):
+    """
+    Keyword Arguments
+    =================
+    n: number of servers
+    """
+    if n < 0:
+        raise ValueError(f"Factorial negative value: n = {n} .")
+
+    b_cap = sum([a**i / math.factorial(i) for i in range(0, n+1)])
+    prob_block = cal_count_queue(n, a) / b_cap
+    return prob_block

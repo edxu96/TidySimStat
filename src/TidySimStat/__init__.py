@@ -16,6 +16,7 @@ from TidySimStat.auxiliary import *
 from TidySimStat.exam import *
 from TidySimStat.des_queue import *
 from TidySimStat.estimation import *
+from TidySimStat.mcmc import *
 
 
 # if __name__ == '__main__':
