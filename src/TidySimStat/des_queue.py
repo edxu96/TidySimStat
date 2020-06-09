@@ -230,7 +230,6 @@ class Servers(Head):
             self.arrive()
             docked = self.undock()
             self.arriveds[len(self.arriveds)+1] = docked
-            # self.last_arrived._next_arrived = docked
 
         return self.clock
 
@@ -275,6 +274,19 @@ class Servers(Head):
     def pd_times(self):
         return pd.DataFrame.from_dict(self.times, orient='index')
 
+    @property
+    def block_rate_warmup(self, frac_warmup:float=0.05):
+        n_warmup = self.num_arriveds * frac_warmup
+        idx_warmup = (self.pd_events['num_arriveds'] == n_warmup).idxmax()
+        n_block_warmup = self.pd_events.iloc[idx_warmup]['num_block']
+        rate = (self.num_block - n_block_warmup) / \
+            (self.num_arriveds - n_warmup)
+        return rate
+
+    @property
+    def block_rate(self):
+        return self.num_block / self.num_arriveds
+
 
 def cal_count_queue(j, a):
     if j < 0:
@@ -285,10 +297,13 @@ def cal_count_queue(j, a):
 
 
 def cal_erlang_b(n, a):
-    """
+    """Calculate block rates according to Erlang's B formula and given number of
+    servers and coefficient `a`.
+
     Keyword Arguments
     =================
     n: number of servers
+    a: coefficient (arrival intensity multiplied with mean service time)
     """
     if n < 0:
         raise ValueError(f"Factorial negative value: n = {n} .")

@@ -29,7 +29,7 @@ class TestInference(unittest.TestCase):
         cls.li_7 = [0.54, 0.67, 0.13, 0.89, 0.33, 0.45, 0.90, 0.01, 0.45,
             0.76, 0.82, 0.24, 0.17]
         cls.li_8 = [1, 2, 3, 4, 5, 6, 7, 8]
-        cls.li_9 = [rd.normalvariate(0, 1) for i in range(1000)]
+        cls.li_9 = [rd.normal(0, 1) for i in range(10000)]
         cls.li_10 = [0.05, 0.1596, 0.2312, 0.2237, 0.1622, 0.1733]
 
     def test_cal_num_runs(self):
@@ -96,10 +96,12 @@ class TestInference(unittest.TestCase):
         # print(f'The p-value calculated by `st.kstest()` is {pvalue_1:.4f}.')
 
         n = len(self.li_9)
+        print(stat)
         pvalue_2 = cal_pvalue_ks(stat, n)
         # print(f'The p-value calculated by `cal_pvalue_ks()` is
             # {pvalue_2:.4f}.')
 
         delta = abs(pvalue_2 - pvalue_1)
+        print(f"pvalue_2 = {pvalue_2} .")
         print(delta)
         self.assertTrue(delta <= 0.005)
