@@ -11,3 +11,4 @@ I have written a new package in Python for course [stochastic simulation](http:/
 - When Pareto distribution is used, large amount of samples are needed.
 - Variance of blocking rates will vary.
 - Common random numbers for different policies. < Each customer should be assigned with same random numbers for random variables for service times and service times. >
+- [How do you see a Markov chain is irreducible?](https://stats.stackexchange.com/questions/186033/how-do-you-see-a-markov-chain-is-irreducible)
