@@ -9,15 +9,14 @@ import scipy.stats as st
 import random as rd
 from typing import Union
 
-from TidySimStat.inference import *
-from TidySimStat.drv import *
-from TidySimStat.crv import *
-from TidySimStat.auxiliary import *
-from TidySimStat.exam import *
-from TidySimStat.des_queue import *
-from TidySimStat.estimation import *
-from TidySimStat.mcmc import *
+from TidySimStat import (
+    inference, drv, crv, auxiliary, exam, des_queue, estimation, mcmc
+)
 
+__all__ = [
+    "inference", "drv", "crv", "auxiliary", 
+    "exam", "des_queue", "estimation", "mcmc"
+]
 
 # if __name__ == '__main__':
 #     print("`TidySimStat.py` is a module by Edward J. Xu. Last modifed date."

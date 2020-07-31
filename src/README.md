@@ -6,7 +6,6 @@ I have written a new package in Python for course [stochastic simulation](http:/
 
 ## Notes
 
-- [The question queue](https://docs.google.com/spreadsheets/d/1jYCVtnZ1Xo-tP9a73HLytkAkrrJCQ5rvSWzix6hdR_M/edit?usp=sharing)
 - When inter arrival times are simulated by Erlang distribution with mean 1, the blocking rate is expected to be lower. When they are simulated by hyper-exponential distribution (0.8, 0.2) with mean (0.8333, 5), the rate is to be higher.
 - When Pareto distribution is used, large amount of samples are needed.
 - Variance of blocking rates will vary.
